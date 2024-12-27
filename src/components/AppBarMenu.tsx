@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React, { useEffect, useState } from 'react';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -7,10 +7,17 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-
+import { CssBaseline } from '@mui/material';
+import { getToken } from '@request/request'
 export default function AppBarMenu() {
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+      setToken(getToken()); // Устанавливаем токен при загрузке компонента
+    }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <CssBaseline />
       <AppBar position="static" color="primary">
         <Toolbar>
           {/* Логотип */}
@@ -25,17 +32,20 @@ export default function AppBarMenu() {
           <Button color="inherit">Contact</Button>
 
           {/* Кнопки Sign In и Register */}
-          <Button color="inherit" href="/signin" sx={{ ml: 2 }}>
+          {!token ? (
+        <>
+          <Button color="inherit" href="/sign-in" sx={{ ml: 2 }}>
             Sign In
           </Button>
           <Button color="inherit" href="/register">
             Register
           </Button>
-
-          {/* Иконка профиля */}
-          <IconButton color="inherit" sx={{ ml: 2 }}>
-            <AccountCircle />
-          </IconButton>
+        </>
+      ) : (
+        <IconButton color="inherit" sx={{ ml: 2 }}>
+          <AccountCircle />
+        </IconButton>
+      )}
         </Toolbar>
       </AppBar>
     </Box>

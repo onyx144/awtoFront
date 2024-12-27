@@ -1,30 +1,28 @@
 "use client";
 
 import React from "react";
-import AppBarMenu from "./AppBarMenu";
+import dynamic from "next/dynamic";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material'; 
+
+const AppBarMenu = dynamic(() => import("./AppBarMenu"), { ssr: false });
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#8fad1c',  // Заменяем основной цвет
+      main: '#8fad1c',  // Основной цвет
     },
     secondary: {
-      main: '#ff4081',  // Вы можете настроить вторичный цвет, если нужно
+      main: '#ff4081',  // Вторичный цвет
     },
   },
-  
 });
 
 const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <>
     <ThemeProvider theme={theme}>
       <AppBarMenu />
       <main>{children}</main>
     </ThemeProvider>
-    </>
   );
 };
 

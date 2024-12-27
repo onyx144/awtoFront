@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect } from 'react';
 
+const BASE_URL = 'http://192.168.31.74:3001';
 const TOKEN_KEY = 'jwtToken';
 const TOKEN_EXPIRY_KEY = 'jwtTokenExpiry';
 const TOKEN_EXPIRY_TIME = 7 * 24 * 60 * 60 * 1000; // 1 неделя
@@ -63,15 +64,17 @@ const request = async (method: string, url: string, data?: any, config?: AxiosRe
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const axiosConfig = { ...config, headers };
 
+  const fullUrl = `${BASE_URL}${url}`;
+
   switch (method.toLowerCase()) {
     case 'get':
-      return axios.get(url, axiosConfig);
+      return axios.get(fullUrl, axiosConfig);
     case 'post':
-      return axios.post(url, data, axiosConfig);
+      return axios.post(fullUrl, data, axiosConfig);
     case 'put':
-      return axios.put(url, data, axiosConfig);
+      return axios.put(fullUrl, data, axiosConfig);
     case 'delete':
-      return axios.delete(url, axiosConfig);
+      return axios.delete(fullUrl, axiosConfig);
     default:
       throw new Error(`Unsupported request method: ${method}`);
   }
