@@ -10,6 +10,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
+import { useRouter } from 'next/router';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -131,7 +132,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       const password = (document.getElementById('password') as HTMLInputElement).value;
       const name = (document.getElementById('name') as HTMLInputElement).value;
       const phone = (document.getElementById('phone') as HTMLInputElement).value;
-  
       try {
         const response = await request('post', '/users/register', {
           email,
@@ -142,9 +142,11 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
         });
         console.log('Data', response.data);
         const { token } = response.data;
+        if( token ) {
         saveToken(token, true);
-  
+        }
         if (response.status === 201) {
+          window.location.href = '/profile'
           console.log('Registration successful!');
         } else {
           console.log('Registration failed. Please try again.');

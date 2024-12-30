@@ -4,14 +4,31 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+import { IconButton, Popover, Button } from '@mui/material';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { CssBaseline } from '@mui/material';
 import { getToken } from '@request/request'
+import { removeToken } from '@request/request'
+
 export default function AppBarMenu() {
     const [token, setToken] = useState<string | null>(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+    
+      const handleLogout = () => {
+        removeToken();
+        handleClose();
+        window.location.reload(); 
+      };
+      const open = Boolean(anchorEl);
+  const id = open ? 'profile-popover' : undefined;
     useEffect(() => {
       setToken(getToken()); // Устанавливаем токен при загрузке компонента
     }, []);
@@ -42,9 +59,28 @@ export default function AppBarMenu() {
           </Button>
         </>
       ) : (
-        <IconButton color="inherit" sx={{ ml: 2 }}>
+        <div
+        onMouseEnter={handleClick} // Показать при наведении
+        onMouseLeave={handleClose}>
+        <IconButton color="inherit" sx={{ ml: 2 }}
+       >
           <AccountCircle />
         </IconButton>
+        <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      >
+        <Button onClick={handleLogout} sx={{ padding: '8px 16px' }}>
+          Вихід
+        </Button>
+      </Popover>
+      </div>
       )}
         </Toolbar>
       </AppBar>
