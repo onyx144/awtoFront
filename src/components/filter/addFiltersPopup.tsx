@@ -17,7 +17,7 @@ import {
 
 interface AddFiltersProps {
   onClose: () => void;
-  optionValue: { category: string; options: string[] }[];
+  optionValue: { category: string; options: string[] };
   onSaveFilters: (filters: { category: string, value: string }[]) => void;
 }
 

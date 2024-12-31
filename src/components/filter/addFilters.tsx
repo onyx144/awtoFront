@@ -25,7 +25,7 @@ const FiltersContainer: React.FC = () => {
   return (
     <div>
       <Grid container spacing={2} sx={{ marginTop: 0 }}>
-        {Array.from({ length: 8 }).map((_, index) => (
+         {filtersData.map((filter, index) => (
           <Grid item xs={12} sm={6} md={6} key={index}>
             <Paper
               sx={{
@@ -42,10 +42,11 @@ const FiltersContainer: React.FC = () => {
                 Open Filters
               </Button>
               {isDialogOpen === index && (
-                <AddFiltersPopup 
-                onClose={handleClose} 
-                optionValue={filtersData}
-                onSaveFilters={handleSaveFilters}/>
+                <AddFiltersPopup
+                  onClose={handleClose}
+                  optionValue={filter} // Передаём конкретный фильтр
+                  onSaveFilters={handleSaveFilters}
+                />
               )}
             </Paper>
           </Grid>
