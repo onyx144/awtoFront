@@ -58,43 +58,50 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
   };
 
   return (
-    <Dialog open onClose={onClose} maxWidth="md" fullWidth sx={{ '& .MuiDialog-paper': { width: '90%', height: '90%' } }}>
+    <Dialog
+      open
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      sx={{ '& .MuiDialog-paper': { width: '90%', height: '90%' } }}
+    >
       <DialogTitle>Add Filters</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
-          {optionValue.map((category, index) => (
-            <Grid item xs={6} key={index}>
-              <Typography>{`Category ${index + 1}`}</Typography>
-              <Paper style={{ maxHeight: 200, minHeight: 200, overflow: 'auto' }}>
+          <Grid item xs={12}>
+            <Typography>{optionValue.category}</Typography>
+            <Paper style={{ maxHeight: 200, minHeight: 200, overflow: 'auto' }}>
               <List>
-              {optionValue.map((item) => (
-  item.options.map((value) => (
-    <ListItem key={value} disablePadding>
-      <ListItemButton
-        onClick={(event) => handleSelectValue(value, event)}
-        selected={selectedValues.includes(value)}
-      >
-        <ListItemText primary={value} />
-      </ListItemButton>
-    </ListItem>
-  ))
-))}
-    </List>
-              </Paper>
-            </Grid>
-          ))}
+                {optionValue.options.map((value) => (
+                  <ListItem key={value} disablePadding>
+                    <ListItemButton
+                      onClick={(event) => handleSelectValue(value, event)}
+                      selected={selectedValues.includes(value)}
+                    >
+                      <ListItemText primary={value} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
         </Grid>
-
+  
         <Box display="flex" justifyContent="center" marginTop={2}>
           <Button variant="contained" onClick={handleAdd} disabled={!selectedValues.length}>
             &gt;&gt;
           </Button>
-          <Button variant="contained" onClick={handleRemove} disabled={!selectedValues.length} style={{ marginLeft: 10 }}>
+          <Button
+            variant="contained"
+            onClick={handleRemove}
+            disabled={!selectedValues.length}
+            style={{ marginLeft: 10 }}
+          >
             &lt;&lt;
           </Button>
         </Box>
       </DialogContent>
-
+  
       <DialogActions>
         <Button onClick={handleSave} color="primary" disabled={!chosenValues.length}>
           Зберегти фільтр
