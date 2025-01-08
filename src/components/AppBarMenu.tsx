@@ -9,6 +9,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import { CssBaseline } from '@mui/material';
 import { getToken } from '@request/request'
 import { removeToken } from '@request/request'
+import Link from 'next/link';
 
 export default function AppBarMenu() {
     const [token, setToken] = useState<string | null>(null);
@@ -59,13 +60,15 @@ export default function AppBarMenu() {
           </Button>
         </>
       ) : (
-        <div
-        onMouseEnter={handleClick} // Показать при наведении
-        onMouseLeave={handleClose}>
-        <IconButton color="inherit" sx={{ ml: 2 }}
-       >
-          <AccountCircle />
-        </IconButton>
+        <div>
+        <IconButton 
+  color="inherit" 
+  component={Link} 
+  href="/profile" 
+  sx={{ ml: 2 }}
+>
+  <AccountCircle />
+</IconButton>
         <Popover
         id={id}
         open={open}

@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from 'react';
-import AddFiltersPopup from './addFiltersPopup';
-import { Button } from '@mui/material';
-import AddFilters from './addFilters';
+import { useState } from "react";
+import { Button } from "@mui/material";
+import AddFilters from "./addFilters";
 
 const FiltersContainer: React.FC = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAddFiltersVisible, setIsAddFiltersVisible] = useState(false);
+
+  const handleAddFilterClick = () => setIsAddFiltersVisible(true);
+  const handleSaveFilter = () => setIsAddFiltersVisible(false);
 
   return (
     <div>
-     <AddFilters/>
+      {isAddFiltersVisible ? (
+        <AddFilters onSave={handleSaveFilter} />
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddFilterClick}
+        >
+          Додати новий фільтр
+        </Button>
+      )}
     </div>
   );
 };

@@ -18,17 +18,17 @@ import {
 interface AddFiltersProps {
   onClose: () => void;
   optionValue: { category: string; options: string[] };
-  onSaveFilters: (filters: { category: string, value: string }[]) => void;
+  onSaveFilters: (filters: { category: string; value: string }[]) => void;
 }
 
 const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSaveFilters }) => {
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
-  const [chosenValues, setChosenValues] = useState<{ category: string, value: string }[]>([]);
+  const [chosenValues, setChosenValues] = useState<{ category: string; value: string }[]>([]);
 
   const handleAdd = () => {
     setChosenValues((prev) => [
       ...prev,
-      ...selectedValues.map((value) => ({ category: `Category ${prev.length + 1}`, value })),
+      ...selectedValues.map((value) => ({ category: optionValue.category, value })),
     ]);
     setSelectedValues([]); // Очищаем выбранные
   };
@@ -58,19 +58,14 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
   };
 
   return (
-    <Dialog
-      open
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      sx={{ '& .MuiDialog-paper': { width: '90%', height: '90%' } }}
-    >
+    <Dialog open onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>Add Filters</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography>{optionValue.category}</Typography>
-            <Paper style={{ maxHeight: 200, minHeight: 200, overflow: 'auto' }}>
+          {/* Левая колонка - Доступные фильтры */}
+          <Grid item xs={6}>
+            <Typography variant="h6">{optionValue.category}</Typography>
+            <Paper style={{ maxHeight: 300, minHeight: 300, overflow: 'auto' }}>
               <List>
                 {optionValue.options.map((value) => (
                   <ListItem key={value} disablePadding>
@@ -85,23 +80,43 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
               </List>
             </Paper>
           </Grid>
+
+          {/* Правая колонка - Выбранные фильтры */}
+          <Grid item xs={6}>
+            <Typography variant="h6">Selected Filters</Typography>
+            <Paper style={{ maxHeight: 300, minHeight: 300, overflow: 'auto' }}>
+              <List>
+                {chosenValues.map((filter, index) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={`${filter.value}`} />
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
         </Grid>
-  
+
+        {/* Кнопки управления */}
         <Box display="flex" justifyContent="center" marginTop={2}>
-          <Button variant="contained" onClick={handleAdd} disabled={!selectedValues.length}>
+          <Button
+            variant="contained"
+            onClick={handleAdd}
+            disabled={!selectedValues.length}
+            style={{ marginRight: 10 }}
+          >
             &gt;&gt;
           </Button>
           <Button
             variant="contained"
             onClick={handleRemove}
             disabled={!selectedValues.length}
-            style={{ marginLeft: 10 }}
           >
             &lt;&lt;
           </Button>
         </Box>
       </DialogContent>
-  
+
+      {/* Действия внизу диалога */}
       <DialogActions>
         <Button onClick={handleSave} color="primary" disabled={!chosenValues.length}>
           Зберегти фільтр
