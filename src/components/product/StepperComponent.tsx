@@ -5,6 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
+import StepThree from './StepThree';
 const steps = ['Шаг 1', 'Шаг 2', 'Шаг 3'];
 
 // Кастомный компонент для иконки шага
@@ -21,18 +22,26 @@ const StepIcon = (props: StepIconProps) => {
   );
 };
 
-const StepContent = ({ step }: { step: number }) => {
-  switch (step) {
-    case 0:
-      return <StepOne/>;
-    case 1:
-      return <StepTwo/>;
-    case 2:
-      return <Typography>Контент для Шага 3</Typography>;
-    default:
-      return null;
-  }
-};
+const StepContent = ({ step }: { step: number }) => (
+  <Box>
+    <Box
+      sx={{ display: step === 0 ? 'block' : 'none' }}
+    >
+      <StepOne />
+    </Box>
+    <Box
+      sx={{ display: step === 1 ? 'block' : 'none' }}
+    >
+      <StepTwo />
+    </Box>
+    <Box
+      sx={{ display: step === 2 ? 'block' : 'none' }}
+    >
+      <StepThree/>
+    </Box>
+  </Box>
+);
+
 
 const StepperComponent = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -40,7 +49,9 @@ const StepperComponent = () => {
   const handleNext = () => {
     if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
   };
-
+  const handleSubmit = () => {
+    alert('Товар загружен')
+  }
   const handleBack = () => {
     if (activeStep > 0) setActiveStep((prev) => prev - 1);
   };
@@ -74,13 +85,23 @@ const StepperComponent = () => {
           >
             Назад
           </Button>
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={activeStep === steps.length - 1}
-          >
-            Далее
-          </Button>
+          {activeStep < 2 ? (
+  <Button
+    variant="contained"
+    onClick={handleNext}
+    disabled={activeStep === steps.length - 1}
+  >
+    Далее
+  </Button>
+) : (
+  <Button
+    variant="contained"
+    onClick={handleSubmit} // Замените handleSubmit на вашу функцию обработки
+  >
+    Отправить запрос
+  </Button>
+)}
+
         </Box>
       </Box>
     </Box>

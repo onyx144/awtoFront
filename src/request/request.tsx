@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect } from 'react';
 
-const BASE_URL = 'http://192.168.0.105:3001';
+const BASE_URL = 'http://192.168.31.74:3001';
 const TOKEN_KEY = 'jwtToken';
 const TOKEN_EXPIRY_KEY = 'jwtTokenExpiry';
 const TOKEN_EXPIRY_TIME = 7 * 24 * 60 * 60 * 1000; // 1 неделя

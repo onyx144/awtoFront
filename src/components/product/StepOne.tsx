@@ -54,9 +54,9 @@ const StepOne: React.FC = () => {
   };
 
   const removePart = (index: number) => {
-    setParts(parts.filter((_, i) => i !== index));
+    console.log(index , 'parts' , parts);
+    setParts((prevParts) => prevParts.filter((_, i) => i !== index));
   };
-
   return (
     <Box>
       {parts.map((part, index) => (
@@ -174,15 +174,24 @@ const StepOne: React.FC = () => {
               Добавить фото
             </Button>
           </Box>
-
+          
           <Button
-            variant="contained"
-            color="error"
-            onClick={() => removePart(index)}
-            sx={{ mt: 2 }}
+            variant="outlined"
+            onClick={() => addPart()}
+            sx={{ mt: 2 , mr: 2 }}
           >
-            Удалить запчасть
+            Добавить запчасть
           </Button>
+          {index > 0 && (
+  <Button
+    variant="contained"
+    color="error"
+    onClick={() => removePart(index)}
+    sx={{ mt: 2 }}
+  >
+    Удалить запчасть {index}
+  </Button>
+)}
         </Box>
       ))}
 

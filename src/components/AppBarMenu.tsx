@@ -35,58 +35,61 @@ export default function AppBarMenu() {
     }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <CssBaseline />
-      <AppBar position="static" color="primary">
-        <Toolbar>
-          {/* Логотип */}
+    <CssBaseline />
+    <AppBar position="static" color="primary">
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        {/* Логотип - слева */}
+        <Link href="/" passHref>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             My Logo
           </Typography>
+        </Link>
 
-          {/* Меню */}
-          <Button color="inherit">Home</Button>
-          <Button color="inherit">About</Button>
-          <Button color="inherit">Services</Button>
-          <Button color="inherit">Contact</Button>
+        {/* Меню и кнопки справа */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          
 
           {/* Кнопки Sign In и Register */}
           {!token ? (
-        <>
-          <Button color="inherit" href="/sign-in" sx={{ ml: 2 }}>
-            Sign In
-          </Button>
-          <Button color="inherit" href="/register">
-            Register
-          </Button>
-        </>
-      ) : (
-        <div>
-        <IconButton 
-  color="inherit" 
-  component={Link} 
-  href="/profile" 
-  sx={{ ml: 2 }}
->
-  <AccountCircle />
-</IconButton>
-        <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-      >
-        <Button onClick={handleLogout} sx={{ padding: '8px 16px' }}>
-          Вихід
-        </Button>
-      </Popover>
-      </div>
-      )}
-        </Toolbar>
-      </AppBar>
-    </Box>
+            <>
+              <Button color="inherit" href="/spares">Найти запчасти</Button>        
+              <Button color="inherit" href="/sign-in" sx={{ ml: 2 }}>
+                Вхід
+              </Button>
+              <Button color="inherit" href="/register">
+                Регестрація
+              </Button>
+            </>
+          ) : (
+            <div>
+              <Button color="inherit" href="/spares">Найти запчасти</Button>        
+              <Button color="inherit" href="/filters">Моі фільтри</Button>
+              <Button color="inherit" href="/story">Історія заявок</Button>
+              <Button onClick={handleLogout} sx={{ color: 'red' }}>
+                  Вихід
+                </Button>
+              <IconButton color="inherit" component={Link} href="/profile" sx={{ ml: 2 }}>
+                <AccountCircle />
+              </IconButton>
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+              >
+                <Button onClick={handleLogout} sx={{ padding: '8px 16px' }}>
+                  Вихід
+                </Button>
+              </Popover>
+            </div>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  </Box>
   );
 }

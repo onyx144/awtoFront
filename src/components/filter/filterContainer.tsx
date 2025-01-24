@@ -19,6 +19,7 @@ const FiltersContainer: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={handleAddFilterClick}
+          sx={{mt: 5}}
         >
           Додати новий фільтр
         </Button>

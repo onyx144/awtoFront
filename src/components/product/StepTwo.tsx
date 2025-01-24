@@ -86,11 +86,9 @@ const [modelId, setModelId] = useState<string>('');
         </Select>
       </FormControl>
     </Box>
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <div>Марка</div>
-      </Grid>
-      <Grid item xs={12} md={6}>
+    <Box sx={{ marginTop: '10px' }}>
+      <Box sx={{ display: 'flex', gap: 2 }}>
+        {/* Селект для марки */}
         <FormControl fullWidth>
           <InputLabel id="make-label">Марка</InputLabel>
           <Select
@@ -109,8 +107,8 @@ const [modelId, setModelId] = useState<string>('');
             {/* Дополните остальными элементами списка марки автомобилей */}
           </Select>
         </FormControl>
-      </Grid>
-      <Grid item xs={12} md={6}>
+
+        {/* Селект для региона */}
         <FormControl fullWidth>
           <InputLabel id="region-label">Регион</InputLabel>
           <Select
@@ -121,63 +119,96 @@ const [modelId, setModelId] = useState<string>('');
             label="Регион"
           >
             <MenuItem value="1">
-              <img src="https://flagcdn.com/w320/gb.png" alt="Европа" style={{ width: 20, marginRight: 8 }} />
-              Европа
-            </MenuItem>
-            <MenuItem value="2">
-              <img src="https://flagcdn.com/w320/us.png" alt="Америка" style={{ width: 20, marginRight: 8 }} />
-              Америка
-            </MenuItem>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      component="img"
+      src="https://flagcdn.com/w320/gb.png"
+      alt="Европа"
+      sx={{ width: 20 }}
+    />
+    Европа
+  </Box>
+</MenuItem>
+<MenuItem value="2">
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      component="img"
+      src="https://flagcdn.com/w320/us.png"
+      alt="Америка"
+      sx={{ width: 20 }}
+    />
+    Америка
+  </Box>
+</MenuItem>
           </Select>
         </FormControl>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
     {/* Модификация */}
-    <Grid item xs={12} md={6}>
-        <div className="flex-row flex-row--spacebetween flex-row--wrap400">
-          <div className="wid100proc">
-            <FormControl fullWidth>
-              <InputLabel id="model-label">Модель</InputLabel>
-              <Select
-                labelId="model-label"
-                id="ModelID"
-                value={modelId}
-                onChange={handleModelChange}
-                label="Модель"
-              >
-                <MenuItem value="0">- выбрать -</MenuItem>
-                {/* Добавьте другие модели */}
-              </Select>
-            </FormControl>
-          </div>
-          <div className="fixed129 fixed129--submodel">
-            <div id="mod_toggle" className="inline-block">
-              <span
-                className="link-n blue f13"
-                onClick={toggleSubModelVisibility}
-              >
-                добавлять модификацию
-              </span>
-            </div>
-            {isSubModelVisible && (
-              <div id="mod_tr">
-                <TextField
-                  fullWidth
-                  id="SubModelOther"
-                  name="SubModelOther"
-                  label="Модификация"
-                  value={subModel}
-                  onChange={(e) => setSubModel(e.target.value)}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </Grid>
+    <Grid item xs={12} md={6} sx={{ marginTop: '10px' }}>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+    {/* Селект для модели */}
+    <FormControl fullWidth>
+      <InputLabel id="model-label">Модель</InputLabel>
+      <Select
+        labelId="model-label"
+        id="ModelID"
+        value={modelId}
+        onChange={handleModelChange}
+        label="Модель"
+      >
+        <MenuItem value="0">- выбрать -</MenuItem>
+        <MenuItem value="1">- 1 -</MenuItem>
+        <MenuItem value="2">- 2 -</MenuItem>
+        <MenuItem value="3">- 3 -</MenuItem>
+        {/* Добавьте другие модели */}
+      </Select>
+    </FormControl>
+
+    {/* Блок с добавлением модификации */}
+    {!isSubModelVisible ? (
+      <Box
+        sx={{
+          color: 'blue',
+          fontSize: '13px',
+          cursor: 'pointer',
+          textDecoration: 'underline',
+        }}
+        onClick={toggleSubModelVisibility}
+      >
+        добавлять модификацию
+      </Box>
+    ) : (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* Поле ввода для модификации */}
+        <TextField
+          fullWidth
+          id="SubModelOther"
+          name="SubModelOther"
+          label="Модификация"
+          value={subModel}
+          onChange={(e) => setSubModel(e.target.value)}
+          size="small"
+        />
+        {/* Кнопка с крестиком для отмены */}
+        <Box
+          sx={{
+            color: 'red',
+            fontSize: '20px',
+            cursor: 'pointer',
+            lineHeight: 1,
+          }}
+          onClick={toggleSubModelVisibility}
+        >
+          ✖
+        </Box>
+      </Box>
+    )}
+  </Box>
+</Grid>
     {/* Год выпуска */}
-    <Grid item xs={12}>
-        <div>Год выпуска</div>
-        <FormControl fullWidth>
+    <Grid item xs={12} >
+        <FormControl fullWidth sx={{mt: 1}}>
           <InputLabel id="year-label">Год выпуска</InputLabel>
           <Select
             labelId="year-label"
@@ -266,72 +297,94 @@ const [modelId, setModelId] = useState<string>('');
         </FormControl>
       </Grid>
     {/* Engine Section */}
-    <Grid container spacing={2} id="engine-tr" className="req__row">
-        <Grid item xs={12} md={3} className="b optout">Двигатель</Grid>
-        <Grid item xs={12} md={9}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel>Топливо</InputLabel>
-                <Select
-                  label="Топливо"
-                  name="fuelID"
-                  value={formData.fuelID}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="">- выбрать -</MenuItem>
-                  <MenuItem value="1">Бензин</MenuItem>
-                  <MenuItem value="2">Дизель</MenuItem>
-                  <MenuItem value="3">Гибрид</MenuItem>
-                  <MenuItem value="4">Электро</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={6} className="fixed129 fixed129--engine">
-              <TextField
-                label="Объем"
-                name="engineSize"
-                value={formData.engineSize}
-                onChange={handleData}
-                fullWidth
-                inputProps={{ maxLength: 20 }}
-                placeholder="_._"
-              />
-              <span id="liter_lbl" className="inline-block mt10">литра</span>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+  {/* Заголовок "Двигатель" */}
+
+  {/* Секция с полями */}
+  <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+  {/* Заголовок "Двигатель" */}
+  <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
+    Двигатель
+  </Grid>
+
+  {/* Поля для выбора топлива и ввода объема */}
+  <Grid item xs={12} md={9} sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+    {/* Селект для топлива */}
+    <FormControl fullWidth sx={{ flex: '1 1 calc(50% - 16px)' }}>
+      <InputLabel>Топливо</InputLabel>
+      <Select
+        label="Топливо"
+        name="fuelID"
+        value={formData.fuelID}
+        onChange={handleChange}
+      >
+        <MenuItem value="">- выбрать -</MenuItem>
+        <MenuItem value="1">Бензин</MenuItem>
+        <MenuItem value="2">Дизель</MenuItem>
+        <MenuItem value="3">Гибрид</MenuItem>
+        <MenuItem value="4">Электро</MenuItem>
+      </Select>
+    </FormControl>
+
+    {/* Поле для объема и текст "литра" */}
+    <Box sx={{ display: 'flex', alignItems: 'center', flex: '1 1 calc(50% - 16px)', gap: 1 }}>
+      <TextField
+        label="Объем"
+        name="engineSize"
+        value={formData.engineSize}
+        onChange={handleData}
+        fullWidth
+        inputProps={{ maxLength: 20 }}
+        placeholder="_._"
+      />
+      <span style={{ whiteSpace: 'nowrap' }}>литра</span>
+    </Box>
+  </Grid>
+</Grid>
+
 
       {/* Body Type Section */}
-      <Grid container spacing={2} id="tr_bodytype" className="req__row body">
-        <Grid item xs={12} md={3} className="b optout">Кузов</Grid>
-        <Grid item xs={12} md={9}>
-          <FormControl fullWidth>
-            <InputLabel>Тип кузова</InputLabel>
-            <Select
-              label="Тип кузова"
-              name="bodyTypeID"
-              value={formData.bodyTypeID}
-              onChange={handleChange}
-            >
-              <MenuItem value="">- выбрать -</MenuItem>
-              <MenuItem value="1">Седан</MenuItem>
-              <MenuItem value="2">Хэтчбек</MenuItem>
-              <MenuItem value="3">Купе</MenuItem>
-              <MenuItem value="4">Универсал</MenuItem>
-              <MenuItem value="7">Внедорожник</MenuItem>
-              <MenuItem value="8">Пикап</MenuItem>
-              <MenuItem value="9">Кабриолет</MenuItem>
-              <MenuItem value="10">Фургон</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
+      <Grid container spacing={2} sx={{ marginTop: '5px' }}>
+  {/* Заголовок "Кузов" */}
+  <Grid 
+    item 
+    xs={12} 
+    md={3} 
+    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }} 
+    className="b optout"
+  >
+    Кузов
+  </Grid>
+
+  {/* Селект для типа кузова */}
+  <Grid item xs={12} md={9}>
+    <FormControl fullWidth>
+      <InputLabel>Тип кузова</InputLabel>
+      <Select
+        label="Тип кузова"
+        name="bodyTypeID"
+        value={formData.bodyTypeID}
+        onChange={handleChange}
+      >
+        <MenuItem value="">- выбрать -</MenuItem>
+        <MenuItem value="1">Седан</MenuItem>
+        <MenuItem value="2">Хэтчбек</MenuItem>
+        <MenuItem value="3">Купе</MenuItem>
+        <MenuItem value="4">Универсал</MenuItem>
+        <MenuItem value="7">Внедорожник</MenuItem>
+        <MenuItem value="8">Пикап</MenuItem>
+        <MenuItem value="9">Кабриолет</MenuItem>
+        <MenuItem value="10">Фургон</MenuItem>
+      </Select>
+    </FormControl>
+  </Grid>
+</Grid>
+
 
       {/* Transmission Section */}
-      <Grid container spacing={2} id="trans-tr" className="req__row body">
-        <Grid item xs={12} md={3}>Трансмиссия</Grid>
+      <Grid container spacing={2} sx={{ marginTop: '5px' }}>
+        <Grid item xs={12} md={3}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }} >
+              Трансмиссия</Grid>
         <Grid item xs={12} md={9}>
           <RadioGroup
             name="transID"
@@ -346,8 +399,8 @@ const [modelId, setModelId] = useState<string>('');
       </Grid>
 
       {/* Axle Section */}
-      <Grid container spacing={2} id="axle-tr" className="req__row body">
-        <Grid item xs={12} md={3}>Привод</Grid>
+      <Grid container spacing={2} sx={{ marginTop: '5px' }} id="axle-tr" className="req__row body">
+        <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>Привод</Grid>
         <Grid item xs={12} md={9}>
           <RadioGroup
             name="axleID"
@@ -419,8 +472,8 @@ const [modelId, setModelId] = useState<string>('');
       )}
 
       {/* VIN Section */}
-      <Grid container spacing={2} id="vin-tr" className="req__row">
-        <Grid item xs={12} md={3} className="optout optoutvin b">Номер кузова (VIN)</Grid>
+      <Grid container spacing={2} sx={{mt:1}} id="vin-tr" className="req__row">
+        <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }} className="optout optoutvin b">Номер кузова (VIN)</Grid>
         <Grid item xs={12} md={9}>
           <TextField
             label="VIN"

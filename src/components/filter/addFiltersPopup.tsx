@@ -14,11 +14,20 @@ import {
   ListItemText,
   ListItemButton,
 } from '@mui/material';
+import ModelBox from './modelBox'
+type NestedCategory = {
+  [key: string]: 
+    | string 
+    | string[] 
+    | string[][] 
+    | NestedCategory;
+};
 
 interface AddFiltersProps {
   onClose: () => void;
-  optionValue: { category: string; options: string[] };
+  optionValue: { category: string; options?: string[]; minCategory?: NestedCategory };
   onSaveFilters: (filters: { category: string; value: string }[]) => void;
+  
 }
 
 const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSaveFilters }) => {
@@ -59,15 +68,19 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
 
   return (
     <Dialog open onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>Add Filters</DialogTitle>
+      <DialogTitle>Фильтр по моделям</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           {/* Левая колонка - Доступные фильтры */}
           <Grid item xs={6}>
             <Typography variant="h6">{optionValue.category}</Typography>
             <Paper style={{ maxHeight: 300, minHeight: 300, overflow: 'auto' }}>
+            {optionValue.options && (
+ 
               <List>
-                {optionValue.options.map((value) => (
+             
+             
+             {optionValue.options?.map((value) => (
                   <ListItem key={value} disablePadding>
                     <ListItemButton
                       onClick={(event) => handleSelectValue(value, event)}
@@ -78,6 +91,10 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
                   </ListItem>
                 ))}
               </List>
+            )}
+            {optionValue.minCategory && (
+              <ModelBox/>
+            )}
             </Paper>
           </Grid>
 
