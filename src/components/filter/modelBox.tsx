@@ -53,6 +53,9 @@ const ModelBox: React.FC<ModelProps> = ({minCategory}) => {
     setSelectedFirstBoxItem(null); // Сброс выбранного элемента при смене типа
   };
 
+  const handleAddFilterClick = (item: string) => {
+   console.log('test');
+  }
   const handleFirstBoxClick = (item: string) => {
     setSelectedFirstBoxItem(item);
 
@@ -128,7 +131,18 @@ const ModelBox: React.FC<ModelProps> = ({minCategory}) => {
         }}
       >
         {secondBoxItems.map((item, index) => (
-          <Typography key={index}>{item}</Typography>
+          <Typography
+            key={index}
+            sx={{
+              cursor: "pointer",
+              backgroundColor: item === selectedFirstBoxItem ? "#f0f0f0" : "transparent", // Подсветка выбранного элемента
+              padding: "4px",
+              borderRadius: "4px",
+            }}
+            onClick={() => handleAddFilterClick} // Однократный клик
+          >
+            {item}
+          </Typography>
         ))}
       </Box>
     </Box>
