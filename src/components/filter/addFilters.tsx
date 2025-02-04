@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { Box, Button, Grid, Typography, Paper } from '@mui/material';
+import { Box, FormControl , FormControlLabel , Radio , RadioGroup ,Button, Grid, Typography, Paper } from '@mui/material';
 import AddFiltersPopup from './addFiltersPopup';
+import {request , saveToken} from '@request/request'
+
 interface AddFiltersProps {
   onSave: () => void;
 }
-
+interface CreateFilterDto {
+  data: Record<string, any>; // Теперь data — это объект
+}
 const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<number | null>(null);
   const [chosenFilters, setChosenFilters] = useState<{ category: string; value: string }[]>([]);
@@ -113,13 +117,50 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
           ]
     },
     { category: 'Регионы:', options: ['Selection 1', 'Selection 2', 'Selection 3'] },
-    { category: 'Дополнительно:', options: ['Item 1', 'Item 2', 'Item 3', 'Item 4'] },
   ];
-
+  //Фильтр груп
+  const groupFilters = (filters: { category: string; value: string }[]) => {
+    return filters.reduce<{ category: string; values: string[] }[]>((acc, { category, value }) => {
+      const existingCategory = acc.find(item => item.category === category);
+  
+      if (existingCategory) {
+        existingCategory.values.push(value);
+      } else {
+        acc.push({ category, values: [value] });
+      }
+  
+      return acc;
+    }, []);
+  };
+  const handleRadioChange = (category: string, value: string) => {
+    setChosenFilters(prevFilters => {
+      // Удаляем старое значение этой категории
+      const updatedFilters = prevFilters.filter(filter => filter.category !== category);
+      // Добавляем новое значение
+      return [...updatedFilters, { category, value }];
+    });
+  };
   const handleOpen = (index: number) => setIsDialogOpen(index);
+  const handleAll = (index: string) => {
+    setChosenFilters((prev) => {
+      // Фильтруем выбранные фильтры, исключая тот, у которого категория совпадает с index
+      const updatedFilters = prev.filter((filter) => filter.category !== index);
+      return updatedFilters;
+    });
+  };
   const handleClose = () => setIsDialogOpen(null);
+  const createFilter = async (filterData: CreateFilterDto): Promise<void> => {
+    try {
+      const response = await request('post', '/filters/create', filterData);
+      console.log('Фильтр создан:', response.data);
+    } catch (error) {
+      console.error('Ошибка при создании фильтра:', error);
+    }
+  };
   const handleSave = () => {
-    onSave(); 
+    const filterData = { data: groupFilters(chosenFilters) };
+    console.log('Filter' , groupFilters(chosenFilters)); 
+    createFilter(filterData);
   };
 
   const handleSaveFilters = (selectedFilters: { category: string; value: string }[]) => {
@@ -156,7 +197,7 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
             >
               <Typography variant="h6"> {filter.category}</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-              <Button variant="contained" sx={{ marginTop: 2 }} onClick={() => handleOpen(index)}>
+              <Button variant="contained" sx={{ marginTop: 2 }} onClick={() => handleAll(filter.category)}>
     Всі
   </Button>
   <Button variant="contained" sx={{ marginTop: 2 }} onClick={() => handleOpen(index)}>
@@ -177,6 +218,49 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
             </Paper>
           </Grid>
         ))}
+        <Grid item xs={12} sm={6} md={6}>
+        <Paper
+          sx={{
+            padding: 2,
+            border: "1px solid #ccc",
+            backgroundColor: "#f5f5f5",
+            textAlign: "center",
+            width: { xs: "90%", sm: "90%" },
+            margin: "auto",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, justifyContent: "center" }}>
+            <Typography variant="h6">Состояние запчастей</Typography>
+            <FormControl component="fieldset">
+            <RadioGroup
+          row
+          defaultValue="all"
+          onChange={(e) => handleRadioChange("Состояние запчастей", e.target.value)}
+        >
+                <FormControlLabel value="all" control={<Radio />} label="Все" />
+                <FormControlLabel value="new" control={<Radio />} label="Новые" />
+                <FormControlLabel value="used" control={<Radio />} label="Подержанные" />
+              </RadioGroup>
+            </FormControl>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, justifyContent: "center", marginTop: 2 }}>
+            <Typography variant="h6">Типы запчастей</Typography>
+            <FormControl component="fieldset">
+            <RadioGroup
+          row
+          defaultValue="all"
+          onChange={(e) => handleRadioChange("Типы запчастей", e.target.value)}
+        >
+                <FormControlLabel value="all" control={<Radio />} label="Все" />
+                <FormControlLabel value="original" control={<Radio />} label="Оригинал" />
+                <FormControlLabel value="nonoriginal" control={<Radio />} label="Неоригинал" />
+              </RadioGroup>
+            </FormControl>
+          </Box>
+        </Paper>
+      </Grid> 
+
       <Button onClick={handleSave} color="primary" sx={{ margin: 'auto' }}>
         Зберегти фільтр
       </Button>  

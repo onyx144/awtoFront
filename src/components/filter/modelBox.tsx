@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Select, MenuItem, FormControl, InputLabel, Box, Typography, SelectChangeEvent } from "@mui/material";
+import {List , Select,ListItem , ListItemButton , ListItemText, MenuItem, FormControl, InputLabel, Box, Typography, SelectChangeEvent } from "@mui/material";
 
 interface MinCategory {
   [key: string]: 
@@ -14,13 +14,15 @@ interface Data {
 
 interface ModelProps {
     minCategory?: MinCategory;
-}
+    onSelectValue: (value: string, event: React.MouseEvent<HTMLDivElement>, secondBoxItems: string[]) => void;
+  }
 
-const ModelBox: React.FC<ModelProps> = ({minCategory}) => {
+const ModelBox: React.FC<ModelProps> = ({minCategory , onSelectValue}) => {
   const [selectedType, setSelectedType] = useState<string>("");
   const [firstBoxItems, setFirstBoxItems] = useState<string[]>([]);
   const [secondBoxItems, setSecondBoxItems] = useState<string[]>([]);
   const [selectedFirstBoxItem, setSelectedFirstBoxItem] = useState<string | null>(null);
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   const data: Data = {
     category: "Модели:",
@@ -128,22 +130,22 @@ const ModelBox: React.FC<ModelProps> = ({minCategory}) => {
           borderRadius: 1,
           p: 2,
           minHeight: 100,
+          mb: 2,
         }}
       >
+        <List>
         {secondBoxItems.map((item, index) => (
-          <Typography
-            key={index}
-            sx={{
-              cursor: "pointer",
-              backgroundColor: item === selectedFirstBoxItem ? "#f0f0f0" : "transparent", // Подсветка выбранного элемента
-              padding: "4px",
-              borderRadius: "4px",
-            }}
-            onClick={() => handleAddFilterClick} // Однократный клик
-          >
-            {item}
-          </Typography>
+           <ListItem key={index} disablePadding>
+           <ListItemButton
+             onClick={(event) => onSelectValue(item, event , secondBoxItems)}
+             selected={selectedValues.includes(item)}
+           >
+             <ListItemText primary={item} />
+           </ListItemButton>
+         </ListItem>
+        
         ))}
+        </List>
       </Box>
     </Box>
   );
