@@ -14,6 +14,8 @@ import {
   ListItemText,
   ListItemButton,
 } from '@mui/material';
+import { getToken } from '@request/request'
+
 import ModelBox from './modelBox'
 type NestedCategory = {
   [key: string]: 
@@ -143,6 +145,7 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
   };
 
   const handleSave = () => {
+    console.log('token' , getToken());
     onSaveFilters(chosenValues);
     onClose(); // Закрываем диалог
   };

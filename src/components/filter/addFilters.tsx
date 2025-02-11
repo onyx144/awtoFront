@@ -153,6 +153,7 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
     try {
       const response = await request('post', '/filters/create', filterData);
       console.log('Фильтр создан:', response.data);
+      onSave();
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }

@@ -14,8 +14,42 @@ import {
   TextareaAutosize,
   IconButton,
 } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
+const theme = createTheme({
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-root': {
+            height: 36, // ✅ Высота инпута
+            alignItems: 'center',
+          },
+          "& .MuiInputLabel-root": {
+            top: '-5px', // ✅ Начальное положение label
+            lineHeight: "16px", // ✅ Центрируем текст без transform
+          },
+          "& .MuiInputLabel-shrink": {
+            top: 4, // ✅ Смещение label при вводе текста
+          },
+          "& .MuiInputBase-input": {
+            padding: "8px 12px", // ✅ Убираем лишние отступы
+          },
+          '& .MuiSelect-select': {
+      padding: '1px', // Отступы внутри Select
+      height: '35px', // Высота для инпута внутри Select
+    },
+    
+    '& .MuiMenuItem-root': {
+      height: 36, // Высота для каждого элемента в выпадающем списке
+    },
+        },
+      },
+    },
+  },
+});
 
 const StepOne: React.FC = () => {
   const [parts, setParts] = useState([{
@@ -58,6 +92,7 @@ const StepOne: React.FC = () => {
     setParts((prevParts) => prevParts.filter((_, i) => i !== index));
   };
   return (
+    <ThemeProvider theme={theme}>
     <Box>
       {parts.map((part, index) => (
         <Box key={index} sx={{ mb: 4, border: '1px solid #ccc', p: 2, borderRadius: '8px' }}>
@@ -196,7 +231,9 @@ const StepOne: React.FC = () => {
       ))}
 
     </Box>
+    </ThemeProvider>
   );
 };
+
 
 export default StepOne;

@@ -16,6 +16,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import {request , saveToken} from '@request/request'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -74,6 +75,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setOpen(false);
   };
 
+  
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (emailError || passwordError) {
       event.preventDefault();
@@ -86,7 +88,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     });
   };
 
-  const validateInputs = () => {
+  const validateInputs = async (event: React.FormEvent) => {
+    event.preventDefault();  
     const email = document.getElementById('email') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
 
@@ -110,7 +113,31 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       setPasswordErrorMessage('');
     }
 
-    return isValid;
+    if (isValid) {
+      try {
+        const response = await request('post', '/users/login', {
+          email: email.value,  // ✅ Теперь передаётся строка, а не объект
+          password: password.value,  // ✅ Теперь передаётся строка, а не объект
+        });
+              console.log('Data', response.data);
+              const { token } = response.data;
+              if( token ) {
+              saveToken(token, true);
+              }
+              if (response.status === 201) {
+                window.location.href = '/profile'
+                console.log('Registration successful!');
+              } else {
+                console.log('Registration failed. Please try again.');
+              }
+            } catch (error) {
+              console.error('Error during registration:', error);
+              console.log('An error occurred. Please try again.');
+            }
+    }
+    else {
+      alert('Дфнные неверны');
+    }
   };
 
   return (

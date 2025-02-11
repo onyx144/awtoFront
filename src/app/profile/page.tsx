@@ -1,6 +1,6 @@
 // Profile.
 "use client";
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import {
   Radio,
   RadioGroup,
@@ -19,7 +19,28 @@ import {
   SelectChangeEvent ,
   InputAdornment,
 } from "@mui/material";
+import {request} from '@request/request'
 
+type User = {
+  additionalInfo: string | null;
+  city: string | null;
+  city_company: string | null;
+  companyAddress: string | null;
+  companyName: string | null;
+  email: string;
+  email_company: string | null;
+  name: string;
+  password: string;
+  paymentMethod: string | null;
+  phone: string;
+  phoneNumbers: { number: string; name: string }[] | null;
+  region: string | null;
+  region_company: string | null;
+  role: string;
+  secondPhone: string | null;
+  verification: boolean;
+  website: string | null;
+};
 // Моковые данные для заполнения формы
 const mockData = {
   fullName: "Петровський Петровський",
@@ -44,25 +65,52 @@ const mockData = {
 
 const Profile = () => {
   const [selectedOption, setSelectedOption] = useState<string>("user");
-  const [formData, setFormData] = useState(mockData);
+  const [formData, setFormData] = useState<User | null>(null);
+ 
+  const updateUser = async (updateData: Partial<User>) => {
+    try {
+      const response = await request('put', `/users/update`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка при обновлении пользователя:', error);
+      throw error;
+    }
+  };
 
+  const getUser = async () => {
+    try {
+      const response = await request('get', '/users');
+      console.log(response.data); 
+      setFormData(response.data);
+
+    } catch (error) {
+      console.error("Ошибка при получении пользователей:", error);
+    }
+  };
+  const handleSave = async () => {
+    if(formData)
+    updateUser(formData);
+  }
+
+  useEffect(() => {
+   getUser(); 
+      }, []);
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
   };
 
   const handleInputChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => 
+      prevData ? { ...prevData, [name]: value } : ({} as User) // Приведение типов
+    );
   };
+  
   const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => 
+      prevData ? { ...prevData, [name]: value } : ({} as User) // Приведение типов
+    );
   };
   return (
     <Box sx={{ padding: 3 }}>
@@ -94,8 +142,8 @@ const Profile = () => {
                 label="Полное имя"
                 variant="outlined"
                 fullWidth
-                name="fullName"
-                value={formData.fullName}
+                name="name"
+                value={formData?.name ?? ''}
                 onChange={handleTextFieldChange}
               />
             </Grid>
@@ -105,7 +153,7 @@ const Profile = () => {
                 variant="outlined"
                 fullWidth
                 name="email"
-                value={formData.email}
+                value={formData?.email ?? ''}
                 onChange={handleTextFieldChange}
               />
             </Grid>
@@ -115,7 +163,7 @@ const Profile = () => {
                 <Select
                   label="Регион"
                   name="region"
-                  value={formData.region}
+                  value={formData?.region ?? ''}
                   onChange={handleInputChange}
                 >
                   <MenuItem value="Кировоградская область">Кировоградская область</MenuItem>
@@ -131,7 +179,7 @@ const Profile = () => {
                 <Select
                   label="Город"
                   name="city"
-                  value={formData.city}
+                  value={formData?.city ?? ''}
                   onChange={handleInputChange}
                 >
                   <MenuItem value="Кропивницкий">Кропивницкий</MenuItem>
@@ -146,8 +194,8 @@ const Profile = () => {
                 label="Телефон"
                 variant="outlined"
                 fullWidth
-                name="phone1"
-                value={formData.phone1}
+                name="phone"
+                value={formData?.phone ?? ''}
                 onChange={handleTextFieldChange}
               />
             </Grid>
@@ -156,8 +204,8 @@ const Profile = () => {
                 label="Телефон #2"
                 variant="outlined"
                 fullWidth
-                name="phone2"
-                value={formData.phone2}
+                name="secondPhone"
+                value={formData?.secondPhone  ?? ''}
                 onChange={handleTextFieldChange}
               />
             </Grid>
@@ -167,7 +215,7 @@ const Profile = () => {
                 <Select
                   label="Способ оплаты"
                   name="paymentMethod"
-                  value={formData.paymentMethod}
+                  value={formData?.paymentMethod  ?? ''}
                   onChange={handleInputChange}
                 >
                   <MenuItem value="Наличный (банковский перевод)">
@@ -179,8 +227,8 @@ const Profile = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <Button variant="contained" color="primary" type="submit">
-                Сохранить
+              <Button variant="contained" onClick={handleSave} color="primary" type="button">
+                Зберегти
               </Button>
             </Grid>
           </Grid>
@@ -193,7 +241,7 @@ const Profile = () => {
     <TextField
       name="companyName"
       label="Название компании"
-      value={formData.companyName}
+      value={formData?.companyName ?? ''}
       onChange={handleTextFieldChange}
       fullWidth
       style={{ marginBottom: '10px' }}
@@ -202,7 +250,7 @@ const Profile = () => {
     <TextField
       name="companyAddress"
       label="Адрес компании"
-      value={formData.companyAddress}
+      value={formData?.companyAddress ?? ''}
       onChange={handleTextFieldChange}
       fullWidth
       style={{ marginBottom: '10px' }}
@@ -210,7 +258,7 @@ const Profile = () => {
 
     <Select
       name="region_company"
-      value={formData.region_company}
+      value={formData?.region_company ?? ''}
       onChange={handleInputChange}
       fullWidth
       displayEmpty
@@ -224,7 +272,7 @@ const Profile = () => {
 
     <Select
       name="city_company"
-      value={formData.city_company}
+      value={formData?.city_company ?? ''}
       onChange={handleInputChange}
       fullWidth
       displayEmpty
@@ -237,15 +285,15 @@ const Profile = () => {
     </Select>
 
     <TextField
-      name="email"
+      name="email_company"
       label="E-mail"
-      value={formData.email_company}
+      value={formData?.email_company  ?? ''}
       onChange={handleTextFieldChange}
       fullWidth
       style={{ marginBottom: '15px' }}
     />
 
-    {formData.phoneNumbers.map((phone, index) => (
+    {/*formData?.phoneNumbers?.map((phone, index) => (
       <div key={index} style={{ marginBottom: '15px' }}>
         <TextField
           name={`phone-${index}`}
@@ -267,19 +315,19 @@ const Profile = () => {
           label="Комментарий к номеру"
           value={phone.name}
           onChange={(e) => {
-            const updatedPhones = [...formData.phoneNumbers];
+            const updatedPhones = [...formData?.phoneNumbers  ?? ''];
             updatedPhones[index].name = e.target.value;
             setFormData({ ...formData, phoneNumbers: updatedPhones });
           }}
           fullWidth
         />
       </div>
-    ))}
+    ))*/}
 
     <TextField
       name="website"
       label="Сайт компании"
-      value={formData.website}
+      value={formData?.website  ?? ''}
       onChange={handleTextFieldChange}
       fullWidth
       style={{ marginBottom: '20px' }}
@@ -288,15 +336,15 @@ const Profile = () => {
     <TextField
       name="additionalInfo"
       label="Дополнительная информация"
-      value={formData.additionalInfo}
+      value={formData?.additionalInfo  ?? ''}
       onChange={handleTextFieldChange}
       fullWidth
       multiline
       rows={3}
       style={{ marginBottom: '10px' }}
     />
-     <Button variant="contained" color="primary" type="submit">
-                Сохранить
+     <Button variant="contained" onClick={handleSave} color="primary" type="submit">
+                Зберегти
       </Button>
   </div>
 )}
