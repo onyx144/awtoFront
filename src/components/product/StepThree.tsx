@@ -17,7 +17,28 @@ import { getToken } from '@request/request'
 
 import { WhatsApp, Telegram, Vibration } from "@mui/icons-material";
 import ViberIcon from '@/svg/vibericon';
-const StepThree: React.FC = () => {
+
+type ContactInfo = {
+  phone: string;
+  additionalPhone: string;
+  fullName: string;
+  email: string;
+  cityName: string;
+  comments: string;
+  messageTypes: {
+    viber: boolean;
+    telegram: boolean;
+    whatsapp: boolean;
+    onlySms: boolean;
+  };
+};
+
+type StepThreeProps = {
+  contactInfo: ContactInfo;
+  setContactInfo: React.Dispatch<React.SetStateAction<ContactInfo>>;
+};
+const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) => {
+  
   const [authType, setAuthType] = useState('1');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -43,12 +64,26 @@ const StepThree: React.FC = () => {
     setAuthType(event.target.value);
   };
   const handleCheckboxChange = (type: keyof typeof messageTypes) => {
-    setMessageTypes((prev) => ({ ...prev, [type]: !prev[type] }));
+    setContactInfo((prev) => ({
+      ...prev,
+      messageTypes: {
+        ...prev.messageTypes,
+        [type]: !prev.messageTypes[type],  // Инвертируем значение текущего поля
+      }
+    }));
   };
 
+  const handleInputChange = (field: keyof ContactInfo, value: string) => {
+    setContactInfo((prev) => ({
+      ...prev,
+      [field]: value,  // Обновляем нужное поле в ContactInfo
+    }));
+  };
+  
   useEffect(() => {
     setToken(getToken()); // Устанавливаем токен при загрузке компонента
   }, []);
+  
   return (
     <Box sx={{ padding: 2 }}>
       { !token &&
@@ -144,16 +179,16 @@ const StepThree: React.FC = () => {
         <TextField
           fullWidth
           label="E-mail"
-          value={loginEmail}
-          onChange={(e) => setLoginEmail(e.target.value)}
+          value={contactInfo.email}
+          onChange={(e) => handleInputChange('email', e.target.value)}
           margin="normal"
           autoComplete="email"
         />
         <TextField
           fullWidth
           label="Телефон"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          value={contactInfo.phone}
+          onChange={(e) => handleInputChange('phone', e.target.value)}
           margin="normal"
           autoComplete="tel"
         />
@@ -169,7 +204,7 @@ const StepThree: React.FC = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={messageTypes.viber}
+                checked={contactInfo.messageTypes.viber}
                 onChange={() => handleCheckboxChange("viber")}
                 icon={<ViberIcon />}
                 checkedIcon={<ViberIcon color={'#8fad1c'} />}
@@ -180,7 +215,7 @@ const StepThree: React.FC = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={messageTypes.telegram}
+                checked={contactInfo.messageTypes.telegram}
                 onChange={() => handleCheckboxChange("telegram")}
                 icon={<Telegram />}
                 checkedIcon={<Telegram />}
@@ -191,7 +226,7 @@ const StepThree: React.FC = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={messageTypes.whatsapp}
+                checked={contactInfo.messageTypes.whatsapp}
                 onChange={() => handleCheckboxChange("whatsapp")}
                 icon={<WhatsApp />}
                 checkedIcon={<WhatsApp />}
@@ -203,7 +238,7 @@ const StepThree: React.FC = () => {
         <FormControlLabel
           control={
             <Checkbox
-              checked={messageTypes.onlySms}
+              checked={contactInfo.messageTypes.onlySms}
               onChange={() => handleCheckboxChange("onlySms")}
             />
           }
@@ -214,8 +249,8 @@ const StepThree: React.FC = () => {
           <TextField
             fullWidth
             label="Дополнительный телефон"
-            value={additionalPhone}
-            onChange={(e) => setAdditionalPhone(e.target.value)}
+            value={contactInfo.additionalPhone}
+            onChange={(e) => handleInputChange('additionalPhone', e.target.value)}
             margin="normal"
             autoComplete="tel"
           />
@@ -233,8 +268,8 @@ const StepThree: React.FC = () => {
         <TextField
           fullWidth
           label="Ваше имя"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          value={contactInfo.fullName}
+          onChange={(e) => handleInputChange('fullName', e.target.value)}
           margin="normal"
           autoComplete="name"
         />
@@ -242,8 +277,8 @@ const StepThree: React.FC = () => {
         <TextField
           fullWidth
           label="Город"
-          value={cityName}
-          onChange={(e) => setCityName(e.target.value)}
+          value={contactInfo.cityName}
+          onChange={(e) => handleInputChange('cityName', e.target.value)} 
           margin="normal"
         />
         <TextField
@@ -251,8 +286,8 @@ const StepThree: React.FC = () => {
           label="Комментарии"
           multiline
           rows={4}
-          value={comments}
-          onChange={(e) => setComments(e.target.value)}
+          value={contactInfo.comments}
+          onChange={(e) => handleInputChange('comments', e.target.value)}
           margin="normal"
         />
       </Box>

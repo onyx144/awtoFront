@@ -1,0 +1,33 @@
+// components/SuccessMessage.tsx
+import React from 'react';
+import { Box, Typography, Checkbox } from '@mui/material';
+
+const SuccessMessage: React.FC = () => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        flexDirection: 'column',
+        textAlign: 'center',
+      }}
+    >
+      <Checkbox
+        checked
+        sx={{
+          '& .MuiSvgIcon-root': {
+            fontSize: 80,
+            color: 'green',
+          },
+        }}
+      />
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        Дякуємо, ваша заявка створена, з вами зв'яжуться за вашими контактними даними
+      </Typography>
+    </Box>
+  );
+};
+
+export default SuccessMessage;

@@ -11,8 +11,30 @@ interface FormData {
     colorMetallic: boolean;
     vin: string;
   }
+  type CarData = {
+    modelId: string;
+    carType: string;
+    makeId: string;
+    makeRegionId: string;
+    subModel: string;
+    isSubModelVisible: boolean;
+    year: string;
+    fuelID: string;
+    engineSize: string;
+    bodyTypeID: string;
+    transID: string;
+    axleID: string;
+    colorName: string;
+    colorMetallic: boolean;
+    vin: string;
+  };
+  
+  type StepTwoProps = {
+    carData: CarData;
+    setCarData: React.Dispatch<React.SetStateAction<CarData>>;
+  };
 
-const StepTwo: React.FC = () => {
+const StepTwo: React.FC<StepTwoProps> = ({ carData, setCarData }) => {
 const [modelId, setModelId] = useState<string>('');
   const [carType, setCarType] = useState<string>("");
   const [makeId, setMakeId] = useState<string>('');
@@ -32,14 +54,17 @@ const [modelId, setModelId] = useState<string>('');
   });
   const handleSelect = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setCarData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
+  const handleProps = (field: string, value: string) => {
+    setCarData(prev => ({ ...prev, [field]: value }));
+  };
   const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = e.target;
-    setFormData((prev) => ({
+    setCarData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
@@ -61,6 +86,7 @@ const [modelId, setModelId] = useState<string>('');
   };
   const handleChange = (event: SelectChangeEvent) => {
     setCarType(event.target.value);
+    console.log(carType);
   };
 
   return (
@@ -314,14 +340,14 @@ const [modelId, setModelId] = useState<string>('');
       <Select
         label="Топливо"
         name="fuelID"
-        value={formData.fuelID}
-        onChange={handleChange}
+        value={carData.fuelID}
+        onChange={handleSelect}
       >
         <MenuItem value="">- выбрать -</MenuItem>
         <MenuItem value="1">Бензин</MenuItem>
         <MenuItem value="2">Дизель</MenuItem>
-        <MenuItem value="3">Гибрид</MenuItem>
-        <MenuItem value="4">Электро</MenuItem>
+        <MenuItem value="3">Гібрид</MenuItem>
+        <MenuItem value="4">Електро</MenuItem>
       </Select>
     </FormControl>
 
@@ -330,7 +356,7 @@ const [modelId, setModelId] = useState<string>('');
       <TextField
         label="Объем"
         name="engineSize"
-        value={formData.engineSize}
+        value={carData.engineSize}
         onChange={handleData}
         fullWidth
         inputProps={{ maxLength: 20 }}
@@ -362,8 +388,8 @@ const [modelId, setModelId] = useState<string>('');
       <Select
         label="Тип кузова"
         name="bodyTypeID"
-        value={formData.bodyTypeID}
-        onChange={handleChange}
+        value={carData.bodyTypeID}
+        onChange={handleSelect}
       >
         <MenuItem value="">- выбрать -</MenuItem>
         <MenuItem value="1">Седан</MenuItem>
@@ -388,8 +414,8 @@ const [modelId, setModelId] = useState<string>('');
         <Grid item xs={12} md={9}>
           <RadioGroup
             name="transID"
-            value={formData.transID}
-            onChange={handleChange}
+            value={carData.transID}
+            onChange={handleData}
             row
           >
             <FormControlLabel value="101" control={<Radio />} label="Механика" />
@@ -404,7 +430,7 @@ const [modelId, setModelId] = useState<string>('');
         <Grid item xs={12} md={9}>
           <RadioGroup
             name="axleID"
-            value={formData.axleID}
+            value={carData.axleID}
             onChange={handleData}
             row
           >
@@ -427,7 +453,7 @@ const [modelId, setModelId] = useState<string>('');
                   <Select
                     label="Цвет"
                     name="colorName"
-                    value={formData.colorName}
+                    value={carData.colorName}
                     onChange={handleSelect}
                   >
                     <MenuItem value="">- выбрать -</MenuItem>
@@ -461,7 +487,7 @@ const [modelId, setModelId] = useState<string>('');
               <Grid item xs={12} md={6} className="fixed129 fixed129--engine">
                 <FormGroup>
                   <FormControlLabel
-                    control={<Checkbox name="colorMetallic" checked={formData.colorMetallic} onChange={handleChange} />}
+                    control={<Checkbox name="colorMetallic" checked={carData.colorMetallic} onChange={handleSelect} />}
                     label="металлик"
                   />
                 </FormGroup>
@@ -478,7 +504,7 @@ const [modelId, setModelId] = useState<string>('');
           <TextField
             label="VIN"
             name="vin"
-            value={formData.vin}
+            value={carData.vin}
             onChange={handleData}
             fullWidth
             inputProps={{ maxLength: 50 }}

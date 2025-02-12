@@ -19,7 +19,40 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#8fad1c',  // Основной цвет
+    },
+    secondary: {
+      main: '#ff4081',  // Вторичный цвет
+    },
+  },
   components: {
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          height: 36, // Устанавливаем высоту для самого Select
+          '& .MuiSelect-select': {
+            padding: '8px', // Паддинги для текста внутри Select
+            height: '100%', // Устанавливаем высоту для инпута внутри Select
+          },
+          "& .MuiInputLabel-shrink": {
+            top: 4, // ✅ Смещение label при вводе текста
+          }
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          top: '-5px', // ✅ Начальное положение label
+            lineHeight: "16px",
+            left: '-13px',
+            padding: "0px 12px",
+        },
+       
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -28,11 +61,13 @@ const theme = createTheme({
             alignItems: 'center',
           },
           "& .MuiInputLabel-root": {
-            top: '-5px', // ✅ Начальное положение label
+            top: '-5px',
             lineHeight: "16px", // ✅ Центрируем текст без transform
           },
           "& .MuiInputLabel-shrink": {
-            top: 4, // ✅ Смещение label при вводе текста
+            top: 4, 
+            left: 0,
+            padding: 0,
           },
           "& .MuiInputBase-input": {
             padding: "8px 12px", // ✅ Убираем лишние отступы
@@ -51,24 +86,36 @@ const theme = createTheme({
   },
 });
 
-const StepOne: React.FC = () => {
-  const [parts, setParts] = useState([{
-    partName: '',
-    partGroup: '',
-    partSide: '',
-    partType: '0',
-    partCondition: '0',
-    partNumber: '',
-    partPhotos: [null],
-    partDescription: '',
-    partPrice: '',
-  }]);
+type Part = {
+  partName: string;
+  partGroup: string;
+  partSide: string;
+  partType: string;
+  partCondition: string;
+  partNumber: string;
+  partPhotos: (File  | null)[];
+  partDescription: string;
+  partPrice: string;
+};
+
+type StepOneProps = {
+  parts: Part[];
+  setParts: React.Dispatch<React.SetStateAction<Part[]>>;
+};
+const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
+  
 
   const handleInputChange = (index: number, field: string, value: any) => {
     const updatedParts = [...parts];
+    console.log('value:' , value);
+
     updatedParts[index] = { ...updatedParts[index], [field]: value };
+    console.log('updatedParts:' , updatedParts);
+
     setParts(updatedParts);
   };
+
+  
 
   const addPart = () => {
     setParts([
@@ -179,6 +226,7 @@ const StepOne: React.FC = () => {
               <Box key={photoIndex} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                 <input
                   type="file"
+                  accept=".png, .jpg, .jpeg, .webp" 
                   onChange={(e) => {
                     const files = e.target.files;
                     if (files) {
