@@ -52,7 +52,7 @@ export default function AppBarMenu() {
           {/* Кнопки Sign In и Register */}
           {!token ? (
             <>
-              <Button color="inherit" href="/spares">Найти запчасти</Button>        
+              <Link color="inherit" href="/spares">Найти запчасти</Link>        
               <Button color="inherit" href="/sign-in" sx={{ ml: 2 }}>
                 Вхід
               </Button>
@@ -61,10 +61,22 @@ export default function AppBarMenu() {
               </Button>
             </>
           ) : (
-            <div>
-              <Button color="inherit" href="/spares">Найти запчасти</Button>        
-              <Button color="inherit" href="/filters">Моі фільтри</Button>
-              <Button color="inherit" href="/story">Історія заявок</Button>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Link color="inherit" href="/spares">
+  <Typography sx={{  textTransform: 'uppercase', mr: 2 }}>
+    Найти запчасти
+  </Typography>
+</Link>
+<Link color="inherit" href="/filters">
+  <Typography sx={{textTransform: 'uppercase' , mr: 2 }}>
+    Мої фільтри
+  </Typography>
+</Link>
+<Link color="inherit" href="/story">
+  <Typography sx={{  textTransform: 'uppercase' , mr: 2 }}>
+    Історія заявок
+  </Typography>
+</Link>
               <Button onClick={handleLogout} sx={{ color: 'red' }}>
                   Вихід
                 </Button>

@@ -10,6 +10,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Grid,
   Typography,
   TextareaAutosize,
   IconButton,
@@ -18,73 +19,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#8fad1c',  // Основной цвет
-    },
-    secondary: {
-      main: '#ff4081',  // Вторичный цвет
-    },
-  },
-  components: {
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          height: 36, // Устанавливаем высоту для самого Select
-          '& .MuiSelect-select': {
-            padding: '8px', // Паддинги для текста внутри Select
-            height: '100%', // Устанавливаем высоту для инпута внутри Select
-          },
-          "& .MuiInputLabel-shrink": {
-            top: 4, // ✅ Смещение label при вводе текста
-          }
-        },
-      },
-    },
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          top: '-5px', // ✅ Начальное положение label
-            lineHeight: "16px",
-            left: '-13px',
-            padding: "0px 12px",
-        },
-       
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiInputBase-root': {
-            height: 36, // ✅ Высота инпута
-            alignItems: 'center',
-          },
-          "& .MuiInputLabel-root": {
-            top: '-5px',
-            lineHeight: "16px", // ✅ Центрируем текст без transform
-          },
-          "& .MuiInputLabel-shrink": {
-            top: 4, 
-            left: 0,
-            padding: 0,
-          },
-          "& .MuiInputBase-input": {
-            padding: "8px 12px", // ✅ Убираем лишние отступы
-          },
-          '& .MuiSelect-select': {
-      padding: '1px', // Отступы внутри Select
-      height: '35px', // Высота для инпута внутри Select
-    },
-    
-    '& .MuiMenuItem-root': {
-      height: 36, // Высота для каждого элемента в выпадающем списке
-    },
-        },
-      },
-    },
-  },
-});
+
 
 type Part = {
   partName: string;
@@ -139,7 +74,6 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
     setParts((prevParts) => prevParts.filter((_, i) => i !== index));
   };
   return (
-    <ThemeProvider theme={theme}>
     <Box>
       {parts.map((part, index) => (
         <Box key={index} sx={{ mb: 4, border: '1px solid #ccc', p: 2, borderRadius: '8px' }}>
@@ -154,12 +88,15 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
             onChange={(e) => handleInputChange(index, 'partName', e.target.value)}
             margin="normal"
           />
-
-          <FormControl fullWidth margin="normal">
+          <Grid item xs={12} >
+          <FormControl fullWidth sx={{mt: 1}}margin="normal">
             <InputLabel id={`part-group-label-${index}`}>Группа запчасти</InputLabel>
             <Select
               labelId={`part-group-label-${index}`}
+              id="YearID"
+              label="Группа запчасти"
               value={part.partGroup}
+              className="wid100proc"
               onChange={(e) => handleInputChange(index, 'partGroup', e.target.value)}
             >
               <MenuItem value="0">- выбрать -</MenuItem>
@@ -169,7 +106,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
               {/* Добавьте остальные опции */}
             </Select>
           </FormControl>
-
+          </Grid>
           <FormControl component="fieldset" margin="normal">
             <Typography>Тип запчасти</Typography>
             <RadioGroup
@@ -204,13 +141,17 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
             margin="normal"
           />
 
-          <TextareaAutosize
-            minRows={3}
-            placeholder="Описание запчасти"
-            value={part.partDescription}
-            onChange={(e) => handleInputChange(index, 'partDescription', e.target.value)}
-            style={{ width: '100%', marginTop: '16px', padding: '8px' }}
-          />
+          <TextField
+                    fullWidth
+                    label="Описание запчасти"
+                    multiline
+                    rows={4}
+                    value={part.partDescription}
+                    onChange={(e) => handleInputChange(index, 'partDescription', e.target.value)}
+                    margin="normal"
+                  />
+
+          
 
           <TextField
             fullWidth
@@ -279,7 +220,6 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       ))}
 
     </Box>
-    </ThemeProvider>
   );
 };
 

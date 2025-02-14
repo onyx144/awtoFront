@@ -4,8 +4,15 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import AddFilters from "./addFilters";
 
-const FiltersContainer: React.FC = () => {
-  const [isAddFiltersVisible, setIsAddFiltersVisible] = useState(false);
+interface FilterContainerProps {
+  isAddFiltersVisible: boolean;
+
+  setIsAddFiltersVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+
+const FiltersContainer: React.FC<FilterContainerProps> = ({ isAddFiltersVisible , setIsAddFiltersVisible }) => {
+  //const [isAddFiltersVisible, setIsAddFiltersVisible] = useState(false);
 
   const handleAddFilterClick = () => setIsAddFiltersVisible(true);
   const handleSaveFilter = () => setIsAddFiltersVisible(false);

@@ -9,9 +9,10 @@ const SuccessMessage: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
+        height: '90vh',
         flexDirection: 'column',
         textAlign: 'center',
+        overflow: 'hidden', // Добавляем, чтобы избежать прокрутки
       }}
     >
       <Checkbox

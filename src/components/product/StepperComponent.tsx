@@ -7,6 +7,7 @@ import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 import {request , saveToken} from '@request/request'
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const steps = ['Шаг 1', 'Шаг 2', 'Шаг 3'];
 
@@ -60,6 +61,19 @@ type ContactInfo = {
 type SpareData = {
   parts: Part[];
 } & CarData & ContactInfo;
+
+//Кастомные стили 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#8fad1c',  // Основной цвет
+    },
+    secondary: {
+      main: '#ff4081',  // Вторичный цвет
+    },
+  },
+  
+});
 
 // Кастомный компонент для иконки шага
 const StepIcon = (props: StepIconProps) => {
@@ -168,6 +182,7 @@ const StepperComponent = () => {
     try {
       const response = await request('post', '/spares/create', spareData);
       console.log('Запчасть создана:', response.data);
+      window.location.href = '/success'
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }
@@ -192,9 +207,10 @@ const StepperComponent = () => {
   };
 
   return (
+   <ThemeProvider theme={theme}>
     <Box
       sx={{
-        width: { xs: '100%', md: '50%' },
+        width: { xs: '100%', md: '80%' },
         margin: 'auto',
         padding: 2,
         backgroundColor: '#fff',
@@ -248,6 +264,8 @@ const StepperComponent = () => {
         </Box>
       </Box>
     </Box>
+
+    </ThemeProvider>
   );
 };
 

@@ -52,7 +52,12 @@ interface ItemProps {
   city: string;
   tyme: string;
   phone: string;
-  contact: ('viber' | 'telegram' | 'whatsapp' | 'phone')[];
+  contact: {
+    viber: boolean;
+    telegram: boolean;
+    whatsapp: boolean;
+    onlySms: boolean;
+  };
   story?: boolean;
 }
 
@@ -283,19 +288,19 @@ const Item: React.FC<ItemProps> = ({ id, name, user, city, tyme, phone, contact 
           
           {/* Контакты */}
           <Typography variant="body1">Контакты: <Link  href={`tel:${phone}`}>{phone}</Link></Typography>
-          { !contact.includes('phone') &&
+          { !contact.onlySms &&
           <Box display="flex" gap={2} mt={2}>
-                {contact.includes('viber') && (
+                {contact.viber && (
                   <a href={`viber://chat?number=${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
                     <ViberColor /> Viber
                   </a>
                 )}
-                {contact.includes('telegram') && (
+                {contact.telegram && (
                   <a href={`https://t.me/${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
                     <Telegram /> Telegram
                   </a>
                 )}
-                {contact.includes('whatsapp') && (
+                {contact.whatsapp && (
                   <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
                     <WhatsApp /> WhatsApp
                   </a>
