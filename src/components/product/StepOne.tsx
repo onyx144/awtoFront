@@ -38,7 +38,14 @@ type StepOneProps = {
   setParts: React.Dispatch<React.SetStateAction<Part[]>>;
 };
 const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
-  
+  const [previewUrls, setPreviewUrls] = useState<string[][]>(
+    parts.map(part =>
+      part.partPhotos.map(photo =>
+        photo instanceof File ? URL.createObjectURL(photo) : ""
+      )
+    )
+  );
+
 
   const handleInputChange = (index: number, field: string, value: any) => {
     const updatedParts = [...parts];
@@ -49,7 +56,26 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
 
     setParts(updatedParts);
   };
+ const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, photoIndex: number) => {
+    if (event.target.files) {
+      const file = event.target.files[0];
 
+      // Проверяем, что файл допустимого формата
+      if (!file.type.startsWith('image/')) {
+        alert('Можно загружать только изображения!');
+        return;
+      }
+
+      const updatedPhotos = [...part.partPhotos];
+      updatedPhotos[photoIndex] = file;
+      handleInputChange(index, 'partPhotos', updatedPhotos);
+
+      // Обновляем превью
+      const updatedPreviews = [...previewUrls];
+      updatedPreviews[photoIndex] = URL.createObjectURL(file);
+      setPreviewUrls(updatedPreviews);
+    }
+  };
   
 
   const addPart = () => {

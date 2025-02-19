@@ -5,8 +5,6 @@ import {request} from '@request/request'
 import BoxList from '@/components/filter/boxList';
 
 interface FilterItem {
-    
-  
     category: string; // Название категории (например, "Тип техники:")
     values: string[]; // Массив значений для этой категории (например, ["Мототехника", "Грузовые", ...])
 }
