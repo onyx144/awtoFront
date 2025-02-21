@@ -22,7 +22,8 @@
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@request/*": ["./src/request/*"],
-      "@svg/*": ["./src/svg/*"]
+      "@svg/*": ["./src/svg/*"],
+      "@json/*": ["./src/json/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RadioGroup , Checkbox , FormControlLabel , Radio ,  FormGroup , TextField , FormControl, Grid , InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Box } from "@mui/material";
-
+import select from '@json/select.json'
 interface FormData {
     fuelID: string;
     engineSize: string;
@@ -42,7 +42,14 @@ const [modelId, setModelId] = useState<string>('');
   const [subModel, setSubModel] = useState<string>('');
   const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
   const [year, setYear] = useState<string>('');
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<CarData>({
+    modelId: "",
+    carType: "",
+    makeId: "",
+    makeRegionId: "",
+    subModel: "",
+    isSubModelVisible: false,
+    year: "",
     fuelID: "",
     engineSize: "",
     bodyTypeID: "",
@@ -52,16 +59,19 @@ const [modelId, setModelId] = useState<string>('');
     colorMetallic: false,
     vin: "",
   });
-  const handleSelect = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setCarData((prev) => ({
+  
+  const handleSelectChange = (field: keyof CarData) => (event: SelectChangeEvent<string>) => {
+    setCarData(prev => ({
       ...prev,
-      [name]: value,
+      [field]: event.target.value
     }));
   };
-  const handleProps = (field: string, value: string) => {
-    setCarData(prev => ({ ...prev, [field]: value }));
-  };
+const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ value: unknown }>) => {
+  setCarData(prev => ({
+    ...prev,
+    [field]: event.target.value as string
+  }));
+};
   const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = e.target;
     setCarData((prev) => ({
@@ -69,12 +79,7 @@ const [modelId, setModelId] = useState<string>('');
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-  const handleModelChange = (event: SelectChangeEvent) => {
-    setModelId(event.target.value);
-  };
-  const handleMakeChange = (event: SelectChangeEvent) => {
-    setMakeId(event.target.value);
-  };
+
   const toggleSubModelVisibility = () => {
     setSubModelVisible(!isSubModelVisible);
   };
@@ -120,8 +125,8 @@ const [modelId, setModelId] = useState<string>('');
           <Select
             labelId="make-label"
             id="MakeID"
-            value={makeId}
-            onChange={handleMakeChange}
+            value={carData.makeId}
+            onChange={handleSelectChange("makeId")}
             label="Марка"
           >
             <MenuItem value="0">- выбрать -</MenuItem>
@@ -140,11 +145,11 @@ const [modelId, setModelId] = useState<string>('');
           <Select
             labelId="region-label"
             id="MakeRegionID"
-            value={makeRegionId}
-            onChange={handleRegionChange}
+            value={carData.makeRegionId}
+            onChange={handleSelectChange("makeRegionId")}
             label="Регион"
           >
-            <MenuItem value="1">
+            <MenuItem value="Европа">
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
     <Box
       component="img"
@@ -155,7 +160,7 @@ const [modelId, setModelId] = useState<string>('');
     Европа
   </Box>
 </MenuItem>
-<MenuItem value="2">
+<MenuItem value="Америка">
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
     <Box
       component="img"
@@ -179,14 +184,14 @@ const [modelId, setModelId] = useState<string>('');
       <Select
         labelId="model-label"
         id="ModelID"
-        value={modelId}
-        onChange={handleModelChange}
+        value={carData.modelId}
+        onChange={handleSelectChange("modelId")}
         label="Модель"
       >
         <MenuItem value="0">- выбрать -</MenuItem>
-        <MenuItem value="1">- 1 -</MenuItem>
-        <MenuItem value="2">- 2 -</MenuItem>
-        <MenuItem value="3">- 3 -</MenuItem>
+        <MenuItem value="1">ABG Titan</MenuItem>
+        <MenuItem value="2">Agco</MenuItem>
+        <MenuItem value="3">Agria</MenuItem>
         {/* Добавьте другие модели */}
       </Select>
     </FormControl>
@@ -212,8 +217,8 @@ const [modelId, setModelId] = useState<string>('');
           id="SubModelOther"
           name="SubModelOther"
           label="Модификация"
-          value={subModel}
-          onChange={(e) => setSubModel(e.target.value)}
+          value={carData.subModel}
+          onChange={handleInputChange("subModel")}
           size="small"
         />
         {/* Кнопка с крестиком для отмены */}
@@ -239,8 +244,8 @@ const [modelId, setModelId] = useState<string>('');
           <Select
             labelId="year-label"
             id="YearID"
-            value={year}
-            onChange={handleYearChange}
+            value={carData.year}
+            onChange={handleSelectChange("year")}
             label="Год выпуска"
             className="wid100proc"
           >
@@ -326,22 +331,25 @@ const [modelId, setModelId] = useState<string>('');
   {/* Заголовок "Двигатель" */}
 
   {/* Секция с полями */}
-  <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+  <Grid container spacing={2} sx={{ marginTop: '10px' , gap: 0 , display: 'flex' , flexDirection: 'column' , paddingLeft: '16px', }}>
   {/* Заголовок "Двигатель" */}
-  <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
     Двигатель
-  </Grid>
 
   {/* Поля для выбора топлива и ввода объема */}
-  <Grid item xs={12} md={9} sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
     {/* Селект для топлива */}
-    <FormControl fullWidth sx={{ flex: '1 1 calc(50% - 16px)' }}>
+    <Box sx={{
+       display: 'flex',
+       paddingTop: '5px',
+       justifyItems: 'center',
+       gap: '15px',
+    }}>
+    <FormControl fullWidth sx={{ flex: '1 1 calc(50% - 16px)' ,  paddingTop: 0}}>
       <InputLabel>Топливо</InputLabel>
       <Select
         label="Топливо"
         name="fuelID"
         value={carData.fuelID}
-        onChange={handleSelect}
+        onChange={handleSelectChange("fuelID")}
       >
         <MenuItem value="">- выбрать -</MenuItem>
         <MenuItem value="1">Бензин</MenuItem>
@@ -357,39 +365,31 @@ const [modelId, setModelId] = useState<string>('');
         label="Объем"
         name="engineSize"
         value={carData.engineSize}
-        onChange={handleData}
+        onChange={handleInputChange("engineSize")}
         fullWidth
         inputProps={{ maxLength: 20 }}
         placeholder="_._"
       />
       <span style={{ whiteSpace: 'nowrap' }}>литра</span>
     </Box>
-  </Grid>
+    </Box>
 </Grid>
 
 
       {/* Body Type Section */}
-      <Grid container spacing={2} sx={{ marginTop: '5px' }}>
+      <Grid container spacing={2} sx={{ gap: 0 , marginTop: '5px' , paddingLeft: '16px' }}>
   {/* Заголовок "Кузов" */}
-  <Grid 
-    item 
-    xs={12} 
-    md={3} 
-    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }} 
-    className="b optout"
-  >
+  
     Кузов
-  </Grid>
 
   {/* Селект для типа кузова */}
-  <Grid item xs={12} md={9}>
-    <FormControl fullWidth>
+    <FormControl fullWidth sx={{marginTop: '5px'}}>
       <InputLabel>Тип кузова</InputLabel>
       <Select
         label="Тип кузова"
         name="bodyTypeID"
         value={carData.bodyTypeID}
-        onChange={handleSelect}
+        onChange={handleSelectChange("bodyTypeID")}
       >
         <MenuItem value="">- выбрать -</MenuItem>
         <MenuItem value="1">Седан</MenuItem>
@@ -402,43 +402,38 @@ const [modelId, setModelId] = useState<string>('');
         <MenuItem value="10">Фургон</MenuItem>
       </Select>
     </FormControl>
-  </Grid>
 </Grid>
 
 
       {/* Transmission Section */}
-      <Grid container spacing={2} sx={{ marginTop: '5px' }}>
-        <Grid item xs={12} md={3}
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }} >
-              Трансмиссия</Grid>
-        <Grid item xs={12} md={9}>
+      <Grid container spacing={2} sx={{ marginTop: '10px' , gap:0 , flexDirection: 'column' , paddingLeft: '16px'}}>
+                  Трансмиссия
+    
           <RadioGroup
             name="transID"
             value={carData.transID}
             onChange={handleData}
             row
           >
-            <FormControlLabel value="101" control={<Radio />} label="Механика" />
-            <FormControlLabel value="102" control={<Radio />} label="Автомат" />
+            <FormControlLabel value="Механіка" control={<Radio />} label="Механіка" />
+            <FormControlLabel value="Автомат" control={<Radio />} label="Автомат" />
           </RadioGroup>
         </Grid>
-      </Grid>
 
       {/* Axle Section */}
-      <Grid container spacing={2} sx={{ marginTop: '5px' }} id="axle-tr" className="req__row body">
-        <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>Привод</Grid>
-        <Grid item xs={12} md={9}>
+      <Grid container spacing={2} sx={{ marginTop: '10px' , gap:0 , flexDirection: 'column' , paddingLeft: '16px'}} id="axle-tr" className="req__row body">
+        Привод
           <RadioGroup
             name="axleID"
             value={carData.axleID}
             onChange={handleData}
+            
             row
           >
-            <FormControlLabel value="1" control={<Radio />} label="Передний" />
-            <FormControlLabel value="2" control={<Radio />} label="Задний" />
-            <FormControlLabel value="3" control={<Radio />} label="Полный" />
+            <FormControlLabel value="Передній" control={<Radio />} label="Передній" />
+            <FormControlLabel value="Задній" control={<Radio />} label="Задній" />
+            <FormControlLabel value="Повний" control={<Radio />} label="Повний" />
           </RadioGroup>
-        </Grid>
       </Grid>
 
       {/* Color Section */}
@@ -454,7 +449,7 @@ const [modelId, setModelId] = useState<string>('');
                     label="Цвет"
                     name="colorName"
                     value={carData.colorName}
-                    onChange={handleSelect}
+                    onChange={handleSelectChange("colorName")}
                   >
                     <MenuItem value="">- выбрать -</MenuItem>
                     <MenuItem value="Бежевый">Бежевый</MenuItem>
@@ -487,7 +482,7 @@ const [modelId, setModelId] = useState<string>('');
               <Grid item xs={12} md={6} className="fixed129 fixed129--engine">
                 <FormGroup>
                   <FormControlLabel
-                    control={<Checkbox name="colorMetallic" checked={carData.colorMetallic} onChange={handleSelect} />}
+                    control={<Checkbox name="colorMetallic" checked={carData.colorMetallic} onChange={handleSelectChange("colorMetallic")} />}
                     label="металлик"
                   />
                 </FormGroup>
@@ -498,18 +493,19 @@ const [modelId, setModelId] = useState<string>('');
       )}
 
       {/* VIN Section */}
-      <Grid container spacing={2} sx={{mt:1}} id="vin-tr" className="req__row">
-        <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }} className="optout optoutvin b">Номер кузова (VIN)</Grid>
-        <Grid item xs={12} md={9}>
+      <Grid container spacing={2} sx={{mt:1 , gap: 0 , paddingLeft: '16px'}} id="vin-tr" className="req__row">
+        Номер кузова (VIN)
+        
           <TextField
             label="VIN"
+            sx={{marginTop: '5px'}}
             name="vin"
             value={carData.vin}
-            onChange={handleData}
+            onChange={handleInputChange("vin")}
             fullWidth
             inputProps={{ maxLength: 50 }}
           />
-        </Grid>
+   
       </Grid>
 
     </Box>

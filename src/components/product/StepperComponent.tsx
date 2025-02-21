@@ -66,29 +66,94 @@ type SpareData = {
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#8fad1c',  // Основной цвет
+      main: "#8fad1c",
     },
     secondary: {
-      main: '#ff4081',  // Вторичный цвет
+      main: "#ff4081",
     },
   },
-  
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        size: "small",
+      },
+      styleOverrides: {
+        root: {
+          "& .MuiInputBase-root": {
+            height: "40px",
+            fontSize: "0.875rem",
+            padding: "4px 0px",
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        size: "small",
+      },
+      styleOverrides: {
+        root: {
+          height: "40px",
+          fontSize: "0.875rem",
+        },
+      },
+    },
+    MuiGrid: {
+      styleOverrides: {
+        item: {
+          paddingTop: "10px", // Уменьшает верхний отступ для Grid item
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          minHeight: "40px",
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.875rem",
+          transform: "translate(14px, 9px) scale(1)", // Выравниваем по центру
+        },
+        shrink: {
+          transform: "translate(14px, -8px) scale(0.75)", // Сдвигаем вверх при фокусе
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          paddingTop: "4px", // Уменьшен паддинг сверху
+        },
+      },
+    },
+    MuiGrid: {
+      styleOverrides: {
+        root: {
+          gap: "10px", // Уменьшен gap между элементами
+        },
+      },
+    },
+  },
 });
 
+
 // Кастомный компонент для иконки шага
-const StepIcon = (props: StepIconProps) => {
+function StepIcon(props: StepIconProps) {
   const { active, completed, className } = props;
-  
+
 
   return completed ? (
     <CheckCircleIcon className={className} sx={{ color: 'green' }} />
   ) : (
     <RadioButtonUncheckedIcon
       className={className}
-      sx={{ color: active ? 'green' : 'gray' }}
-    />
+      sx={{ color: active ? 'green' : 'gray' }} />
   );
-};
+}
 
 const StepContent = ({
   step,
@@ -178,22 +243,38 @@ const StepperComponent = () => {
       onlySms: false,
     },
   });
-  const createSpare = async (spareData: SpareData): Promise<void> => {
+  const createSpare = async (spareData: SpareData , files: File[]): Promise<void> => {
+    console.log('Data:' , spareData );
+    const formData = new FormData();
+    formData.append('spareData', JSON.stringify(spareData));
+
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
     try {
-      const response = await request('post', '/spares/create', spareData);
+      const response = await request('post', '/spares/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       console.log('Запчасть создана:', response.data);
-      window.location.href = '/success'
+      //window.location.href = '/success'
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }
   };
   const handleSubmit = () => {
+    const files: File[] = parts.flatMap((part) => part.partPhotos || []).filter((file): file is File => file !== null);
+  
     const formData = {
       parts,
       ...carData,
       ...contactInfo
     };
-    createSpare(formData);
+  
+    // Отправляем данные и файлы
+    createSpare(formData, files);
+  
     console.log("Отправленные данные:", JSON.stringify(formData, null, 2));
   };
   const [activeStep, setActiveStep] = useState(0);

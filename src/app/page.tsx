@@ -41,6 +41,18 @@ export default function Home() {
 
   const [filteredData, setFilteredData] = useState<SpareData[]>([]);
 
+  const cellStyle = {
+    backgroundColor: '#d1f5d1', // Светло-зеленый фон
+  border: '1px solid #ccc', // Легкая граница
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', // Легкая тень
+  padding: '8px',
+  textAlign: 'center', // Центрирование текста по горизонтали
+  //display: 'flex', // Используем flex для вертикального выравнивания
+  alignItems: 'center', // Выравнивание по вертикали
+  justifyContent: 'center',
+      fontSize: '12px', // Уменьшаем шрифт для маленьких экранов
+
+  };
 
   const getSpares = async (page = 1, limit = 20) => {
     try {
@@ -114,14 +126,42 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
       ) : (
         <TableContainer>
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Название</TableCell>
-                <TableCell>Город</TableCell>
-                <TableCell>Отправлено</TableCell>
-                <TableCell>Связь</TableCell>
-              </TableRow>
-            </TableHead>
+          <TableHead>
+          <TableRow>
+  <TableCell sx={cellStyle}>
+    Марка
+    <br />
+    Модель
+    <br />
+    Рік
+  </TableCell>
+  <TableCell sx={cellStyle}>
+    Обєм двигуна
+    <br />
+    Паливо
+    <br />
+    Тип кузова
+    <br />
+    Трансмісія
+    <br />
+    Привід
+  </TableCell>
+  <TableCell sx={cellStyle}>
+    Група запчастини
+    <br />
+    Тип запчастини
+    <br />
+    Стан
+  </TableCell>
+  <TableCell sx={cellStyle}>Назва запчастини</TableCell>
+  <TableCell sx={cellStyle}>Код запчастини</TableCell>
+  <TableCell sx={cellStyle}>Фото</TableCell>
+  <TableCell sx={cellStyle}>Вінкод</TableCell>
+  <TableCell sx={cellStyle}>Додаткова інка</TableCell>
+  <TableCell sx={cellStyle}>Звязатися</TableCell>
+  </TableRow>
+</TableHead>
+
             <TableBody>
               {filteredData.map((item, index) => (
                 <Item key={index} id={item.id} name={item.partName} city={item.city} tyme={item.date} phone={item.phone} contact={item.messageType} />
@@ -133,3 +173,4 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
     </Box>
   )
 }
+
