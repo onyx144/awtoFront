@@ -198,6 +198,7 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           display: "flex",
           justifyContent: "flex-start",
           alignItems: "center",
+          flexWrap: 'wrap'
         }}
       >
         <Box sx={{ display: "flex", flexWrap: "nowrap", mr: 2 }}>

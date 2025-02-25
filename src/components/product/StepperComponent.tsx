@@ -27,7 +27,7 @@ type Part = {
 type CarData = {
   modelId: string;
   carType: string;
-  makeId: string;
+  mark: string;
   makeRegionId: string;
   subModel: string;
   isSubModelVisible: boolean;
@@ -130,13 +130,7 @@ const theme = createTheme({
         },
       },
     },
-    MuiGrid: {
-      styleOverrides: {
-        root: {
-          gap: "10px", // Уменьшен gap между элементами
-        },
-      },
-    },
+   
   },
 });
 
@@ -214,7 +208,7 @@ const StepperComponent = () => {
   const [carData, setCarData] = useState<CarData>({
     modelId: '',
     carType: '',
-    makeId: '',
+    mark: '',
     makeRegionId: '1',
     subModel: '',
     isSubModelVisible: false,
@@ -252,11 +246,7 @@ const StepperComponent = () => {
     formData.append('files', file);
   });
     try {
-      const response = await request('post', '/spares/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await request('post', '/spares/create' , spareData);
       console.log('Запчасть создана:', response.data);
       //window.location.href = '/success'
     } catch (error) {

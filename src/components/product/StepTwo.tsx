@@ -14,7 +14,7 @@ interface FormData {
   type CarData = {
     modelId: string;
     carType: string;
-    makeId: string;
+    mark: string;
     makeRegionId: string;
     subModel: string;
     isSubModelVisible: boolean;
@@ -37,15 +37,20 @@ interface FormData {
 const StepTwo: React.FC<StepTwoProps> = ({ carData, setCarData }) => {
 const [modelId, setModelId] = useState<string>('');
   const [carType, setCarType] = useState<string>("");
-  const [makeId, setMakeId] = useState<string>('');
+  const [mark, setmark] = useState<string>('');
   const [makeRegionId, setMakeRegionId] = useState<string>('1');
   const [subModel, setSubModel] = useState<string>('');
   const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
   const [year, setYear] = useState<string>('');
+  //const models =select.models[carData.makeRegionId as keyof typeof select.models];
+  const models =
+  (select.models[carData.makeRegionId as keyof typeof select.models]?.[
+    carData.mark as keyof typeof select.models[keyof typeof select.models]
+  ] || []) as string[];
   const [formData, setFormData] = useState<CarData>({
     modelId: "",
     carType: "",
-    makeId: "",
+    mark: "",
     makeRegionId: "",
     subModel: "",
     isSubModelVisible: false,
@@ -65,6 +70,7 @@ const [modelId, setModelId] = useState<string>('');
       ...prev,
       [field]: event.target.value
     }));
+    console.log('Model:' , models);
   };
 const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ value: unknown }>) => {
   setCarData(prev => ({
@@ -105,15 +111,15 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         <Select
           labelId="car-type-select-label"
           id="car-type-select"
-          value={carType}
-          onChange={handleChange}
+          value={carData.carType}
+          onChange={handleSelectChange('carType')}
           label="Тип"
         >
-          <MenuItem value="1">Легковые</MenuItem>
-          <MenuItem value="2">Мототехника</MenuItem>
-          <MenuItem value="3">Грузовые</MenuItem>
-          <MenuItem value="4">Автобусы</MenuItem>
-          <MenuItem value="6">Спецтехника</MenuItem>
+          {select.types.map((type) => (
+          <MenuItem key={type.id} value={type.id}>
+            {type.name}
+          </MenuItem>
+        ))}
         </Select>
       </FormControl>
     </Box>
@@ -124,17 +130,18 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
           <InputLabel id="make-label">Марка</InputLabel>
           <Select
             labelId="make-label"
-            id="MakeID"
-            value={carData.makeId}
-            onChange={handleSelectChange("makeId")}
+            id="mark"
+            value={carData.mark}
+            onChange={handleSelectChange("mark")}
             label="Марка"
           >
-            <MenuItem value="0">- выбрать -</MenuItem>
-            <MenuItem value="1">Acura</MenuItem>
-            <MenuItem value="2">Alfa Romeo</MenuItem>
-            <MenuItem value="383">ARO</MenuItem>
-            <MenuItem value="255">Asia</MenuItem>
-            <MenuItem value="22">Aston Martin</MenuItem>
+           {select.marks[carData.carType as keyof typeof select.marks]?.map((mark) => (
+            <MenuItem key={mark.id} value={mark.id}>
+              {mark.name}
+            </MenuItem>
+          )) || (
+            <MenuItem disabled>Нет доступных марок</MenuItem>
+          )}
             {/* Дополните остальными элементами списка марки автомобилей */}
           </Select>
         </FormControl>
@@ -149,7 +156,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             onChange={handleSelectChange("makeRegionId")}
             label="Регион"
           >
-            <MenuItem value="Европа">
+            <MenuItem value="eu">
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
     <Box
       component="img"
@@ -160,7 +167,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
     Европа
   </Box>
 </MenuItem>
-<MenuItem value="Америка">
+<MenuItem value="us">
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
     <Box
       component="img"
@@ -188,11 +195,15 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         onChange={handleSelectChange("modelId")}
         label="Модель"
       >
-        <MenuItem value="0">- выбрать -</MenuItem>
-        <MenuItem value="1">ABG Titan</MenuItem>
-        <MenuItem value="2">Agco</MenuItem>
-        <MenuItem value="3">Agria</MenuItem>
-        {/* Добавьте другие модели */}
+        {models.length > 0  ? (
+  models.map((model, index) => (
+    <MenuItem key={index} value={model}>
+      {model}
+    </MenuItem>
+  ))
+) : (
+  <MenuItem disabled>Немає доступных моделей</MenuItem>
+)}
       </Select>
     </FormControl>
 
