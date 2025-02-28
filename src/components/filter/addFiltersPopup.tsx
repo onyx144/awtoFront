@@ -15,19 +15,27 @@ import {
   ListItemButton,
 } from '@mui/material';
 import { getToken } from '@request/request'
-
+import { getOptionName } from '@/request/function';
 import ModelBox from './modelBox'
-type NestedCategory = {
-  [key: string]: 
-    | string 
-    | string[] 
-    | string[][] 
-    | NestedCategory;
+// Тип для отдельной опции фильтра
+type FilterOption = {
+  id: string;
+  name: string;
 };
 
+// Тип для структуры данных фильтра
+type FilterCategory = {
+  category: string;
+  options: FilterOption[];
+};
+
+// Тип для вложенных категорий, если такие есть
+type NestedCategory = {
+  [key: string]: string | string[] | string[][] | NestedCategory;
+};
 interface AddFiltersProps {
   onClose: () => void;
-  optionValue: { category: string; options?: string[]; minCategory?: NestedCategory };
+  optionValue: { category: string; options?: FilterOption[]; minCategory?: NestedCategory };
   onSaveFilters: (filters: { category: string; value: string }[]) => void;
   
 }
@@ -36,7 +44,12 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedChosenValues, setSelectedChosenValues] = useState<string[]>([]);
   const [chosenValues, setChosenValues] = useState<{ category: string; value: string }[]>([]);
-
+  const getOptionName = (id: string, options: { id: string; name: string }[]): string => {
+    const optionsMap = new Map(options.map((option) => [option.id, option.name]));
+    return optionsMap.get(id) || id;
+    
+  };
+  
   
   const handleAdd = (value?: string) => {
     if (value && value.length > 1) {
@@ -165,12 +178,12 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
              
              
              {optionValue.options?.map((value) => (
-                  <ListItem key={value} disablePadding>
+                  <ListItem key={value.id} disablePadding>
                     <ListItemButton
-                      onClick={(event) => handleSelectValue(value, event , optionValue.options ?? [])}
-                      selected={selectedValues.includes(value)}
+                      onClick={(event) => handleSelectValue(value.name, event , optionValue.options?.map((opt) => opt.name)  ?? [])}
+                      selected={selectedValues.includes(value.name)}
                     >
-                      <ListItemText primary={value} />
+                      <ListItemText primary={value.name} />
                     </ListItemButton>
                   </ListItem>
                 ))}

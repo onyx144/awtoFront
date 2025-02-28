@@ -42,11 +42,20 @@ const [modelId, setModelId] = useState<string>('');
   const [subModel, setSubModel] = useState<string>('');
   const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
   const [year, setYear] = useState<string>('');
-  //const models =select.models[carData.makeRegionId as keyof typeof select.models];
-  const models =
-  (select.models[carData.makeRegionId as keyof typeof select.models]?.[
-    carData.mark as keyof typeof select.models[keyof typeof select.models]
-  ] || []) as string[];
+  let models =
+  (select.models[carData.makeRegionId as keyof typeof select.models] &&
+  typeof select.models[carData.makeRegionId as keyof typeof select.models] === "object" &&
+  Array.isArray(
+    select.models[carData.makeRegionId as keyof typeof select.models]?.[
+      carData.mark as keyof typeof select.models[keyof typeof select.models]
+    ]
+  )
+    ? select.models[carData.makeRegionId as keyof typeof select.models]?.[
+        carData.mark as keyof typeof select.models[keyof typeof select.models]
+      ]
+    : []) as { id: string; name: string }[];
+
+
   const [formData, setFormData] = useState<CarData>({
     modelId: "",
     carType: "",
@@ -115,7 +124,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
           onChange={handleSelectChange('carType')}
           label="Тип"
         >
-          {select.types.map((type) => (
+          {select.types.type.map((type) => (
           <MenuItem key={type.id} value={type.id}>
             {type.name}
           </MenuItem>
@@ -135,13 +144,13 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             onChange={handleSelectChange("mark")}
             label="Марка"
           >
-           {select.marks[carData.carType as keyof typeof select.marks]?.map((mark) => (
-            <MenuItem key={mark.id} value={mark.id}>
-              {mark.name}
-            </MenuItem>
-          )) || (
-            <MenuItem disabled>Нет доступных марок</MenuItem>
-          )}
+           {typeof select.marks[carData.carType as keyof typeof select.marks] === "object" &&
+  (select.marks[carData.carType as keyof typeof select.marks] as { id: string; name: string }[]).map((mark) => (
+    <MenuItem key={mark.id} value={mark.id}>
+      {mark.name}
+    </MenuItem>
+  ))}
+
             {/* Дополните остальными элементами списка марки автомобилей */}
           </Select>
         </FormControl>
@@ -197,8 +206,8 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
       >
         {models.length > 0  ? (
   models.map((model, index) => (
-    <MenuItem key={index} value={model}>
-      {model}
+    <MenuItem key={model.id} value={model.id}>
+      {model.name}
     </MenuItem>
   ))
 ) : (

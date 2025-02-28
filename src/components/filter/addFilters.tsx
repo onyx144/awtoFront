@@ -2,131 +2,64 @@ import React, { useState } from 'react';
 import { Box, FormControl , FormControlLabel , Radio , RadioGroup ,Button, Grid, Typography, Paper } from '@mui/material';
 import AddFiltersPopup from './addFiltersPopup';
 import {request , saveToken} from '@request/request'
-
+import {extractIdNamePairs , createReverseMap} from '@request/function'
+import select from '@json/select.json'
 interface AddFiltersProps {
   onSave: () => void;
 }
 interface CreateFilterDto {
   data: Record<string, any>; // Теперь data — это объект
 }
+type FilterOption = { id: string; name: string };
+type FilterCategory = { category: string; options: FilterOption[] };
+
 const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<number | null>(null);
   const [chosenFilters, setChosenFilters] = useState<{ category: string; value: string }[]>([]);
-  const filtersData = [
-    {
-      category: 'Тип техники:',
-      options: ['Легковые', 'Мототехника', 'Грузовые', 'Автобусы', 'Спецтехника']
-    },
-    {
-      category: 'Годы выпуска',
-      options: [
-        '2024', '2023', '2022', '2021', '2020', 
-        '2019', '2018', '2017', '2016', '2015', 
-        '2014', '2013', '2012', '2011', '2010', 
-        '2009', '2008', '2007', '2006', '2005', 
-        '2004', '2003', '2002', '2001', '2000', 
-        '1999', '1998', '1997', '1996', '1995', 
-        '1994', '1993', '1992', '1991', '1990', 
-        '1989', '1988', '1987', '1986', '1985', 
-        '1984', '1983', '1982', '1981', '1980', 
-        '1979', '1978', '1977', '1976', '1975', 
-        '1974', '1973', '1972', '1971', '1970', 
-        '1969', '1968', '1967', '1966', '1965', 
-        '1964', '1963', '1962', '1961', '1960', 
-        '1959', '1958', '1957', '1956', '1955', 
-        '1954', '1953', '1952', '1951', '1950'
-      ]
-    },
-        { category: 'Марки:', options: ['Option X', 'Option Y', 'Option Z', 'Option W', 'Option V'] },
-    { category: 'Модели:', 
-      minCategory: {
-        Легковые: {
-          Access: {
-            Модели: [['Bogatto', 'DRR']]
-          },
-          Acxa: {
-            Модели: [['150', 'ACX']]
-          }
-        },
-        Мототехника: [['Мототехника', 'Квадроциклы']],
-        
+
+  const parseFiltersData = (data: Record<string, any>): FilterCategory[] => {
+    return Object.entries(data).map(([_, value]) => {
+      let options: FilterOption[] = [];
+  
+      if (Array.isArray(value.type)) {
+        options = value.type as FilterOption[];
+      } else if (Array.isArray(value.options)) {
+        options = value.options as FilterOption[];
+      } else {
+        options = Object.values(value)
+          .filter((v): v is FilterOption[] => Array.isArray(v))
+          .flat();
       }
-     },
-    {
-      category: 'Группы запчастей:',
-      options: [
-        'Двигатель', 'Ременный привод', 'Коробка передач', 'Мост', 
-        'Карданная передача', 'Привод колеса', 'Подвеска', 'Кузов', 
-        'Сцепление', 'Рулевое управление', 'Тормозная система', 
-        'Система зажигания', 'Система питания', 'Система выпуска', 
-        'Система охлаждения и отопления', 'Кондиционер', 'Стекла и зеркала', 
-        'Система очистки стекол', 'Фары / Освещение', 'Интерьер', 
-        'Экстерьер', 'Электрика', 'Приборы и датчики', 'Системы безопасности', 
-        'Вспомогательные системы', 'Фильтры', 'Масла', 'Шины и диски', 
-        'Тюнинг', 'ГБО'
-      ]
-    },
-    { 
-      category: 'Названия запчастей:', 
-      options: [
-        'ECU', 
-        'Акселерометр', 
-        'Блок управления двигателем', 
-        'Блок управления трансмиссией', 
-        'Датчик температуры', 
-        'Датчик давления', 
-        'Модуль зажигания', 
-        'Реле', 
-        'Сенсор кислорода', 
-        'Термостат', 
-        'Фильтр топлива', 
-        'Коммутатор', 
-        'Компрессор кондиционера', 
-        'Насос омывателя', 
-        'Радиатор', 
-        'Система впрыска', 
-        'Система охлаждения', 
-        'Электродвигатель стеклоподъемника', 
-        'Фары', 
-        'Генератор', 
-        'Аккумулятор', 
-        'Моторчик стеклоочистителя', 
-        'Система зажигания', 
-        'Глушитель', 
-        'Тормозной диск', 
-        'Тормозной суппорт', 
-        'Шаровая опора', 
-        'Рулевая рейка', 
-        'Ремень ГРМ', 
-        'Ремень генератора', 
-        'Шкив', 
-        'Маховик', 
-        'Сцепление', 
-        'Топливный насос', 
-        'Дроссельная заслонка', 
-        'Турбокомпрессор', 
-        'Воздушный фильтр', 
-        'Топливный фильтр', 
-        'Система выпуска отработанных газов', 
-        'Катализатор', 
-        'Теплообменник', 
-        'Подушка двигателя', 
-        'Подушка коробки передач', 
-        'Патрубок', 
-        'Сальник', 
-          ]
-    },
-    { category: 'Регионы:', options: ['Selection 1', 'Selection 2', 'Selection 3'] },
-  ];
-  //Фильтр груп
-  const groupFilters = (filters: { category: string; value: string }[]) => {
+  
+      return {
+        category: value.category as string,
+        options
+      };
+    });
+  };
+  
+  const filtersData = parseFiltersData(select);
+  
+  //console.log(filtersData);
+  const groupFilters = (
+    filters: { category: string; value: string }[]
+  ) => {
+    // Создаем Map для быстрого поиска id по name
+    const nameToIdMap =  extractIdNamePairs(select);
+    console.log('Opteon:' , nameToIdMap);
+  
     return filters.reduce<{ category: string; values: string[] }[]>((acc, { category, value }) => {
+      const idReverse = createReverseMap(nameToIdMap); 
+      const id = idReverse.get(value);
+      console.log('Opteon2:' , id , 'value:' , value2);
+      if (!id) return acc; // Если name нет в JSON, пропускаем
+  
       const existingCategory = acc.find(item => item.category === category);
   
       if (existingCategory) {
-        existingCategory.values.push(value);
+        existingCategory.values.push(id);
       } else {
-        acc.push({ category, values: [value] });
+        acc.push({ category, values: [id] });
       }
   
       return acc;
@@ -140,8 +73,12 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
       return [...updatedFilters, { category, value }];
     });
   };
-  const handleOpen = (index: number) => setIsDialogOpen(index);
+  const handleOpen = (index: number) => 
+    {
+      setIsDialogOpen(index);
+    }
   const handleAll = (index: string) => {
+    
     setChosenFilters((prev) => {
       // Фильтруем выбранные фильтры, исключая тот, у которого категория совпадает с index
       const updatedFilters = prev.filter((filter) => filter.category !== index);
@@ -150,17 +87,17 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
   };
   const handleClose = () => setIsDialogOpen(null);
   const createFilter = async (filterData: CreateFilterDto): Promise<void> => {
-    try {
+    /* try {
       const response = await request('post', '/filters/create', filterData);
       console.log('Фильтр создан:', response.data);
       onSave();
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
-    }
+    }*/
   };
   const handleSave = () => {
     const filterData = { data: groupFilters(chosenFilters) };
-    console.log('Filter' , groupFilters(chosenFilters)); 
+    //console.log('Filter 1' , groupFilters(chosenFilters)); 
     createFilter(filterData);
   };
 
