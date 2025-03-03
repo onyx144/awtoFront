@@ -16,6 +16,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import select from '@json/select.json'
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -161,9 +162,9 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       onChange={(e) => handleInputChange(index, "partType", e.target.value)}
       sx={{ alignItems: "center" , display: "flex", flexDirection: "row", gap: 2 }} 
     >
-      <FormControlLabel value="0" control={<Radio />} label="Любая" />
-      <FormControlLabel value="1" control={<Radio />} label="Оригинал" />
-      <FormControlLabel value="2" control={<Radio />} label="Аналог" />
+      <FormControlLabel value="type_all" control={<Radio />} label="Будь-яка" />
+      <FormControlLabel value="original" control={<Radio />} label="Оригінал" />
+      <FormControlLabel value="analog" control={<Radio />} label="Аналог" />
     </RadioGroup>
   </FormControl>
 
@@ -174,9 +175,9 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       onChange={(e) => handleInputChange(index, "partCondition", e.target.value)}
       sx={{ alignItems: "center" , display: "flex", flexDirection: "row", gap: 2 }} 
    >
-      <FormControlLabel value="0" control={<Radio />} label="Любая" />
-      <FormControlLabel value="1" control={<Radio />} label="Новая" />
-      <FormControlLabel value="2" control={<Radio />} label="Б/У" />
+      <FormControlLabel value="state_all" control={<Radio />} label="Будь-яка" />
+      <FormControlLabel value="new" control={<Radio />} label="Новая" />
+      <FormControlLabel value="used" control={<Radio />} label="Б/У" />
     </RadioGroup>
   </FormControl>
 </Box>

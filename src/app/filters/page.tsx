@@ -3,6 +3,7 @@ import React , {useEffect , useState} from 'react';
 import FilterContainer from '@components/filter/filterContainer'
 import {request} from '@request/request'
 import BoxList from '@/components/filter/boxList';
+import select from "@json/select.json"
 
 interface FilterItem {
     category: string; // Название категории (например, "Тип техники:")

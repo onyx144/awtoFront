@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import { Box, Button, Typography, Paper } from "@mui/material";
 import { request } from "@request/request";
 import { useRouter } from "next/navigation";
+import select from "@json/select.json"
+import {extractIdNamePairs , getNamesByIds , mapToObject } from '@request/function'
 
 interface FilterItem {
   category: string;
@@ -23,7 +25,8 @@ type BoxListProps = {
 
 const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
   const router = useRouter();
-
+  const nameToIdMap =  extractIdNamePairs(select); 
+  const valuesMap = mapToObject(nameToIdMap);
   const redirectToHomeWithFilters = (filters: FilterItem[]) => {
     const queryParams = filters
       .map(
@@ -78,7 +81,7 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
                   {filter.category || "Нет данных"}
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: "12px" }}>
-                  {filter.values.length > 0 ? filter.values.join(", ") : "Нет данных"}
+                {filter.values.length > 0 ? getNamesByIds(filter.values , valuesMap).join(", ") : "Нет данных"}
                 </Typography>
               </Box>
             ))}

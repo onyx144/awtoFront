@@ -21,5 +21,11 @@ const getOptionName = (id: string, options: { id: string; name: string }[]): str
   const createReverseMap = <K, V>(map: Map<K, V>): Map<V, K> => {
     return new Map([...map.entries()].map(([key, value]) => [value, key]));
   };
+  const getNamesByIds = (ids: string[], dataMap: Record<string, string>): string[] => {
+    return ids.map(id => dataMap[id] || id);
+  };
+  const mapToObject = (map: Map<string, string>): Record<string, string> => {
+    return Object.fromEntries(map);
+  };
   
-export { getOptionName , extractIdNamePairs , createReverseMap };
+export { getOptionName , mapToObject, extractIdNamePairs , createReverseMap , getNamesByIds };

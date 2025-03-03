@@ -10,33 +10,33 @@
       "category": "Марки:" ,
       
       "passenger": [
-        { "id": "1", "name": "Acura" },
-        { "id": "2", "name": "Alfa Romeo" }
+        { "id": "acura", "name": "Acura" },
+        { "id": "alfa_romeo", "name": "Alfa Romeo" }
       ],
       "bike": [
-        { "id": "10", "name": "Yamaha" },
-        { "id": "11", "name": "Ducati" }
+        { "id": "yamaha", "name": "Yamaha" },
+        { "id": "ducati", "name": "Ducati" }
       ]
     },
     "models": {
   "category": "Модели:",
   "us": {
-    "1": [
+    "acura": [
       { "id": "mdx", "name": "MDX" },
       { "id": "rdx", "name": "RDX" },
       { "id": "tlx", "name": "TLX" }
     ],
-    "2": [
+    "alfa_romeo": [
       { "id": "giulia", "name": "Giulia" },
       { "id": "stelvio", "name": "Stelvio" }
     ]
   },
   "eu": {
-    "10": [
+    "yamaha": [
       { "id": "r1", "name": "R1" },
       { "id": "mt07", "name": "MT-07" }
     ],
-    "11": [
+    "ducati": [
       { "id": "panigale", "name": "Panigale" },
       { "id": "monster", "name": "Monster" }
     ]
@@ -239,5 +239,7 @@
       { "id": "1950", "name": "1950" }
     ]
   }
+
+  
   
 }

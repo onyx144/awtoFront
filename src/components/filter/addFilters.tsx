@@ -44,32 +44,29 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
   const groupFilters = (
     filters: { category: string; value: string }[]
   ) => {
+    console.log('Filter:' , filters);
     // Создаем Map для быстрого поиска id по name
     const nameToIdMap =  extractIdNamePairs(select);
-    console.log('Opteon:' , nameToIdMap);
   
     return filters.reduce<{ category: string; values: string[] }[]>((acc, { category, value }) => {
       const idReverse = createReverseMap(nameToIdMap); 
-      const id = idReverse.get(value);
-      console.log('Opteon2:' , id , 'value:' , value2);
+      const id = idReverse.get(value) || value; 
       if (!id) return acc; // Если name нет в JSON, пропускаем
   
       const existingCategory = acc.find(item => item.category === category);
-  
-      if (existingCategory) {
-        existingCategory.values.push(id);
-      } else {
-        acc.push({ category, values: [id] });
-      }
+
+        if (existingCategory) {
+            existingCategory.values.push(id);
+        } else {
+            acc.push({ category, values: [id] });
+        }
   
       return acc;
     }, []);
   };
   const handleRadioChange = (category: string, value: string) => {
     setChosenFilters(prevFilters => {
-      // Удаляем старое значение этой категории
       const updatedFilters = prevFilters.filter(filter => filter.category !== category);
-      // Добавляем новое значение
       return [...updatedFilters, { category, value }];
     });
   };
@@ -87,17 +84,16 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
   };
   const handleClose = () => setIsDialogOpen(null);
   const createFilter = async (filterData: CreateFilterDto): Promise<void> => {
-    /* try {
+     try {
       const response = await request('post', '/filters/create', filterData);
       console.log('Фильтр создан:', response.data);
       onSave();
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
-    }*/
+    }
   };
   const handleSave = () => {
     const filterData = { data: groupFilters(chosenFilters) };
-    //console.log('Filter 1' , groupFilters(chosenFilters)); 
     createFilter(filterData);
   };
 
@@ -175,7 +171,7 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
           defaultValue="all"
           onChange={(e) => handleRadioChange("Состояние запчастей", e.target.value)}
         >
-                <FormControlLabel value="all" control={<Radio />} label="Все" />
+                <FormControlLabel value="state_all" control={<Radio />} label="Все" />
                 <FormControlLabel value="new" control={<Radio />} label="Новые" />
                 <FormControlLabel value="used" control={<Radio />} label="Подержанные" />
               </RadioGroup>
@@ -190,7 +186,7 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
           defaultValue="all"
           onChange={(e) => handleRadioChange("Типы запчастей", e.target.value)}
         >
-                <FormControlLabel value="all" control={<Radio />} label="Все" />
+                <FormControlLabel value="type_all" control={<Radio />} label="Все" />
                 <FormControlLabel value="original" control={<Radio />} label="Оригинал" />
                 <FormControlLabel value="nonoriginal" control={<Radio />} label="Неоригинал" />
               </RadioGroup>
