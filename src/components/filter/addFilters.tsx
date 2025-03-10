@@ -179,12 +179,12 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, justifyContent: "center", marginTop: 2 }}>
-            <Typography variant="h6">Типы запчастей</Typography>
+            <Typography variant="h6">Типы запчастин</Typography>
             <FormControl component="fieldset">
             <RadioGroup
           row
           defaultValue="all"
-          onChange={(e) => handleRadioChange("Типы запчастей", e.target.value)}
+          onChange={(e) => handleRadioChange("Типы запчастин", e.target.value)}
         >
                 <FormControlLabel value="type_all" control={<Radio />} label="Все" />
                 <FormControlLabel value="original" control={<Radio />} label="Оригинал" />

@@ -31,7 +31,7 @@ type CarData = {
   makeRegionId: string;
   subModel: string;
   isSubModelVisible: boolean;
-  year: string;
+  years: string;
   fuelID: string;
   engineSize: string;
   bodyTypeID: string;
@@ -212,7 +212,7 @@ const StepperComponent = () => {
     makeRegionId: '1',
     subModel: '',
     isSubModelVisible: false,
-    year: '',
+    years: '',
     fuelID: '',
     engineSize: '',
     bodyTypeID: '',

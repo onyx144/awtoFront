@@ -18,7 +18,7 @@ interface FormData {
     makeRegionId: string;
     subModel: string;
     isSubModelVisible: boolean;
-    year: string;
+    years: string;
     fuelID: string;
     engineSize: string;
     bodyTypeID: string;
@@ -63,7 +63,7 @@ const [modelId, setModelId] = useState<string>('');
     makeRegionId: "",
     subModel: "",
     isSubModelVisible: false,
-    year: "",
+    years: "",
     fuelID: "",
     engineSize: "",
     bodyTypeID: "",
@@ -264,8 +264,8 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
           <Select
             labelId="year-label"
             id="YearID"
-            value={carData.year}
-            onChange={handleSelectChange("year")}
+            value={carData.years}
+            onChange={handleSelectChange("years")}
             label="Год выпуска"
             className="wid100proc"
           >

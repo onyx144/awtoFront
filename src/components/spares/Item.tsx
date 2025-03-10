@@ -59,6 +59,20 @@ interface ItemProps {
     onlySms: boolean;
   };
   story?: boolean;
+  mark?: string;
+  modelId?: string;
+  years?: string;
+  engineSize?: string;
+  fuelID?: string;
+  bodyTypeID?: string;
+  axleID?: string;
+  partGroup?: string;
+  partType?: string;
+  partCondition?: string;
+  partNumber?: string;
+  photo?: string;
+  vin?: string;
+  partDescription?: string;
 }
 
 const getInitialValues = (): FormValues => ({
@@ -73,7 +87,30 @@ const getInitialValues = (): FormValues => ({
   currency: Cookies.get("currency") || "",
 });
 
-const Item: React.FC<ItemProps> = ({ id, name, user, city, tyme, phone, contact , story }) => {
+const Item: React.FC<ItemProps> = ({
+  id,
+  name,
+  user,
+  city,
+  tyme,
+  phone,
+  contact,
+  story,
+  mark,
+  modelId,
+  years,
+  engineSize,
+  fuelID,
+  bodyTypeID,
+  axleID,
+  partGroup,
+  partType,
+  partCondition,
+  partNumber,
+  photo,
+  vin,
+  partDescription,
+ }) => {
   const [open, setOpen] = useState(false); // Состояние для открытия модального окна
   const [showMessage, setShowMessage] = useState(false); // Состояние для отображения сообщения
   const [formValues, setFormValues] = useState<FormValues>({
@@ -163,8 +200,8 @@ const Item: React.FC<ItemProps> = ({ id, name, user, city, tyme, phone, contact 
     <>
       <TableRow>
 
-        <TableCell>{name}</TableCell>
-        <TableCell>{city}</TableCell>
+        <TableCell>{mark} <br /> {modelId} <br /> {years}</TableCell>
+        <TableCell>{engineSize} <br/> {}</TableCell>
         <TableCell>{timeAgo(tyme)}</TableCell>
         { !story &&
         <TableCell>

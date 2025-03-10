@@ -13,26 +13,41 @@ export default function Home() {
 
   
   interface SpareData {
-    partName: string;
-    partGroup: string;
-    partType: string;
-    partCondition: string;
-    partId: string;
-    partNumber: string;
-    partDescription: string;
-    partPrice: string;
-    partPhotos: Record<string, unknown>[]; // Можно уточнить тип фото, если он известен
     id: string;
-    city: string;
-    phone: string;
-    fullName: string;
-    date: string; // Дата в формате ISO
-    messageType: {
-      viber: boolean;
-      telegram: boolean;
-      whatsapp: boolean;
-      onlySms: boolean;
-    };
+  name: string;
+  user?: string;
+  city: string;
+  tyme: string;
+  phone: string;
+  fullName: string;
+  date: string; // Дата в формате ISO
+  story?: boolean;
+  mark?: string;
+  modelId?: string;
+  years?: string;
+  engineSize?: string;
+  fuelID?: string;
+  bodyTypeID?: string;
+  axleID?: string;
+  vin?: string;
+  photo?: string;
+  
+  partName: string;
+  partGroup: string;
+  partType: string;
+  partCondition: string;
+  partId: string;
+  partNumber: string;
+  partDescription?: string;
+  partPrice: string;
+  partPhotos: Record<string, unknown>[]; // Можно уточнить тип фото, если он известен
+
+  messageType: {
+    viber: boolean;
+    telegram: boolean;
+    whatsapp: boolean;
+    onlySms: boolean;
+  };
   }
    
   // Состояние для хранения введенного поиска
@@ -142,8 +157,7 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
     <br />
     Тип кузова
     <br />
-    Трансмісія
-    <br />
+   
     Привід
   </TableCell>
   <TableCell sx={cellStyle}>
@@ -164,7 +178,33 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
 
             <TableBody>
               {filteredData.map((item, index) => (
-                <Item key={index} id={item.id} name={item.partName} city={item.city} tyme={item.date} phone={item.phone} contact={item.messageType} />
+                <Item
+                key={index}
+                id={item.id}
+                name={item.name}
+                user={item.user}
+                city={item.city}
+                tyme={item.tyme}
+                phone={item.phone}
+                contact={item.messageType}
+                story={item.story}
+                mark={item.mark}
+                modelId={item.modelId}
+                years={item.years}
+                engineSize={item.engineSize}
+                fuelID={item.fuelID}
+                bodyTypeID={item.bodyTypeID}
+                axleID={item.axleID}
+                partGroup={item.partGroup}
+                partType={item.partType}
+                partCondition={item.partCondition}
+                partNumber={item.partNumber}
+                photo={item.photo}
+                vin={item.vin}
+                partDescription={item.partDescription}
+              />
+              
+              
               ))}
             </TableBody>
           </Table>

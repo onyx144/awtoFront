@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React , {useState} from "react";
 import dynamic from "next/dynamic";
-import { Box, Button, Typography, Paper } from "@mui/material";
+import { Box, Button, Typography, FormControlLabel , Checkbox, Paper } from "@mui/material";
 import { request } from "@request/request";
 import { useRouter } from "next/navigation";
 import select from "@json/select.json"
@@ -11,11 +11,13 @@ import {extractIdNamePairs , getNamesByIds , mapToObject } from '@request/functi
 interface FilterItem {
   category: string;
   values: string[];
+ 
 }
 
 type Data = {
   id: number;
   data: FilterItem[];
+  message: boolean;
 };
 
 type BoxListProps = {
@@ -26,6 +28,7 @@ type BoxListProps = {
 const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
   const router = useRouter();
   const nameToIdMap =  extractIdNamePairs(select); 
+  const [checked, setChecked] = useState<boolean>(false); 
   const valuesMap = mapToObject(nameToIdMap);
   const redirectToHomeWithFilters = (filters: FilterItem[]) => {
     const queryParams = filters
@@ -38,6 +41,19 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
       .join("&");
 
     router.push(`/?${queryParams}`);
+  };
+
+  const messageUpdate = async (id: number , event: React.ChangeEvent<HTMLInputElement>) => {
+    const newChecked = event.target.checked;
+
+    try {
+      await request('post', `/filters/message/${id}`, { message: newChecked });
+      console.log('Обновили бро');
+      onUpdate();
+    } catch (error) {
+      console.error('Ошибка обновления:', error);
+      setChecked(!newChecked); // откат при ошибке
+    } 
   };
 
   const deleteItem = async (id: number) => {
@@ -67,6 +83,8 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
               gap: 1,
             }}
           >
+            <Box className="double-flex">
+              <Box >
             {item.data.map((filter, idx) => (
               <Box
                 key={idx}
@@ -85,6 +103,23 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
                 </Typography>
               </Box>
             ))}
+            </Box>
+            <Box>
+            <FormControlLabel
+      control={
+        <Checkbox
+          checked={item.message}
+          onChange={(event) => messageUpdate(item.id, event)}
+          sx={{ transform: 'scale(0.6)' ,  padding: '0px'}} 
+        />
+      }
+      label={'Включити фільтр'}
+      sx={{ fontSize: '12px', '& .MuiTypography-root': { fontSize: '12px' } ,
+      marginTop: '-15px',
+    gap: '0px' , }}
+    />
+            </Box>
+            </Box>
             <Box
               sx={{
                 display: "flex",
