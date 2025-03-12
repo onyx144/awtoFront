@@ -3,6 +3,7 @@ import React, { useState , useEffect } from 'react';
 import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import Item from '@/components/spares/Item';
 import {request} from '@request/request'
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Home() {
   const mockData = [
@@ -31,7 +32,7 @@ export default function Home() {
   axleID?: string;
   vin?: string;
   photo?: string;
-  
+  email: string;
   partName: string;
   partGroup: string;
   partType: string;
@@ -53,6 +54,7 @@ export default function Home() {
   // Состояние для хранения введенного поиска
   const [searchQuery, setSearchQuery] = useState('');
   const [spareList, setSpareList] = useState<SpareData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [filteredData, setFilteredData] = useState<SpareData[]>([]);
 
@@ -65,13 +67,13 @@ export default function Home() {
   //display: 'flex', // Используем flex для вертикального выравнивания
   alignItems: 'center', // Выравнивание по вертикали
   justifyContent: 'center',
-      fontSize: '12px', // Уменьшаем шрифт для маленьких экранов
-
+  fontSize: '12px', // Уменьшаем шрифт для маленьких экранов
+  lineHeight: '1.8', 
   };
 
   const getSpares = async (page = 1, limit = 20) => {
-    try {
-      const response = await request('get', '/spares?page=${page}&limit=${limit}');
+    try {const queryParams = window.location.search; 
+      const response = await request('get', `/spares${queryParams}`);
       console.log('Data:' , response.data)
       setFilteredData(response.data);
 
@@ -79,8 +81,12 @@ export default function Home() {
       console.error("Ошибка при получении пользователей:", error);
     }
   };
-
   useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+  useEffect(() => {
+    
     const params = new URLSearchParams(window.location.search);
 const page = params.get("page") ? Number(params.get("page")) : 1;
 const limit = params.get("limit") ? Number(params.get("limit")) : 20;
@@ -123,7 +129,24 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
       </Typography>
 
       {/* Таблица с данными */}
-      {filteredData.length === 0 ? (
+      
+      {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '60vh',
+            flexDirection: 'column',
+            textAlign: 'center',
+          }}
+        >
+          <CircularProgress />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Завантаження...
+          </Typography>
+        </Box>
+      ) : filteredData.length === 0 ? (
         <Box
           sx={{
             display: 'flex',
@@ -171,7 +194,7 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
   <TableCell sx={cellStyle}>Код запчастини</TableCell>
   <TableCell sx={cellStyle}>Фото</TableCell>
   <TableCell sx={cellStyle}>Вінкод</TableCell>
-  <TableCell sx={cellStyle}>Додаткова інка</TableCell>
+  <TableCell sx={cellStyle}>Додаткова інформація</TableCell>
   <TableCell sx={cellStyle}>Звязатися</TableCell>
   </TableRow>
 </TableHead>
@@ -181,10 +204,10 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
                 <Item
                 key={index}
                 id={item.id}
-                name={item.name}
+                name={item.partName}
                 user={item.user}
                 city={item.city}
-                tyme={item.tyme}
+                email={item.email}
                 phone={item.phone}
                 contact={item.messageType}
                 story={item.story}
@@ -201,6 +224,7 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
                 partNumber={item.partNumber}
                 photo={item.photo}
                 vin={item.vin}
+                time={item.date}
                 partDescription={item.partDescription}
               />
               

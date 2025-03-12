@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import select from '@json/select.json'
-
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -155,7 +154,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
           </FormControl>
           </Grid>
           <Box sx={{ display: "flex", flexDirection: "column"}}>
-  <FormControl sx={{ alignItems: "center" , margin: 0 , display: "flex", flexDirection: "row", gap: 2 }} component="fieldset" margin="normal">
+  <FormControl className='message-line' sx={{ alignItems: "center" , margin: 0 , display: "flex", flexDirection: "row", gap: 2 }} component="fieldset" margin="normal">
     <Typography>Тип запчасти</Typography>
     <RadioGroup
       value={part.partType}
@@ -168,7 +167,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
     </RadioGroup>
   </FormControl>
 
-  <FormControl sx={{ margin: 0 , alignItems: "center" , display: "flex", flexDirection: "row", gap: 2 }} component="fieldset" margin="normal">
+  <FormControl className='message-line' sx={{ margin: 0 , alignItems: "center" , display: "flex", flexDirection: "row", gap: 2 }} component="fieldset" margin="normal">
     <Typography>Состояние запчасти</Typography>
     <RadioGroup
       value={part.partCondition}

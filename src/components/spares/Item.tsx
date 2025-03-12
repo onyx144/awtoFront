@@ -7,12 +7,15 @@ import { Box, Button, Typography,
 import React, { useState , useEffect } from 'react';
 import { CopyAll } from '@mui/icons-material'; // иконка для копирования в буфер
 import { WhatsApp, Telegram, Vibration } from "@mui/icons-material";
-import ViberColor from '@/svg/vibericon';
+import WhatsAppIcon from '@/svg/WhatsAppIcon';
+import ViberIcon from '@/svg/vibericon';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
-
+import { request } from '@/request/request';
+import TelegramLogo from '@/svg/TelegramIcon';
 // Функция для преобразования времени в "Х минут назад"
 const timeAgo = (datetime: string) => {
+    console.log('time' , datetime);
     const now = new Date();
     const time = new Date(datetime);
     const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
@@ -50,7 +53,7 @@ interface ItemProps {
   name: string;
   user?: string;
   city: string;
-  tyme: string;
+  time: string;
   phone: string;
   contact: {
     viber: boolean;
@@ -58,6 +61,7 @@ interface ItemProps {
     whatsapp: boolean;
     onlySms: boolean;
   };
+  email?: string;
   story?: boolean;
   mark?: string;
   modelId?: string;
@@ -92,7 +96,8 @@ const Item: React.FC<ItemProps> = ({
   name,
   user,
   city,
-  tyme,
+  time,
+  email,
   phone,
   contact,
   story,
@@ -173,9 +178,10 @@ const Item: React.FC<ItemProps> = ({
   
   const handleNext = () => {
     handleCopy();
+
     setIsSubmitted(true);
   };
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const informText = formValues.inform ? `Додаткова інформація: ${formValues.inform}\n` : '';
     const textToCopy = `
     Вітаю! Ви шукаєте ${name}, ось наша пропозиція!\n 
@@ -194,15 +200,30 @@ const Item: React.FC<ItemProps> = ({
       .catch((err) => {
         console.error('Ошибка при копировании: ', err);
       });
+      try {
+        const response = await request('post', '/spares/send', { 
+          email: email, 
+          text: textToCopy 
+        });
+    
+        console.log('Успешный ответ:', response.data);
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
   };
 
   return (
     <>
-      <TableRow>
+      <TableRow sx={{ '& td, & th': { textAlign: 'center', verticalAlign: 'middle' } }}>
 
         <TableCell>{mark} <br /> {modelId} <br /> {years}</TableCell>
-        <TableCell>{engineSize} <br/> {}</TableCell>
-        <TableCell>{timeAgo(tyme)}</TableCell>
+        <TableCell>{engineSize} <br/> {fuelID} <br/> {bodyTypeID} <br/>{axleID}</TableCell>
+        <TableCell>{partGroup} <br/> {bodyTypeID} <br/> {partCondition} </TableCell>
+        <TableCell>{name}</TableCell>
+        <TableCell>{partNumber}</TableCell>
+        <TableCell>Фотка</TableCell>
+        <TableCell>{vin}</TableCell>
+        <TableCell>{partDescription}</TableCell>
         { !story &&
         <TableCell>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>Зв'язатися</Button>
@@ -321,7 +342,7 @@ const Item: React.FC<ItemProps> = ({
           <>
           <Typography>Ваша пропозиція була відправлена на емайл Покупцю та текст пропозиції був скопійований в буфер обміну і ви можете звязатися з клієнтом прямо зараз в месенджерах по кнопках нижче та вставити свою пропозицію в чат для відправки.</Typography>
           <Typography variant="body1">Місто: {city}</Typography>
-          <Typography variant="body1">Опубликовано: {timeAgo(tyme)}</Typography>
+          <Typography variant="body1">Опубликовано: {timeAgo(time)}</Typography>
           
           {/* Контакты */}
           <Typography variant="body1">Контакты: <Link  href={`tel:${phone}`}>{phone}</Link></Typography>
@@ -329,17 +350,17 @@ const Item: React.FC<ItemProps> = ({
           <Box display="flex" gap={2} mt={2}>
                 {contact.viber && (
                   <a href={`viber://chat?number=${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
-                    <ViberColor /> Viber
+                    <ViberIcon /> 
                   </a>
                 )}
                 {contact.telegram && (
                   <a href={`https://t.me/${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Telegram /> Telegram
+                    <TelegramLogo /> 
                   </a>
                 )}
                 {contact.whatsapp && (
                   <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
-                    <WhatsApp /> WhatsApp
+                    <WhatsAppIcon /> 
                   </a>
                 )}
                 

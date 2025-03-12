@@ -63,40 +63,27 @@ export default function AppBarMenu() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Link color="inherit" href="/spares">
-  <Typography sx={{  textTransform: 'uppercase', mr: 2 }}>
+  <Typography className='header-text'>
     Найти запчасти
   </Typography>
 </Link>
 <Link color="inherit" href="/filters">
-  <Typography sx={{textTransform: 'uppercase' , mr: 2 }}>
+  <Typography className='header-text'>
     Мої фільтри
   </Typography>
 </Link>
 <Link color="inherit" href="/story">
-  <Typography sx={{  textTransform: 'uppercase' , mr: 2 }}>
+  <Typography className='header-text'>
     Історія заявок
   </Typography>
 </Link>
-              <Button onClick={handleLogout} sx={{ color: 'red' }}>
+              <Button onClick={handleLogout} className='header-text'sx={{ color: 'red' }}>
                   Вихід
                 </Button>
-              <IconButton color="inherit" component={Link} href="/profile" sx={{ ml: 2 }}>
+              <IconButton color="inherit" component={Link} href="/profile" >
                 <AccountCircle />
               </IconButton>
-              <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-              >
-                <Button onClick={handleLogout} sx={{ padding: '8px 16px' }}>
-                  Вихід
-                </Button>
-              </Popover>
+              
             </div>
           )}
         </Box>

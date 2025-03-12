@@ -248,7 +248,7 @@ const StepperComponent = () => {
     try {
       const response = await request('post', '/spares/create' , spareData);
       console.log('Запчасть создана:', response.data);
-      //window.location.href = '/success'
+      window.location.href = '/success'
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }

@@ -31,11 +31,7 @@ export default function Story() {
               <TableCell>Было закрыто</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {mockData.map((item) => (
-              <Item key={item.id} user={item.user} name={item.name} city={item.city} tyme={item.tyme} phone={item.phone} contact={item.contact as ('viber' | 'telegram' | 'whatsapp' | 'phone')[]} story/>
-            ))}
-          </TableBody>
+        
         </Table>
       </TableContainer>
     </Box>

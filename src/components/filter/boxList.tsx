@@ -11,7 +11,15 @@ import {extractIdNamePairs , getNamesByIds , mapToObject } from '@request/functi
 interface FilterItem {
   category: string;
   values: string[];
- 
+  vehicleType: string[]; // Тип техники
+  spareParts: string[]; // Названия запчастей
+  years: string[]; // Годы выпуска
+  brands: string[]; // Марки
+  spareGroups: string[]; // Группы запчастей
+  model: string[]; // Модель запчастей
+  type: string[]; // Тип техники
+  state: string[]; // Состояние запчастей
+  regions: string[]; // Регион
 }
 
 type Data = {
@@ -30,18 +38,31 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
   const nameToIdMap =  extractIdNamePairs(select); 
   const [checked, setChecked] = useState<boolean>(false); 
   const valuesMap = mapToObject(nameToIdMap);
-  const redirectToHomeWithFilters = (filters: FilterItem[]) => {
-    const queryParams = filters
-      .map(
-        (filter) =>
-          `${encodeURIComponent(filter.category)}=${encodeURIComponent(
-            filter.values.join(",")
-          )}`
-      )
-      .join("&");
+  const categoryMap: Record<string, string> = {
+  'Тип техники': 'vehicleType',
+  'Назви запчастин': 'spareParts',
+  'Годы выпуска': 'years',
+  'Марки': 'brands',
+  'Групи запчастин': 'spareGroups',
+  'Модель запчастей': 'model',
+  'Типы запчастин': 'type',
+  'Состояние запчастей': 'state',
+  'Регіони України': 'regions',
+};
 
-    router.push(`/?${queryParams}`);
-  };
+const redirectToHomeWithFilters = (filters: FilterItem[]) => {
+  const queryParams = filters
+    .map((filter) => {
+      const key = categoryMap[filter.category]; // Найти соответствующий ключ
+      return key
+        ? `${encodeURIComponent(key)}=${encodeURIComponent(filter.values.join(","))}`
+        : null; // Если ключ не найден, пропускаем
+    })
+    .filter(Boolean) // Удаляем null
+    .join("&");
+
+  router.push(`/?${queryParams}`);
+};
 
   const messageUpdate = async (id: number , event: React.ChangeEvent<HTMLInputElement>) => {
     const newChecked = event.target.checked;
@@ -135,9 +156,6 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
                 sx={{ flex: 1 }}
               >
                 Шукати
-              </Button>
-              <Button variant="outlined" color="secondary" sx={{ flex: 1 }}>
-                Редагувати
               </Button>
               <Button
                 variant="contained"

@@ -201,7 +201,7 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           flexWrap: 'wrap'
         }}
       >
-        <Box sx={{ display: "flex", flexWrap: "nowrap", mr: 2 }}>
+        <Box className={'message-line'} sx={{ display: "flex", flexWrap: "nowrap", mr: 2 }}>
           <FormControlLabel
             control={
               <Checkbox

@@ -66,7 +66,29 @@ const mockData = {
 const Profile = () => {
   const [selectedOption, setSelectedOption] = useState<string>("user");
   const [formData, setFormData] = useState<User | null>(null);
- 
+  const [currentPassword, setcurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const updatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+      alert('Пароли не совпадают');
+      return;
+    }
+
+    try {
+      const response = await request('put', '/users/change-password', {
+        currentPassword,
+        newPassword,
+      });
+      alert('Пароль успешно изменен');
+      console.log('Пароль успешно изменен', response.data);
+    } catch (error) {
+      console.error('Ошибка при смене пароля:', error);
+      alert(error);
+    }
+  };
   const updateUser = async (updateData: Partial<User>) => {
     try {
       const response = await request('put', `/users/update`, updateData);
@@ -362,6 +384,7 @@ const Profile = () => {
                 variant="outlined"
                 type="password"
                 fullWidth
+                onChange={(e) => setcurrentPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -370,6 +393,7 @@ const Profile = () => {
                 variant="outlined"
                 type="password"
                 fullWidth
+                onChange={(e) => setNewPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -378,10 +402,11 @@ const Profile = () => {
                 variant="outlined"
                 type="password"
                 fullWidth
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
-              <Button variant="contained" color="primary" type="submit">
+              <Button onClick={updatePassword} variant="contained" color="primary" type="submit">
                 Сменить пароль
               </Button>
             </Grid>
