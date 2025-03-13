@@ -96,6 +96,10 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
     const filterData = { data: groupFilters(chosenFilters) };
     createFilter(filterData);
   };
+  const onClose = () => {
+    onSave();
+  };
+
 
   const handleSaveFilters = (selectedFilters: { category: string; value: string }[]) => {
     setChosenFilters((prev) => {
@@ -194,10 +198,14 @@ const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
           </Box>
         </Paper>
       </Grid> 
-
+<Box className={'button-center'}>
       <Button onClick={handleSave} color="primary" sx={{ margin: 'auto' }}>
         Зберегти фільтр
       </Button>  
+      <Button onClick={onClose} color="primary">
+        Закрити
+      </Button>
+      </Box>
       </Grid>
     </div>
   );

@@ -41,7 +41,10 @@ body {
   padding: 6px 8px;
   text-align: center;
 }
-
+.button-center {
+  width: 100%;
+  text-align: center;
+}
 @media (max-width: 600px) {
   .header-text {
     font-size: 12px!important;

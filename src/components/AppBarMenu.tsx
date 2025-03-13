@@ -72,11 +72,11 @@ export default function AppBarMenu() {
     Мої фільтри
   </Typography>
 </Link>
-<Link color="inherit" href="/story">
+{/*<Link color="inherit" href="/story">
   <Typography className='header-text'>
     Історія заявок
   </Typography>
-</Link>
+</Link>*/}
               <Button onClick={handleLogout} className='header-text'sx={{ color: 'red' }}>
                   Вихід
                 </Button>

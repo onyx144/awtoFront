@@ -6,12 +6,22 @@ import BoxList from '@/components/filter/boxList';
 import select from "@json/select.json"
 
 interface FilterItem {
-    category: string; // Название категории (например, "Тип техники:")
-    values: string[]; // Массив значений для этой категории (например, ["Мототехника", "Грузовые", ...])
+  category: string;
+  values: string[];
+  vehicleType: string[]; // Тип техники
+  spareParts: string[]; // Названия запчастей
+  years: string[]; // Годы выпуска
+  brands: string[]; // Марки
+  spareGroups: string[]; // Группы запчастей
+  model: string[]; // Модель запчастей
+  type: string[]; // Тип техники
+  state: string[]; // Состояние запчастей
+  regions: string[];  // Массив значений для этой категории (например, ["Мототехника", "Грузовые", ...])
 }
   
 interface FiltersState {
   id: number;
+  message: boolean;
   data: FilterItem[];
   // Коллекция категорий, где ключ - это название категории, а значение - массив объектов FilterItem
 }
@@ -36,12 +46,14 @@ export default function FilterPage() {
     return (
         <div>
             <FilterContainer isAddFiltersVisible={isAddFiltersVisible} setIsAddFiltersVisible ={setIsAddFiltersVisible}/>
-             
-            {filters.length > 0 ?  (
-        <BoxList items={filters} onUpdate={getFilter}/>
-      ) : (
-        <div>Поки ви не додали фільтр</div>
-      )}
+            {!isAddFiltersVisible && (
+  filters.length > 0 ? (
+    <BoxList items={filters} onUpdate={getFilter} />
+  ) : (
+    <div>Поки ви не додали фільтр</div>
+  )
+)}
+
         </div>
     )
 }

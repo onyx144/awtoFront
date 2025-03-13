@@ -16,7 +16,7 @@ import {
 import { getToken } from '@request/request'
 
 import { WhatsApp, Telegram, Vibration } from "@mui/icons-material";
-import ViberIcon from '@/svg/vibericon';
+import ViberStep from '@/svg/viberstep';
 
 type ContactInfo = {
   phone: string;
@@ -207,8 +207,8 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
               <Checkbox
                 checked={contactInfo.messageTypes.viber}
                 onChange={() => handleCheckboxChange("viber")}
-                icon={<ViberIcon />}
-                checkedIcon={<ViberIcon color={'#8fad1c'} />}
+                icon={<ViberStep />}
+                checkedIcon={<ViberStep color={'#8fad1c'} />}
               />
             }
             label="Viber"

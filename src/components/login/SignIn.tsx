@@ -119,13 +119,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           email: email.value,  // ✅ Теперь передаётся строка, а не объект
           password: password.value,  // ✅ Теперь передаётся строка, а не объект
         });
-              console.log('Data', response.data);
-              const { token } = response.data;
+              //console.log('Data', response.data);
+              const token = response.data;
               if( token ) {
               saveToken(token, true);
+              console.log('save');
               }
               if (response.status === 201) {
-                window.location.href = '/profile'
+              //  window.location.href = '/profile'
                 console.log('Registration successful!');
               } else {
                 console.log('Registration failed. Please try again.');
