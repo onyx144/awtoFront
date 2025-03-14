@@ -8,12 +8,13 @@ import { IconButton, Popover, Button } from '@mui/material';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { CssBaseline } from '@mui/material';
 import { getToken } from '@request/request'
-import { removeToken } from '@request/request'
+import { removeToken , removeRole  ,getRole } from '@request/request'
 import Link from 'next/link';
 
 export default function AppBarMenu() {
     const [token, setToken] = useState<string | null>(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [role, setRole] = useState<string | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -31,7 +32,9 @@ export default function AppBarMenu() {
       const open = Boolean(anchorEl);
   const id = open ? 'profile-popover' : undefined;
     useEffect(() => {
-      setToken(getToken()); // Устанавливаем токен при загрузке компонента
+      setToken(getToken());
+      setRole(getRole())
+      
     }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -67,16 +70,18 @@ export default function AppBarMenu() {
     Найти запчасти
   </Typography>
 </Link>
+{role=="salesman" &&
 <Link color="inherit" href="/filters">
   <Typography className='header-text'>
     Мої фільтри
   </Typography>
 </Link>
-{/*<Link color="inherit" href="/story">
+}
+{role=="buyer" && <Link color="inherit" href="/story">
   <Typography className='header-text'>
     Історія заявок
   </Typography>
-</Link>*/}
+</Link>}
               <Button onClick={handleLogout} className='header-text'sx={{ color: 'red' }}>
                   Вихід
                 </Button>

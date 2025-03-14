@@ -4,7 +4,7 @@ import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead,
 import Item from '@/components/spares/Item';
 import {request} from '@request/request'
 import CircularProgress from '@mui/material/CircularProgress';
-
+import { getRole } from '@request/request';
 export default function Home() {
   const mockData = [
     { id: '1', name: 'КПП на 1996 Mitsubishi Colt 1.5 бензин', user: 'John Doe', city: 'Мукачево', tyme: '2025-01-24T14:00:00', contact: ['viber', 'telegram'], phone: '+380123456789' },
@@ -195,7 +195,9 @@ const limit = params.get("limit") ? Number(params.get("limit")) : 20;
   <TableCell sx={cellStyle}>Фото</TableCell>
   <TableCell sx={cellStyle}>Вінкод</TableCell>
   <TableCell sx={cellStyle}>Додаткова інформація</TableCell>
+  {getRole()=="salesman" &&
   <TableCell sx={cellStyle}>Звязатися</TableCell>
+  }
   </TableRow>
 </TableHead>
 

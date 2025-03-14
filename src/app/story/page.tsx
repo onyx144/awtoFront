@@ -12,13 +12,24 @@ export default function Story() {
 
   
 
- 
+  const cellStyle = {
+    backgroundColor: '#d1f5d1', // Светло-зеленый фон
+  border: '1px solid #ccc', // Легкая граница
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', // Легкая тень
+  padding: '8px',
+  textAlign: 'center', // Центрирование текста по горизонтали
+  //display: 'flex', // Используем flex для вертикального выравнивания
+  alignItems: 'center', // Выравнивание по вертикали
+  justifyContent: 'center',
+  fontSize: '12px', // Уменьшаем шрифт для маленьких экранов
+  lineHeight: '1.8', 
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
       {/* Поисковая строка */}
       <Typography variant='h4' sx={{ marginBottom: 1 }}>
-      Итория ваших заявок
+      Ітория ваших заявок
       </Typography>
 
       {/* Таблица с данными */}
@@ -26,9 +37,9 @@ export default function Story() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Название</TableCell>
-              <TableCell>Город</TableCell>
-              <TableCell>Было закрыто</TableCell>
+              <TableCell sx={cellStyle}>Название</TableCell>
+              <TableCell sx={cellStyle}>Город</TableCell>
+              <TableCell sx={cellStyle}>Стан</TableCell>
             </TableRow>
           </TableHead>
         

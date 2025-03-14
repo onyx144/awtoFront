@@ -11,6 +11,7 @@ import WhatsAppIcon from '@/svg/WhatsAppIcon';
 import ViberIcon from '@/svg/vibericon';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import { getRole } from '@/request/request';
 import { request } from '@/request/request';
 import TelegramLogo from '@/svg/TelegramIcon';
 // Функция для преобразования времени в "Х минут назад"
@@ -224,7 +225,7 @@ const Item: React.FC<ItemProps> = ({
         <TableCell>Фотка</TableCell>
         <TableCell>{vin}</TableCell>
         <TableCell>{partDescription}</TableCell>
-        { !story &&
+        { !story || getRole()=="salesman" &&
         <TableCell>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>Зв'язатися</Button>
         </TableCell>

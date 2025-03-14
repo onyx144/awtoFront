@@ -16,7 +16,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import {request , saveToken} from '@request/request'
+import {request , saveToken , saveRole} from '@request/request'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -120,9 +120,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           password: password.value,  // ✅ Теперь передаётся строка, а не объект
         });
               //console.log('Data', response.data);
-              const token = response.data;
+              const token = response.data.token;
+              const role = response.data.role
               if( token ) {
               saveToken(token, true);
+              saveRole(role , true);
               console.log('save');
               }
               if (response.status === 201) {
