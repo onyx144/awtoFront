@@ -12,7 +12,7 @@ const theme = createTheme({
       main: '#8fad1c',  // Основной цвет
     },
     secondary: {
-      main: '#ff4081',  // Вторичный цвет
+      main: '#8fad1c',  // Вторичный цвет
     },
   },
 });

@@ -16,7 +16,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import {request , saveToken , saveRole} from '@request/request'
+import {request , saveToken , saveRole, saveEmail, savePhone} from '@request/request'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -121,10 +121,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         });
               //console.log('Data', response.data);
               const token = response.data.token;
-              const role = response.data.role
+              const user = response.data.user
               if( token ) {
               saveToken(token, true);
-              saveRole(role , true);
+              saveRole(user.role , true);
+              saveEmail(user.email , true);
+              savePhone(user.phone , true);
               console.log('save');
               }
               if (response.status === 201) {

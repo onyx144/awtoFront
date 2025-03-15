@@ -19,7 +19,7 @@ import Select , {SelectChangeEvent} from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import {request , saveRole, saveToken} from '@request/request'
+import {request , saveRole, saveEmail , savePhone , saveToken} from '@request/request'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -146,6 +146,8 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
         if( token ) {
         saveToken(token, true);
         saveRole(response.data.user.role  ,true);
+        saveEmail(response.data.user.email , true);
+        savePhone(response.data.user.phone , true);
         }
         if (response.status === 201) {
           window.location.href = '/profile'

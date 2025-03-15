@@ -6,6 +6,8 @@ const TOKEN_KEY = 'jwtToken';
 const TOKEN_EXPIRY_KEY = 'jwtTokenExpiry';
 const TOKEN_EXPIRY_TIME = 7 * 24 * 60 * 60 * 1000; // 1 неделя
 const ROLE_KEY = 'user_role';
+const EMAIL_KEY = 'user_email';
+const PHONE_KEY = 'user_phone';
 
 const saveToken = (token: string, rememberMe: boolean) => {
   localStorage.setItem(TOKEN_KEY, token);
@@ -76,6 +78,53 @@ const useAuthInterceptor = () => {
   }, []);
 };
 
+// ✅ Сохранение email
+const saveEmail = (email: string, rememberMe: boolean) => {
+  if (rememberMe) {
+    localStorage.setItem(EMAIL_KEY, email);
+  } else {
+    sessionStorage.setItem(EMAIL_KEY, email);
+  }
+};
+
+// ✅ Получение email
+const getEmail = (): string | null => {
+  return localStorage.getItem(EMAIL_KEY) || sessionStorage.getItem(EMAIL_KEY);
+};
+
+// ✅ Удаление email
+const removeEmail = () => {
+  localStorage.removeItem(EMAIL_KEY);
+  sessionStorage.removeItem(EMAIL_KEY);
+};
+
+// ✅ Сохранение phone
+const savePhone = (phone: string, rememberMe: boolean) => {
+  if (rememberMe) {
+    localStorage.setItem(PHONE_KEY, phone);
+  } else {
+    sessionStorage.setItem(PHONE_KEY, phone);
+  }
+};
+
+// ✅ Получение phone
+const getPhone = (): string | null => {
+  return localStorage.getItem(PHONE_KEY) || sessionStorage.getItem(PHONE_KEY);
+};
+
+// ✅ Удаление phone
+const removePhone = () => {
+  localStorage.removeItem(PHONE_KEY);
+  sessionStorage.removeItem(PHONE_KEY);
+};
+
+const clearAllUserData = () => {
+  removeToken();
+  removeRole();
+  removeEmail();
+  removePhone();
+};
+
 const request = async (method: string, url: string, data?: any, config?: AxiosRequestConfig) => {
   const token = getToken();
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -97,4 +146,4 @@ const request = async (method: string, url: string, data?: any, config?: AxiosRe
   }
 };
 
-export { saveRole , getRole , removeRole , saveToken, getToken, removeToken, useAuthInterceptor, request };
+export { clearAllUserData , getPhone, getEmail , saveEmail , savePhone, saveRole , getRole , removeRole , saveToken, getToken, removeToken, useAuthInterceptor, request };

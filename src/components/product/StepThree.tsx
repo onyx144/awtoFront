@@ -10,10 +10,11 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Link ,
   TextField,
   Typography,
 } from '@mui/material';
-import { getToken } from '@request/request'
+import { getToken , getRole , getEmail , getPhone} from '@request/request'
 
 import { WhatsApp, Telegram, Vibration } from "@mui/icons-material";
 import ViberStep from '@/svg/viberstep';
@@ -60,6 +61,16 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
     whatsapp: false,
     onlySms: false,
   });
+  useEffect(() => {
+    if (getRole() === 'buyer') {
+      setContactInfo((prev) => ({
+        ...prev,
+        email: getEmail() || '',
+        phone: getPhone() || '',
+      }));
+    }
+  }, []);
+  
   const handleAuthTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAuthType(event.target.value);
   };
@@ -86,7 +97,8 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
   
   return (
     <Box sx={{ padding: 2 }}>
-      { !token &&
+      
+      { !getToken() && (
       <Box>
         <Typography variant="h6">Выберите способ авторизации</Typography>
         <RadioGroup row value={authType} onChange={handleAuthTypeChange}>
@@ -102,79 +114,21 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           />
         </RadioGroup>
       </Box>
-      }
-      {authType === '2' && (
-        <Box mt={2}>
-          <Typography variant="h6">Войти</Typography>
-          <TextField
-            fullWidth
-            label="Ваш e-mail"
-            value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
-            margin="normal"
-            autoComplete="email"
-          />
-          <TextField
-            fullWidth
-            label="Пароль"
-            type="password"
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-            margin="normal"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-            }
-            label="Запомнить меня"
-          />
-          <Button variant="text" onClick={() => alert('Сброс пароля')}>Забыли пароль?</Button>
-        </Box>
       )}
-
-      {authType === '2' && (
-        <Box mt={2}>
-          <Typography variant="h6">Регистрация</Typography>
-          <TextField
-            fullWidth
-            label="Ваш e-mail"
-            value={regEmail}
-            onChange={(e) => setRegEmail(e.target.value)}
-            margin="normal"
-            autoComplete="email"
-          />
-          <TextField
-            fullWidth
-            label="Пароль"
-            type="password"
-            value={regPassword}
-            onChange={(e) => setRegPassword(e.target.value)}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Еще раз пароль"
-            type="password"
-            value={regPasswordConfirm}
-            onChange={(e) => setRegPasswordConfirm(e.target.value)}
-            margin="normal"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-            }
-            label="Запомнить меня"
-          />
-        </Box>
+      {authType === '2'  && (
+         <Box display="flex" justifyContent="center" sx={{ gap: "10px" }}  mt={2}>
+         <Button variant="contained" color="primary" component={Link} href="/sign-in">
+           Увійти
+         </Button>
+         <Button variant="contained" color="primary" component={Link} href="/sign-up">
+           Зареєструватись
+         </Button>
+       </Box>
       )}
-
+      
       <Box mt={2}>
+      {(authType === '1' || getRole() == 'salesman') && (
+        <Box>
         <Typography variant="h6">Контактная информация</Typography>
         <TextField
           fullWidth
@@ -192,6 +146,8 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           margin="normal"
           autoComplete="tel"
         />
+        </Box>
+      )}
          <Box
         sx={{
           mt: 2,

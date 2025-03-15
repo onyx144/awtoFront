@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import {
   Box,
   TextField,
   Button,
   Select,
   MenuItem,
+  Autocomplete,
   InputLabel,
   FormControl,
   RadioGroup,
@@ -46,6 +47,12 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
     )
   );
 
+  const [options, setOptions] = useState<{ id: string; name: string }[]>([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  useEffect(() => {
+    // Загружаем пункты из JSON
+    setOptions(select.names.options);
+  }, []);
 
   const handleInputChange = (index: number, field: string, value: any) => {
     const updatedParts = [...parts];
@@ -127,13 +134,15 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
             Запчасть {index + 1}
           </Typography>
 
-          <TextField
-            fullWidth
-            label="Название запчасти"
-            value={part.partName}
-            onChange={(e) => handleInputChange(index, 'partName', e.target.value)}
-            margin="normal"
-          />
+          <Autocomplete
+      options={select.names.options} // Берём данные прямо из JSON
+      getOptionLabel={(option) => option.name}
+      value={selectedValue ? { id: selectedValue, name: selectedValue } : null}
+      onChange={(_, newValue) => setSelectedValue(newValue?.name || "")}
+      renderInput={(params) => (
+        <TextField {...params} label="Название компании" fullWidth margin="normal" />
+      )}
+    />
           <Grid item xs={12} >
           <FormControl fullWidth sx={{mt: 1}}margin="normal">
             <InputLabel id={`part-group-label-${index}`}>Группа запчасти</InputLabel>

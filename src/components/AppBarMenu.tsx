@@ -8,7 +8,7 @@ import { IconButton, Popover, Button } from '@mui/material';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { CssBaseline } from '@mui/material';
 import { getToken } from '@request/request'
-import { removeToken , removeRole  ,getRole } from '@request/request'
+import { removeToken , removeRole  ,getRole , clearAllUserData} from '@request/request'
 import Link from 'next/link';
 
 export default function AppBarMenu() {
@@ -25,8 +25,7 @@ export default function AppBarMenu() {
       };
     
       const handleLogout = () => {
-        removeToken();
-        handleClose();
+        clearAllUserData()
         window.location.reload(); 
       };
       const open = Boolean(anchorEl);
