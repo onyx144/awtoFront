@@ -49,10 +49,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
 
   const [options, setOptions] = useState<{ id: string; name: string }[]>([]);
   const [selectedValue, setSelectedValue] = useState("");
-  useEffect(() => {
-    // Загружаем пункты из JSON
-    setOptions(select.names.options);
-  }, []);
+ 
 
   const handleInputChange = (index: number, field: string, value: any) => {
     const updatedParts = [...parts];
@@ -135,14 +132,23 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
           </Typography>
 
           <Autocomplete
-      options={select.names.options} // Берём данные прямо из JSON
-      getOptionLabel={(option) => option.name}
-      value={selectedValue ? { id: selectedValue, name: selectedValue } : null}
-      onChange={(_, newValue) => setSelectedValue(newValue?.name || "")}
-      renderInput={(params) => (
-        <TextField {...params} label="Название компании" fullWidth margin="normal" />
-      )}
-    />
+  options={select.names.options} // Берём данные прямо из JSON
+  getOptionLabel={(option) => option.name}
+  value={selectedValue ? { id: selectedValue, name: selectedValue } : null}
+  onChange={(_, newValue) => {
+    setSelectedValue(newValue?.name || "");
+
+    // Обновляем только ту запчасть, в которой уже был partName
+    setParts((prevParts) => {
+      return prevParts.map((part) =>
+        part.partName ? { ...part, partName: newValue?.name || "" } : part
+      );
+    });
+  }}
+  renderInput={(params) => (
+    <TextField {...params} label="Название компании" fullWidth margin="normal" />
+  )}
+/>
           <Grid item xs={12} >
           <FormControl fullWidth sx={{mt: 1}}margin="normal">
             <InputLabel id={`part-group-label-${index}`}>Группа запчасти</InputLabel>

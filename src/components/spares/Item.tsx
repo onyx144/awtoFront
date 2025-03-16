@@ -225,7 +225,7 @@ const Item: React.FC<ItemProps> = ({
         <TableCell>Фотка</TableCell>
         <TableCell>{vin}</TableCell>
         <TableCell>{partDescription}</TableCell>
-        { !story || getRole()=="salesman" &&
+        { (!story || getRole()=="salesman") &&
         <TableCell>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>Зв'язатися</Button>
         </TableCell>
