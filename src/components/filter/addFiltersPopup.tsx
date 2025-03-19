@@ -158,14 +158,14 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
   };
 
   const handleSave = () => {
-    console.log('token' , getToken());
+    console.log('option value' , optionValue);
     onSaveFilters(chosenValues);
     onClose(); // Закрываем диалог
   };
 
   return (
     <Dialog open onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>Фильтр по моделям</DialogTitle>
+      <DialogTitle>Оберіть фільтр</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           {/* Левая колонка - Доступные фильтры */}
@@ -189,7 +189,7 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
                 ))}
               </List>
             )}
-            {optionValue.minCategory && (
+            {optionValue.category == 'Модели:' && (
               <ModelBox onSelectValue={handleSelectValue}/>
             )}
             </Paper>
