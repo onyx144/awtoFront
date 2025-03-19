@@ -20,8 +20,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import select from '@json/select.json'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-
+import { request } from '@request/request'
+import UploadImage from './UploadImage';
 type Part = {
   partName: string;
   partGroup: string;
@@ -63,26 +63,36 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, partIndex: number, photoIndex: number) => {
     if (event.target.files) {
       const file = event.target.files[0];
-
+  
       // Проверка формата
       if (!file.type.startsWith("image/")) {
         alert("Можно загружать только изображения!");
         return;
       }
-
+  
+      // Обновляем `partPhotos` внутри `parts`
       setParts(prevParts => {
-        const updatedParts = [...prevParts];
-        const updatedPhotos = [...updatedParts[partIndex].partPhotos];
-        updatedPhotos[photoIndex] = file;
-        updatedParts[partIndex].partPhotos = updatedPhotos;
-        return updatedParts;
+        return prevParts.map((part, pIndex) => {
+          if (pIndex !== partIndex) return part; // Оставляем остальные части без изменений
+  
+          // Копируем массив `partPhotos`
+          const updatedPhotos = [...part.partPhotos];
+          updatedPhotos[photoIndex] = file; // Обновляем нужное фото
+  
+          return { ...part, partPhotos: updatedPhotos }; // Возвращаем обновленный объект
+        });
       });
-
-      // Обновляем превью
+  
+      // Обновляем `previewUrls`
       setPreviewUrls(prev => {
-        const updatedPreviews = [...prev];
-        updatedPreviews[partIndex][photoIndex] = URL.createObjectURL(file);
-        return updatedPreviews;
+        return prev.map((previewRow, pIndex) => {
+          if (pIndex !== partIndex) return previewRow; // Оставляем остальные превью без изменений
+  
+          const updatedPreviews = [...previewRow]; // Копируем текущий массив превью
+          updatedPreviews[photoIndex] = URL.createObjectURL(file); // Создаем ссылку для превью
+  
+          return updatedPreviews; // Возвращаем обновленный массив превью
+        });
       });
     }
   };
@@ -125,6 +135,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
   };
   return (
     <Box>
+      <UploadImage/>
       {parts.map((part, index) => (
         <Box key={index} sx={{ mb: 4, border: '1px solid #ccc', p: 2, borderRadius: '8px' }}>
           <Typography variant="h6" gutterBottom>
@@ -256,7 +267,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
               </IconButton>
             </Box>
           ))}
-
+          {/*
           <Button
             variant="outlined"
             startIcon={<AddCircleOutlineIcon />}
@@ -277,6 +288,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
           >
             Добавить фото
           </Button>
+          */}
         </Box>
       ))}
     </Box>

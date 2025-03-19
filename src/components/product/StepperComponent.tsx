@@ -238,17 +238,19 @@ const StepperComponent = () => {
     },
   });
   const createSpare = async (spareData: SpareData , files: File[]): Promise<void> => {
-    console.log('Data:' , spareData );
+    console.log('Data:' , files );
     const formData = new FormData();
-    formData.append('spareData', JSON.stringify(spareData));
 
-  files.forEach((file) => {
-    formData.append('files', file);
-  });
+    files.forEach((file) => {
+      formData.append('files', file); // Добавляем файлы
+    });
+  
     try {
       const response = await request('post', '/spares/create' , spareData);
+      const imageResponse = await request('post', '/spares/image', formData);  
       console.log('Запчасть создана:', response.data);
-      window.location.href = '/success'
+      console.log('Аймаг залетел:', imageResponse.data);
+ //     window.location.href = '/success'
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }

@@ -124,26 +124,37 @@ const clearAllUserData = () => {
   removeEmail();
   removePhone();
 };
-
-const request = async (method: string, url: string, data?: any, config?: AxiosRequestConfig) => {
+const request = async (
+  method: string,
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig
+) => {
   const token = getToken();
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const axiosConfig = { ...config, headers };
+  const headers: Record<string, string> = token
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 
+  if (data instanceof FormData) {
+    headers["Content-Type"] = "multipart/form-data"; // ⚡ Добавляем поддержку файлов
+  }
+
+  const axiosConfig = { ...config, headers };
   const fullUrl = `${BASE_URL}${url}`;
 
   switch (method.toLowerCase()) {
-    case 'get':
+    case "get":
       return axios.get(fullUrl, axiosConfig);
-    case 'post':
+    case "post":
       return axios.post(fullUrl, data, axiosConfig);
-    case 'put':
+    case "put":
       return axios.put(fullUrl, data, axiosConfig);
-    case 'delete':
+    case "delete":
       return axios.delete(fullUrl, axiosConfig);
     default:
       throw new Error(`Unsupported request method: ${method}`);
   }
 };
+
 
 export { clearAllUserData , getPhone, getEmail , saveEmail , savePhone, saveRole , getRole , removeRole , saveToken, getToken, removeToken, useAuthInterceptor, request };
