@@ -41,7 +41,6 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       )
     )
   );
-  const [selectedValue, setSelectedValue] = useState("");
  
 // eslint-disable-next-line
   const handleInputChange = (index: number, field: string, value: any) => {
@@ -120,8 +119,8 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
     ]);
   };
 
+ 
   const removePart = (index: number) => {
-    console.log(index , 'parts' , parts);
     setParts((prevParts) => prevParts.filter((_, i) => i !== index));
   };
   return (
@@ -135,21 +134,12 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
           <Autocomplete
   options={select.names.options} // Берём данные прямо из JSON
   getOptionLabel={(option) => option.name}
-  value={selectedValue ? { id: selectedValue, name: selectedValue } : null}
-  onChange={(_, newValue) => {
-    setSelectedValue(newValue?.name || "");
-
-    // Обновляем только ту запчасть, в которой уже был partName
-    setParts((prevParts) => {
-      return prevParts.map((part) =>
-        part.partName ? { ...part, partName: newValue?.name || "" } : part
-      );
-    });
-  }}
-  renderInput={(params) => (
-    <TextField {...params} label="Название компании" fullWidth margin="normal" />
+  value={part.partName ? { id: part.partName, name: part.partName } : null}
+  onChange={(_, newValue) => handleInputChange(index, 'partName', newValue?.name || '')}  renderInput={(params) => (
+    <TextField {...params} label="Назва запчастини" fullWidth margin="normal" />
   )}
 />
+
           <Grid item xs={12} >
           <FormControl fullWidth sx={{mt: 1}}margin="normal">
             <InputLabel id={`part-group-label-${index}`}>Группа запчасти</InputLabel>
@@ -208,8 +198,6 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
           <TextField
                     fullWidth
                     label="Описание запчасти"
-                    multiline
-                    rows={4}
                     value={part.partDescription}
                     onChange={(e) => handleInputChange(index, 'partDescription', e.target.value)}
                     margin="normal"
