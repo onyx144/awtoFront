@@ -24,7 +24,8 @@ type Part = {
   partType: string;
   partCondition: string;
   partNumber: string;
-  partPhotos: (File  | null)[];
+  partFile: (File  | null)[];
+  partPhotos: (string | null)[];
   partDescription: string;
   partPrice: string;
 };
@@ -36,7 +37,7 @@ type StepOneProps = {
 const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
   const [previewUrls, setPreviewUrls] = useState<string[][]>(
     parts.map(part =>
-      part.partPhotos.map(photo =>
+      part.partFile.map(photo =>
         photo instanceof File ? URL.createObjectURL(photo) : ""
       )
     )
@@ -60,16 +61,16 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
         return;
       }
   
-      // Обновляем `partPhotos` внутри `parts`
+      // Обновляем `partFile` внутри `parts`
       setParts(prevParts => {
         return prevParts.map((part, pIndex) => {
           if (pIndex !== partIndex) return part; // Оставляем остальные части без изменений
   
-          // Копируем массив `partPhotos`
-          const updatedPhotos = [...part.partPhotos];
+          // Копируем массив `partFile`
+          const updatedPhotos = [...part.partFile];
           updatedPhotos[photoIndex] = file; // Обновляем нужное фото
   
-          return { ...part, partPhotos: updatedPhotos }; // Возвращаем обновленный объект
+          return { ...part, partFile: updatedPhotos }; // Возвращаем обновленный объект
         });
       });
   
@@ -90,7 +91,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
   const handleRemovePhoto = (partIndex: number, photoIndex: number) => {
     setParts(prevParts => {
       const updatedParts = [...prevParts];
-      updatedParts[partIndex].partPhotos = updatedParts[partIndex].partPhotos.filter((_, i) => i !== photoIndex);
+      updatedParts[partIndex].partFile = updatedParts[partIndex].partFile.filter((_, i) => i !== photoIndex);
       return updatedParts;
     });
 
@@ -112,6 +113,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
         partType: '0',
         partCondition: '0',
         partNumber: '',
+        partFile: [null],
         partPhotos: [null],
         partDescription: '',
         partPrice: '',
@@ -217,7 +219,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       {parts.map((part, partIndex) => (
         <Box key={partIndex} sx={{ mt: 2 }}>
           <Typography>Фото запчасти</Typography>
-          {part.partPhotos.map((photo, photoIndex) => (
+          {part.partFile.map((photo, photoIndex) => (
             <Box key={photoIndex} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
               <input
                 type="file"
@@ -252,7 +254,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
             onClick={() => {
               setParts(prevParts => {
                 const updatedParts = [...prevParts];
-                updatedParts[partIndex].partPhotos.push(null);
+                updatedParts[partIndex].partFile.push(null);
                 return updatedParts;
               });
 

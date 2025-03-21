@@ -18,7 +18,8 @@ type Part = {
   partType: string;
   partCondition: string;
   partNumber: string;
-  partPhotos: (File  | null)[];
+  partFile: (File  | null)[];
+  partPhotos: (string | null)[];
   partDescription: string;
   partPrice: string;
 };
@@ -191,19 +192,7 @@ const StepContent = ({
 
 
 const StepperComponent = () => {
-  const [parts, setParts] = useState<Part[]>([
-    {
-      partName: '',
-      partGroup: '',
-      partSide: '',
-      partType: '0',
-      partCondition: '0',
-      partNumber: '',
-      partPhotos: [null],
-      partDescription: '',
-      partPrice: '',
-    },
-  ]);
+  const [parts, setParts] = useState<Part[]>([]);
 
   const [carData, setCarData] = useState<CarData>({
     modelId: '',
@@ -257,7 +246,7 @@ const StepperComponent = () => {
     }
   };
   const handleSubmit = () => {
-    const files: File[] = parts.flatMap((part) => part.partPhotos || []).filter((file): file is File => file !== null);
+    const files: File[] = parts.flatMap((part) => part.partFile || []).filter((file): file is File => file !== null);
   
     const formData = {
       parts,

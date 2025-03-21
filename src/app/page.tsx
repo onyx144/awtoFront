@@ -36,7 +36,7 @@ export default function Home() {
   partNumber: string;
   partDescription?: string;
   partPrice: string;
-  partPhotos: Record<string, unknown>[]; // Можно уточнить тип фото, если он известен
+  partFile: Record<string, unknown>[]; // Можно уточнить тип фото, если он известен
 
   messageType: {
     viber: boolean;
