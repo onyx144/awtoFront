@@ -3,10 +3,8 @@ import { Box, Button, Typography,
   Select,
   FormControl,
   InputLabel,TableRow, 
-  TextField, TableCell, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
+  TextField, TableCell, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import React, { useState , useEffect } from 'react';
-import { CopyAll } from '@mui/icons-material'; // иконка для копирования в буфер
-import { WhatsApp, Telegram, Vibration } from "@mui/icons-material";
 import WhatsAppIcon from '@/svg/WhatsAppIcon';
 import ViberIcon from '@/svg/vibericon';
 import Link from 'next/link';
@@ -80,7 +78,7 @@ interface ItemProps {
   partDescription?: string;
 }
 
-const getInitialValues = (): FormValues => ({
+/*const getInitialValues = (): FormValues => ({
   condition: Cookies.get("condition") || "",
   type: Cookies.get("type") || "",
   warranty: "",
@@ -90,12 +88,11 @@ const getInitialValues = (): FormValues => ({
   price: "",
   inform: "",
   currency: Cookies.get("currency") || "",
-});
+});*/
 
 const Item: React.FC<ItemProps> = ({
   id,
   name,
-  user,
   city,
   time,
   email,
@@ -110,7 +107,6 @@ const Item: React.FC<ItemProps> = ({
   bodyTypeID,
   axleID,
   partGroup,
-  partType,
   partCondition,
   partNumber,
   photo,
@@ -144,6 +140,7 @@ const Item: React.FC<ItemProps> = ({
   };
 
   useEffect(() => {
+    console.log('id' , id);
     const globalStyles = `
       @keyframes fadeOut {
         0% {
@@ -222,12 +219,18 @@ const Item: React.FC<ItemProps> = ({
         <TableCell>{partGroup} <br/> {bodyTypeID} <br/> {partCondition} </TableCell>
         <TableCell>{name}</TableCell>
         <TableCell>{partNumber}</TableCell>
-        <TableCell>Фотка</TableCell>
+        <TableCell> {photo ? (
+    <a href={photo} target="_blank" rel="noopener noreferrer">
+      <img src={photo} alt="Фото" width={50} height={50} style={{ borderRadius: '5px' }} />
+    </a>
+  ) : (
+    "Зображення не завантажено"
+  )}</TableCell>
         <TableCell>{vin}</TableCell>
         <TableCell>{partDescription}</TableCell>
         { (!story || getRole()=="salesman") &&
         <TableCell>
-          <Button variant="contained" color="primary" onClick={handleClickOpen}>Зв'язатися</Button>
+          <Button variant="contained" color="primary" onClick={handleClickOpen}>Звя&apos;затися</Button>
         </TableCell>
         }
       </TableRow>
@@ -380,7 +383,7 @@ const Item: React.FC<ItemProps> = ({
 };
 const styles = {
     toast: {
-        position: 'fixed' as 'fixed',
+      position: 'fixed' as const,
       bottom: '20px',
       left: '50%',
       transform: 'translateX(-50%)',

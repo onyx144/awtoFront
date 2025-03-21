@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -13,15 +13,10 @@ import {
   Radio,
   Grid,
   Typography,
-  TextareaAutosize,
   IconButton,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import select from '@json/select.json'
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { request } from '@request/request'
-import UploadImage from './UploadImage';
 type Part = {
   partName: string;
   partGroup: string;
@@ -46,17 +41,13 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       )
     )
   );
-
-  const [options, setOptions] = useState<{ id: string; name: string }[]>([]);
   const [selectedValue, setSelectedValue] = useState("");
  
-
+// eslint-disable-next-line
   const handleInputChange = (index: number, field: string, value: any) => {
     const updatedParts = [...parts];
-    console.log('value:' , value);
 
     updatedParts[index] = { ...updatedParts[index], [field]: value };
-    console.log('updatedParts:' , updatedParts);
 
     setParts(updatedParts);
   };
@@ -135,7 +126,6 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
   };
   return (
     <Box>
-      <UploadImage/>
       {parts.map((part, index) => (
         <Box key={index} sx={{ mb: 4, border: '1px solid #ccc', p: 2, borderRadius: '8px' }}>
           <Typography variant="h6" gutterBottom>

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Box, FormControl , FormControlLabel , Radio , RadioGroup ,Button, Grid, Typography, Paper } from '@mui/material';
 import AddFiltersPopup from './addFiltersPopup';
-import {request , saveToken} from '@request/request'
+import {request } from '@request/request'
 import {extractIdNamePairs , createReverseMap} from '@request/function'
 import select from '@json/select.json'
 interface AddFiltersProps {
   onSave: () => void;
 }
 interface CreateFilterDto {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: Record<string, any>; // Теперь data — это объект
 }
 type FilterOption = { id: string; name: string };
@@ -16,27 +17,28 @@ type FilterCategory = { category: string; options: FilterOption[] };
 const AddFilters: React.FC<AddFiltersProps> = ({ onSave }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<number | null>(null);
   const [chosenFilters, setChosenFilters] = useState<{ category: string; value: string }[]>([]);
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+const parseFiltersData = (data: Record<string, any>): FilterCategory[] => {
+  return Object.entries(data).map(([, value]) => {
+    let options: FilterOption[] = [];
+  
+    if (Array.isArray(value.type)) {
+      options = value.type as FilterOption[];
+    } else if (Array.isArray(value.options)) {
+      options = value.options as FilterOption[];
+    } else {
+      options = Object.values(value)
+        .filter((v): v is FilterOption[] => Array.isArray(v))
+        .flat();
+    }
+  
+    return {
+      category: value.category as string,
+      options
+    };
+  });
+};
 
-  const parseFiltersData = (data: Record<string, any>): FilterCategory[] => {
-    return Object.entries(data).map(([_, value]) => {
-      let options: FilterOption[] = [];
-  
-      if (Array.isArray(value.type)) {
-        options = value.type as FilterOption[];
-      } else if (Array.isArray(value.options)) {
-        options = value.options as FilterOption[];
-      } else {
-        options = Object.values(value)
-          .filter((v): v is FilterOption[] => Array.isArray(v))
-          .flat();
-      }
-  
-      return {
-        category: value.category as string,
-        options
-      };
-    });
-  };
   
   const filtersData = parseFiltersData(select);
   

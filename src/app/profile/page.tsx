@@ -17,9 +17,8 @@ import {
   Box,
   Typography,
   SelectChangeEvent ,
-  InputAdornment,
 } from "@mui/material";
-import select from '@json/select.json'
+//import select from '@json/select.json'
 import {request} from '@request/request'
 
 type User = {
@@ -43,26 +42,7 @@ type User = {
   website: string | null;
 };
 // Моковые данные для заполнения формы
-const mockData = {
-  fullName: "Петровський Петровський",
-  email: "test22@gmail.com",
-  region: "Кировоградская область",
-  city: "Кропивницкий",
-  phone1: "0966921999",
-  phone2: "0731191999",
-  paymentMethod: "Наличный (банковский перевод)",
-  companyName: "Avtozap",
-  companyAddress: "Угерсько",
-  region_company: "Львовская область",
-  city_company: "Стрый",
-  email_company: "test22@gmail.com",
-  phoneNumbers: [
-    { number: "0966921233", name: "Ігор" },
-    { number: "0731191844", name: "Валерій" },
-  ],
-  website: "https://autozap.net.ua/",
-  additionalInfo: "Розборка Тойот і не тільки. Запчастини з гарантією",
-};
+
 
 const Profile = () => {
   const [selectedOption, setSelectedOption] = useState<string>("user");

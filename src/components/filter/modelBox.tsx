@@ -17,12 +17,12 @@ interface ModelProps {
     onSelectValue: (value: string, event: React.MouseEvent<HTMLDivElement>, secondBoxItems: string[]) => void;
   }
 
-const ModelBox: React.FC<ModelProps> = ({minCategory , onSelectValue}) => {
+const ModelBox: React.FC<ModelProps> = ({ onSelectValue}) => {
   const [selectedType, setSelectedType] = useState<string>("");
   const [firstBoxItems, setFirstBoxItems] = useState<string[]>([]);
   const [secondBoxItems, setSecondBoxItems] = useState<string[]>([]);
   const [selectedFirstBoxItem, setSelectedFirstBoxItem] = useState<string | null>(null);
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [selectedValues] = useState<string[]>([]);
 
   const data: Data = {
     category: "Модели:",
@@ -44,6 +44,7 @@ const ModelBox: React.FC<ModelProps> = ({minCategory , onSelectValue}) => {
     setSelectedType(selected);
 
     if (typeof data.minCategory[selected] === "object" && !Array.isArray(data.minCategory[selected])) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setFirstBoxItems(Object.keys(data.minCategory[selected] as { [key: string]: any }));
     } else if (Array.isArray(data.minCategory[selected])) {
       setFirstBoxItems((data.minCategory[selected] as string[][]).flat());
@@ -55,9 +56,7 @@ const ModelBox: React.FC<ModelProps> = ({minCategory , onSelectValue}) => {
     setSelectedFirstBoxItem(null); // Сброс выбранного элемента при смене типа
   };
 
-  const handleAddFilterClick = (item: string) => {
-   console.log('test');
-  }
+
   const handleFirstBoxClick = (item: string) => {
     setSelectedFirstBoxItem(item);
 

@@ -14,8 +14,7 @@ import {
   ListItemText,
   ListItemButton,
 } from '@mui/material';
-import { getToken } from '@request/request'
-import { getOptionName } from '@/request/function';
+
 import ModelBox from './modelBox'
 // Тип для отдельной опции фильтра
 type FilterOption = {
@@ -24,10 +23,7 @@ type FilterOption = {
 };
 
 // Тип для структуры данных фильтра
-type FilterCategory = {
-  category: string;
-  options: FilterOption[];
-};
+
 
 // Тип для вложенных категорий, если такие есть
 type NestedCategory = {
@@ -44,11 +40,11 @@ const AddFiltersPopup: React.FC<AddFiltersProps> = ({ onClose, optionValue, onSa
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedChosenValues, setSelectedChosenValues] = useState<string[]>([]);
   const [chosenValues, setChosenValues] = useState<{ category: string; value: string }[]>([]);
-  const getOptionName = (id: string, options: { id: string; name: string }[]): string => {
+ /* const getOptionName = (id: string, options: { id: string; name: string }[]): string => {
     const optionsMap = new Map(options.map((option) => [option.id, option.name]));
     return optionsMap.get(id) || id;
     
-  };
+  };*/
   
   
   const handleAdd = (value?: string) => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { RadioGroup , Checkbox , FormControlLabel , Radio ,  FormGroup , TextField , FormControl, Grid , InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Box } from "@mui/material";
 import select from '@json/select.json'
-interface FormData {
+/*interface FormData {
     fuelID: string;
     engineSize: string;
     bodyTypeID: string;
@@ -10,7 +10,7 @@ interface FormData {
     colorName: string;
     colorMetallic: boolean;
     vin: string;
-  }
+  }*/
   type CarData = {
     modelId: string;
     carType: string;
@@ -35,28 +35,24 @@ interface FormData {
   };
 
 const StepTwo: React.FC<StepTwoProps> = ({ carData, setCarData }) => {
-const [modelId, setModelId] = useState<string>('');
-  const [carType, setCarType] = useState<string>("");
-  const [mark, setmark] = useState<string>('');
-  const [makeRegionId, setMakeRegionId] = useState<string>('1');
-  const [subModel, setSubModel] = useState<string>('');
-  const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
-  const [year, setYear] = useState<string>('');
-  let models =
-  (select.models[carData.makeRegionId as keyof typeof select.models] &&
-  typeof select.models[carData.makeRegionId as keyof typeof select.models] === "object" &&
-  Array.isArray(
-    select.models[carData.makeRegionId as keyof typeof select.models]?.[
-      carData.mark as keyof typeof select.models[keyof typeof select.models]
-    ]
-  )
-    ? select.models[carData.makeRegionId as keyof typeof select.models]?.[
-        carData.mark as keyof typeof select.models[keyof typeof select.models]
-      ]
-    : []) as { id: string; name: string }[];
+//const [modelId, setModelId] = useState<string>('');
+  //const [carType, setCarType] = useState<string>("");
+   const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
+   const models =
+   (select.models[carData.makeRegionId as keyof typeof select.models] &&
+   typeof select.models[carData.makeRegionId as keyof typeof select.models] === "object" &&
+   Array.isArray(
+     select.models[carData.makeRegionId as keyof typeof select.models]?.[
+       carData.mark as keyof typeof select.models[keyof typeof select.models]
+     ]
+   )
+     ? select.models[carData.makeRegionId as keyof typeof select.models]?.[
+         carData.mark as keyof typeof select.models[keyof typeof select.models]
+       ]
+     : []) as { id: string; name: string }[];
 
 
-  const [formData, setFormData] = useState<CarData>({
+  const [formData] = useState<CarData>({
     modelId: "",
     carType: "",
     mark: "",
@@ -98,16 +94,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
   const toggleSubModelVisibility = () => {
     setSubModelVisible(!isSubModelVisible);
   };
-  const handleYearChange = (event: SelectChangeEvent) => {
-    setYear(event.target.value);
-  };
-  const handleRegionChange = (event: SelectChangeEvent) => {
-    setMakeRegionId(event.target.value);
-  };
-  const handleChange = (event: SelectChangeEvent) => {
-    setCarType(event.target.value);
-    console.log(carType);
-  };
+
 
   return (
     <Box>
@@ -205,7 +192,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         label="Модель"
       >
         {models.length > 0  ? (
-  models.map((model, index) => (
+  models.map((model) => (
     <MenuItem key={model.id} value={model.id}>
       {model.name}
     </MenuItem>

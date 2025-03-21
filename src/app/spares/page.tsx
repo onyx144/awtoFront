@@ -1,6 +1,4 @@
-import Image from "next/image";
-import SignIn from '@components/login/SignIn';
-import AppBarMenu from "@/components/AppBarMenu";
+
 import StepperComponent from "@/components/product/StepperComponent";
 export default function Home() {
   return (

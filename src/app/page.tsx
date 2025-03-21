@@ -1,16 +1,11 @@
 'use client'
 import React, { useState , useEffect } from 'react';
-import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
+import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Item from '@/components/spares/Item';
 import {request} from '@request/request'
 import CircularProgress from '@mui/material/CircularProgress';
 import { getRole } from '@request/request';
 export default function Home() {
-  const mockData = [
-    { id: '1', name: 'КПП на 1996 Mitsubishi Colt 1.5 бензин', user: 'John Doe', city: 'Мукачево', tyme: '2025-01-24T14:00:00', contact: ['viber', 'telegram'], phone: '+380123456789' },
-  { id: '2', name: 'КПП на 2010 Honda Civic', user: 'Jane Doe', city: 'Киев', tyme: '2025-01-23T12:30:00', contact: ['whatsapp'], phone: '+380987654321' },
-  { id: '3', name: 'КПП на 2005 Ford Focus', user: 'Alex Smith', city: 'Львов', tyme: '2025-01-22T09:00:00', contact: ['phone', 'telegram'], phone: '+380112233445' },
-  { id: '4', name: 'КПП на 2015 Audi A3', user: 'Alice Johnson', city: 'Одесса', tyme: '2025-01-21T16:45:00', contact: ['viber', 'whatsapp'], phone: '+380334455667' }  ];
 
   
   interface SpareData {
@@ -53,7 +48,7 @@ export default function Home() {
    
   // Состояние для хранения введенного поиска
   const [searchQuery, setSearchQuery] = useState('');
-  const [spareList, setSpareList] = useState<SpareData[]>([]);
+  const [spareList] = useState<SpareData[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [filteredData, setFilteredData] = useState<SpareData[]>([]);
@@ -71,7 +66,7 @@ export default function Home() {
   lineHeight: '1.8', 
   };
 
-  const getSpares = async (page = 1, limit = 20) => {
+  const getSpares = async () => {
     try {const queryParams = window.location.search; 
       const response = await request('get', `/spares${queryParams}`);
       console.log('Data:' , response.data)
@@ -87,10 +82,10 @@ export default function Home() {
   }, []);
   useEffect(() => {
     
-    const params = new URLSearchParams(window.location.search);
-const page = params.get("page") ? Number(params.get("page")) : 1;
-const limit = params.get("limit") ? Number(params.get("limit")) : 20;
-    getSpares(page , limit); 
+    //const params = new URLSearchParams(window.location.search);
+//const page = params.get("page") ? Number(params.get("page")) : 1;
+//const limit = params.get("limit") ? Number(params.get("limit")) : 20;
+    getSpares(); 
         }, []);
 
   // Обработчик поиска

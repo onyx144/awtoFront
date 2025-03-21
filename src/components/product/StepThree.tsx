@@ -3,20 +3,16 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  MenuItem,
   Radio,
   RadioGroup,
-  Select,
   Link ,
   TextField,
   Typography,
 } from '@mui/material';
 import { getToken , getRole , getEmail , getPhone} from '@request/request'
 
-import { WhatsApp, Telegram, Vibration } from "@mui/icons-material";
+import { WhatsApp, Telegram } from "@mui/icons-material";
 import ViberStep from '@/svg/viberstep';
 
 type ContactInfo = {
@@ -41,7 +37,7 @@ type StepThreeProps = {
 const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) => {
   
   const [authType, setAuthType] = useState('1');
-  const [loginEmail, setLoginEmail] = useState('');
+  /*const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -51,17 +47,15 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
   const [additionalPhone, setAdditionalPhone] = useState('');
   const [fullName, setFullName] = useState('');
   const [cityName, setCityName] = useState('');
-  const [comments, setComments] = useState('');
-  const [token, setToken] = useState<string | null>(null);
+  const [comments, setComments] = useState('');*/
   
   const [showAdditionalPhone, setShowAdditionalPhone] = useState(false);
-  const [messageTypes, setMessageTypes] = useState({
-    viber: false,
-    telegram: false,
-    whatsapp: false,
-    onlySms: false,
-  });
+  const [token, setToken] = useState<string | null>(null);
+ 
+
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setToken(getToken());
     if (getRole() === 'buyer') {
       setContactInfo((prev) => ({
         ...prev,
@@ -69,12 +63,13 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
         phone: getPhone() || '',
       }));
     }
+    }
   }, []);
   
   const handleAuthTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAuthType(event.target.value);
   };
-  const handleCheckboxChange = (type: keyof typeof messageTypes) => {
+  const handleCheckboxChange = (type: keyof ContactInfo['messageTypes']) => {
     setContactInfo((prev) => ({
       ...prev,
       messageTypes: {
@@ -91,14 +86,12 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
     }));
   };
   
-  useEffect(() => {
-    setToken(getToken()); // Устанавливаем токен при загрузке компонента
-  }, []);
+ 
   
   return (
     <Box sx={{ padding: 2 }}>
       
-      { !getToken() && (
+      { !token && (
       <Box>
         <Typography variant="h6">Выберите способ авторизации</Typography>
         <RadioGroup row value={authType} onChange={handleAuthTypeChange}>

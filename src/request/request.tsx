@@ -124,9 +124,11 @@ const clearAllUserData = () => {
   removeEmail();
   removePhone();
 };
+
 const request = async (
   method: string,
   url: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any,
   config?: AxiosRequestConfig
 ) => {

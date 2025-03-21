@@ -1,6 +1,6 @@
 "use client";
 
-import React , {useState} from "react";
+import React  from "react";
 import dynamic from "next/dynamic";
 import { Box, Button, Typography, FormControlLabel , Checkbox, Paper } from "@mui/material";
 import { request } from "@request/request";
@@ -36,7 +36,7 @@ type BoxListProps = {
 const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
   const router = useRouter();
   const nameToIdMap =  extractIdNamePairs(select); 
-  const [checked, setChecked] = useState<boolean>(false); 
+  //const [checked, setChecked] = useState<boolean>(false); 
   const valuesMap = mapToObject(nameToIdMap);
   const categoryMap: Record<string, string> = {
   'Тип техники': 'vehicleType',
@@ -69,11 +69,11 @@ const redirectToHomeWithFilters = (filters: FilterItem[]) => {
 
     try {
       await request('post', `/filters/message/${id}`, { message: newChecked });
-      console.log('Обновили бро');
+     // console.log('Обновили бро');
       onUpdate();
     } catch (error) {
       console.error('Ошибка обновления:', error);
-      setChecked(!newChecked); // откат при ошибке
+      //setChecked(!newChecked); // откат при ошибке
     } 
   };
 

@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from 'react';
-import { Box, Button, Step, StepLabel, Stepper, Typography, StepIconProps } from '@mui/material';
+import { Box, Button, Step, StepLabel, Stepper, StepIconProps } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
-import {request , saveToken} from '@request/request'
+import {request } from '@request/request'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const steps = ['Шаг 1', 'Шаг 2', 'Шаг 3'];
@@ -247,10 +247,11 @@ const StepperComponent = () => {
   
     try {
       const response = await request('post', '/spares/create' , spareData);
-      const imageResponse = await request('post', '/spares/image', formData);  
+      if (formData.has('files') && formData.getAll('files').length > 0) {
+      const imageResponse = await request('post', '/spares/image', formData);
+      }  
       console.log('Запчасть создана:', response.data);
-      console.log('Аймаг залетел:', imageResponse.data);
- //     window.location.href = '/success'
+      window.location.href = '/success'
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }

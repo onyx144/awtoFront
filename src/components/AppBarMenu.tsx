@@ -4,35 +4,36 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { IconButton, Popover, Button } from '@mui/material';
+import { IconButton, Button } from '@mui/material';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { CssBaseline } from '@mui/material';
 import { getToken } from '@request/request'
-import { removeToken , removeRole  ,getRole , clearAllUserData} from '@request/request'
+import { getRole , clearAllUserData} from '@request/request'
 import Link from 'next/link';
 
 export default function AppBarMenu() {
     const [token, setToken] = useState<string | null>(null);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [role, setRole] = useState<string | null>(null);
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+   /* const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
-      };
+      };*/
     
-      const handleClose = () => {
+    /*  const handleClose = () => {
         setAnchorEl(null);
-      };
+      };*/
     
       const handleLogout = () => {
         clearAllUserData()
         window.location.reload(); 
       };
-      const open = Boolean(anchorEl);
-  const id = open ? 'profile-popover' : undefined;
+      //const open = Boolean(anchorEl);
+ // const id = open ? 'profile-popover' : undefined;
     useEffect(() => {
+      if (typeof window !== 'undefined') {
       setToken(getToken());
       setRole(getRole())
+      }
       
     }, []);
   return (

@@ -4,6 +4,7 @@ const getOptionName = (id: string, options: { id: string; name: string }[]): str
   };
   
   type IdNameObject = { id: string; name: string };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type DataObject = { [key: string]: any };
   
   const extractIdNamePairs = (obj: DataObject, map: Map<string, string> = new Map()): Map<string, string> => {
