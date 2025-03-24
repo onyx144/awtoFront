@@ -95,7 +95,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+      setEmailErrorMessage('Введіть дійсну електронну адресу.');
       isValid = false;
     } else {
       setEmailError(false);
@@ -104,7 +104,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+      setPasswordErrorMessage("Обов'язково заповніть поле");
       isValid = false;
     } else {
       setPasswordError(false);
@@ -128,18 +128,19 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               console.log('save');
               }
               if (response.status === 201) {
-              //  window.location.href = '/profile'
+                window.location.href = '/profile'
                 console.log('Registration successful!');
               } else {
+                setPasswordErrorMessage("Ви неправильно ввели email або пароль");
+                setPasswordError(true);
                 console.log('Registration failed. Please try again.');
               }
             } catch (error) {
+              setPasswordErrorMessage("Ви неправильно ввели email або пароль");
+              setPasswordError(true);
               console.error('Error during registration:', error);
               console.log('An error occurred. Please try again.');
             }
-    }
-    else {
-      alert('Дфнные неверны');
     }
   };
 
@@ -152,7 +153,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Sign in
+            Вхід
           </Typography>
           <Box
             component="form"
@@ -183,7 +184,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password">Пароль</FormLabel>
               <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
@@ -201,7 +202,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             </FormControl>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="пам'ятай мене"
             />
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
@@ -210,7 +211,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               variant="contained"
               onClick={validateInputs}
             >
-              Sign in
+              Вхід
             </Button>
             <Link
               component="button"
@@ -219,20 +220,20 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               variant="body2"
               sx={{ alignSelf: 'center' }}
             >
-              Forgot your password?
+              Забули пароль?
             </Link>
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           
             
             <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
+              Немає акаунту?{' '}
               <Link
                 href="/register"
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
-                Sign up
+                Зареєструватися
               </Link>
             </Typography>
           </Box>

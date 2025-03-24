@@ -251,7 +251,7 @@ const StepperComponent = () => {
       await request('post', '/spares/image', formData);
       }  
       console.log('Запчасть создана:', response.data);
-      //window.location.href = '/success'
+      window.location.href = '/success'
     } catch (error) {
       console.error('Ошибка при создании фильтра:', error);
     }
