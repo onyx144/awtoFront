@@ -3,10 +3,10 @@ import React, { useState , useEffect } from 'react';
 import { Box, InputAdornment , Autocomplete , Button , TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Item from '@/components/spares/Item';
 import {request} from '@request/request';
-import SearchIcon from "@mui/icons-material/Search";
 import select from '@json/select.json'
 import CircularProgress from '@mui/material/CircularProgress';
 import { getRole } from '@request/request';
+
 export default function Home() {
 
   
@@ -56,11 +56,18 @@ export default function Home() {
 
   const [spareList] = useState<SpareData[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState('');
+  
   const [filteredData, setFilteredData] = useState<SpareData[]>([]);
 
   const handleSearch = () => {
-    console.log("Ищем:", searchQuery);
+    if (!searchQuery) {
+      setError("Будь ласка, оберіть деталь");
+      return;
+    }
+  
+    setError('');
+    window.location.href = `/spares?search=${encodeURIComponent(searchQuery.name)}`;
   };
   const cellStyle = {
     backgroundColor: '#d1f5d1', // Светло-зеленый фон
@@ -98,7 +105,7 @@ export default function Home() {
         }, []);
 
   // Обработчик поиска
- 
+  
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -109,7 +116,7 @@ export default function Home() {
       </Typography>
       <Autocomplete
         className="search"
-        sx={{ padding: 0 }}
+        sx={{ padding: 0, minHeight: "40px" }}
         options={select.names.options}
         getOptionLabel={(option) => option.name}
         value={searchQuery}
@@ -119,15 +126,16 @@ export default function Home() {
             {...params}
             label="Пошук"
             variant="outlined"
-            sx={{ padding: 0 }}
+            sx={{ padding: 0, minHeight: "40px" }} 
             fullWidth
             InputLabelProps={{
-              shrink: searchQuery ? true : undefined, // Поднимаем label, если есть значение
-              sx: { transition: "all 0.2s ease-in-out" , 
-                top: '-6px'}, 
+              shrink: true , // Поднимаем label, если есть значение
+              sx: { transition: "all 0.2s ease-in-out" , }
+              //top: (params.focused) ? '-6px' : '0px' , }
                // Настройка позиции
             }}
             InputProps={{
+              sx: { height: "40px", padding: "0 10px" }, 
               ...params.InputProps,
               endAdornment: (
                 <InputAdornment position="end">
@@ -137,6 +145,8 @@ export default function Home() {
                 </InputAdornment>
               ),
             }}
+            error={!!error}
+            helperText={error}
           />
         )}
       />

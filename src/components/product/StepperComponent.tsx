@@ -149,10 +149,12 @@ function StepIcon(props: StepIconProps) {
   );
 }
 
-const StepContent = ({
+
+{/*const StepContent = ({
   step,
   parts,
   setParts,
+  validateStep,
   carData,
   setCarData,
   contactInfo,
@@ -160,6 +162,7 @@ const StepContent = ({
 }: {
   step: number;
   parts: Part[];
+  validateStep: (isValid: boolean) => void,
   setParts: React.Dispatch<React.SetStateAction<Part[]>>;
   carData: CarData;
   setCarData: React.Dispatch<React.SetStateAction<CarData>>;
@@ -173,7 +176,7 @@ const StepContent = ({
     <Box
       sx={{ display: step === 0 ? 'block' : 'none' }}
     >
-      <StepOne parts={parts} setParts={setParts}/>
+      <StepOne parts={parts} setParts={setParts} setIsValid={valid}/>
     </Box>
     <Box
       sx={{ display: step === 1 ? 'block' : 'none' }}
@@ -189,7 +192,7 @@ const StepContent = ({
    );
   };
 
-
+*/}
 const StepperComponent = () => {
   const [parts, setParts] = useState<Part[]>([
     {
@@ -271,8 +274,12 @@ const StepperComponent = () => {
     console.log("Отправленные данные:", JSON.stringify(formData, null, 2));
   };
   const [activeStep, setActiveStep] = useState(0);
-
+  const [validateStepOne, setValidateStepOne] = useState<() => boolean>(() => () => true);  
   const handleNext = () => {
+    if (activeStep === 0) {
+      const isValid = validateStepOne(); // Вызываем валидацию
+      if (!isValid) return; // Если ошибка — не переходим дальше
+    }
     if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
   };
 
@@ -301,15 +308,33 @@ const StepperComponent = () => {
         ))}
       </Stepper>
       <Box sx={{ mt: 4 }}>
-        <StepContent 
+      <Box>
+    <Box
+      sx={{ display: activeStep === 0 ? 'block' : 'none' }}
+    >
+      <StepOne parts={parts} setParts={setParts} setIsValid={(fn) => setValidateStepOne(() => fn)}/>
+    </Box>
+    <Box
+      sx={{ display: activeStep === 1 ? 'block' : 'none' }}
+    >
+      <StepTwo carData={carData} setCarData={setCarData} />
+    </Box>
+    <Box
+      sx={{ display: activeStep === 2 ? 'block' : 'none' }}
+    >
+      <StepThree contactInfo={contactInfo} setContactInfo={setContactInfo}/>
+    </Box>
+  </Box>
+        {/*<StepContent 
         step={activeStep}
         parts={parts}
+        validateStep={setValidateStepOne}
         setParts={setParts}
         carData={carData}
         setCarData={setCarData}
         contactInfo={contactInfo}
         setContactInfo={setContactInfo}
-        />
+        />*/}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Button
             variant="outlined"

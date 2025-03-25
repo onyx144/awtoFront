@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -15,6 +15,8 @@ import {
   Typography,
   IconButton,
 } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
+import { forwardRef, useImperativeHandle } from "react";
 import select from '@json/select.json'
 import DeleteIcon from '@mui/icons-material/Delete';
 type Part = {
@@ -32,8 +34,12 @@ type Part = {
 type StepOneProps = {
   parts: Part[];
   setParts: React.Dispatch<React.SetStateAction<Part[]>>;
+  setIsValid:  (fn: () => boolean) => void;
 };
-const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
+export type StepOneRef = {
+  validate: () => boolean;
+};
+const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsValid }, ref) => {
   const [previewUrls, setPreviewUrls] = useState<string[][]>(
     parts.map(part =>
       part.partPhotos.map(photo =>
@@ -42,6 +48,39 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
     )
   );
  
+  const validate = (): boolean => {
+    let newErrors: Record<string, boolean> = {};
+    
+    parts.forEach((part, index) => {
+      if (!part.partName) newErrors[`partName-${index}`] = true;
+      if (!part.partGroup) newErrors[`partGroup-${index}`] = true;
+      if (!part.partType) newErrors[`partType-${index}`] = true;
+      if (!part.partCondition) newErrors[`partCondition-${index}`] = true;
+      if (!part.partNumber) newErrors[`partNumber-${index}`] = true;
+      if (!part.partDescription) newErrors[`partDescription-${index}`] = true;
+      if (!part.partPrice) newErrors[`partPrice-${index}`] = true;
+    });
+
+    setErrors(newErrors);
+    const isValid = Object.keys(newErrors).length === 0;
+    setIsValid(() => isValid);
+    
+    return isValid;
+  };
+  useEffect(() => {
+    validate(); 
+  }, []);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search');
+  useEffect(() => {
+    if (searchQuery) {
+      setParts((prevParts) =>
+        prevParts.map((part, index) =>
+          index === 0 ? { ...part, partName: searchQuery } : part
+        )
+      );
+    }
+  }, [searchQuery, setParts]);
 // eslint-disable-next-line
   const handleInputChange = (index: number, field: string, value: any) => {
     const updatedParts = [...parts];
@@ -86,7 +125,7 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
       });
     }
   };
-
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
   const handleRemovePhoto = (partIndex: number, photoIndex: number) => {
     setParts(prevParts => {
       const updatedParts = [...prevParts];
@@ -132,11 +171,21 @@ const StepOne: React.FC<StepOneProps> = ({ parts, setParts }) => {
           </Typography>
 
           <Autocomplete
-  options={select.names.options} // Берём данные прямо из JSON
+  options={select.names.options}
   getOptionLabel={(option) => option.name}
   value={part.partName ? { id: part.partName, name: part.partName } : null}
-  onChange={(_, newValue) => handleInputChange(index, 'partName', newValue?.name || '')}  renderInput={(params) => (
-    <TextField {...params} label="Назва запчастини" fullWidth margin="normal" />
+  onChange={(_, newValue) => {
+    handleInputChange(index, "partName", newValue?.name || "");
+    
+  }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Назва запчастини"
+      fullWidth
+      margin="normal"
+      error={!!errors[`partName-${index}`]}
+      helperText={errors[`partName-${index}`] ? "Поле обязательно" : ""}    />
   )}
 />
 
