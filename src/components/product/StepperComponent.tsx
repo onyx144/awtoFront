@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState , useRef } from 'react';
 import { Box, Button, Step, StepLabel, Stepper, StepIconProps } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import StepOne from './StepOne';
+import StepOne , {StepOneRef} from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 import {request } from '@request/request'
@@ -148,51 +148,6 @@ function StepIcon(props: StepIconProps) {
       sx={{ color: active ? 'green' : 'gray' }} />
   );
 }
-
-
-{/*const StepContent = ({
-  step,
-  parts,
-  setParts,
-  validateStep,
-  carData,
-  setCarData,
-  contactInfo,
-  setContactInfo,
-}: {
-  step: number;
-  parts: Part[];
-  validateStep: (isValid: boolean) => void,
-  setParts: React.Dispatch<React.SetStateAction<Part[]>>;
-  carData: CarData;
-  setCarData: React.Dispatch<React.SetStateAction<CarData>>;
-  contactInfo: ContactInfo;
-  setContactInfo: React.Dispatch<React.SetStateAction<ContactInfo>>;
-}) => {
-  
-
-   return (
-  <Box>
-    <Box
-      sx={{ display: step === 0 ? 'block' : 'none' }}
-    >
-      <StepOne parts={parts} setParts={setParts} setIsValid={valid}/>
-    </Box>
-    <Box
-      sx={{ display: step === 1 ? 'block' : 'none' }}
-    >
-      <StepTwo carData={carData} setCarData={setCarData} />
-    </Box>
-    <Box
-      sx={{ display: step === 2 ? 'block' : 'none' }}
-    >
-      <StepThree contactInfo={contactInfo} setContactInfo={setContactInfo}/>
-    </Box>
-  </Box>
-   );
-  };
-
-*/}
 const StepperComponent = () => {
   const [parts, setParts] = useState<Part[]>([
     {
@@ -207,7 +162,7 @@ const StepperComponent = () => {
       partPrice: '',
     },
   ]);
-
+  const stepOneRef = useRef<StepOneRef>(null);
   const [carData, setCarData] = useState<CarData>({
     modelId: '',
     carType: '',
@@ -276,11 +231,15 @@ const StepperComponent = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [validateStepOne, setValidateStepOne] = useState<() => boolean>(() => () => true);  
   const handleNext = () => {
-    if (activeStep === 0) {
-      const isValid = validateStepOne(); // Вызываем валидацию
-      if (!isValid) return; // Если ошибка — не переходим дальше
+    
+    if (activeStep === 0 && stepOneRef.current) {
+      const result = stepOneRef.current.validate();
+      console.log("Результат валидации из StepOne:", result);
+      if(result) {
+        setActiveStep((prev) => prev + 1);
+      }
     }
-    if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
+    //if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
@@ -312,7 +271,7 @@ const StepperComponent = () => {
     <Box
       sx={{ display: activeStep === 0 ? 'block' : 'none' }}
     >
-      <StepOne parts={parts} setParts={setParts} setIsValid={(fn) => setValidateStepOne(() => fn)}/>
+      <StepOne ref={stepOneRef} parts={parts} setParts={setParts} setIsValid={(fn) => setValidateStepOne(() => fn)}/>
     </Box>
     <Box
       sx={{ display: activeStep === 1 ? 'block' : 'none' }}

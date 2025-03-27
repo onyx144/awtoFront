@@ -15,6 +15,17 @@ const theme = createTheme({
       main: '#8fad1c',  // Вторичный цвет
     },
   },
+  components: {
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          paddingLeft: "0 !important",
+          marginLeft: "0 !important",
+
+        },
+      },
+    },
+  },
 });
 
 const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {

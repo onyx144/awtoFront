@@ -47,7 +47,27 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
       )
     )
   );
- 
+  useImperativeHandle(ref, () => ({
+    validate: () => {
+      let newErrors: Record<string, boolean> = {};
+    
+    parts.forEach((part, index) => {
+      if (!part.partName) newErrors[`partName-${index}`] = true;
+      if (!part.partGroup) newErrors[`partGroup-${index}`] = true;
+      if (!part.partType) newErrors[`partType-${index}`] = true;
+      if (!part.partCondition) newErrors[`partCondition-${index}`] = true;
+      if (!part.partNumber) newErrors[`partNumber-${index}`] = true;
+      if (!part.partDescription) newErrors[`partDescription-${index}`] = true;
+      if (!part.partPrice) newErrors[`partPrice-${index}`] = true;
+    });
+
+    setErrors(newErrors);
+    const isValid = Object.keys(newErrors).length === 0;
+    setIsValid(() => isValid);
+    
+    return isValid;
+    },
+  }));
   const validate = (): boolean => {
     let newErrors: Record<string, boolean> = {};
     
@@ -67,9 +87,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
     
     return isValid;
   };
-  useEffect(() => {
-    validate(); 
-  }, []);
+  
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search');
   useEffect(() => {
@@ -342,7 +360,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
 
     </Box>
   );
-};
+});
 
 
 export default StepOne;
