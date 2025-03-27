@@ -284,7 +284,7 @@ export default function SignUp() {
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
-                Sign in
+                Вхід
               </Link>
             </Typography>
           </Box>

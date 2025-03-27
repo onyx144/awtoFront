@@ -52,7 +52,7 @@ export default function AppBarMenu() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           
 
-          {/* Кнопки Sign In и Register */}
+          {/* Кнопки Вхід и Register */}
           {!token ? (
             <>
               <Link color="inherit" href="/spares">Найти запчасти</Link>        

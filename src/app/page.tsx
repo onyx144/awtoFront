@@ -1,10 +1,12 @@
 'use client'
 import React, { useState , useEffect } from 'react';
-import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, InputAdornment , Autocomplete , Button , TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Item from '@/components/spares/Item';
-import {request} from '@request/request'
+import {request} from '@request/request';
+import select from '@json/select.json'
 import CircularProgress from '@mui/material/CircularProgress';
 import { getRole } from '@request/request';
+
 export default function Home() {
 
   
@@ -45,14 +47,28 @@ export default function Home() {
     onlySms: boolean;
   };
   }
-   
+  interface Option {
+    id: string;
+    name: string;
+  }
   // Состояние для хранения введенного поиска
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState<Option | null>(null);
+
   const [spareList] = useState<SpareData[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState('');
+  
   const [filteredData, setFilteredData] = useState<SpareData[]>([]);
 
+  const handleSearch = () => {
+    if (!searchQuery) {
+      setError("Будь ласка, оберіть деталь");
+      return;
+    }
+  
+    setError('');
+    window.location.href = `/spares?search=${encodeURIComponent(searchQuery.name)}`;
+  };
   const cellStyle = {
     backgroundColor: '#d1f5d1', // Светло-зеленый фон
   border: '1px solid #ccc', // Легкая граница
@@ -89,34 +105,52 @@ export default function Home() {
         }, []);
 
   // Обработчик поиска
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-    setFilteredData(
-      spareList.filter(
-        (item) =>
-          item.partName.toLowerCase().includes(query.toLowerCase()) ||
-          item.city.toLowerCase().includes(query.toLowerCase()) ||
-          item.fullName.toLowerCase().includes(query.toLowerCase()) ||
-          item.partNumber.includes(query) // Числовые значения можно фильтровать без `toLowerCase()`
-      )
-    );
-  };
+  
 
   return (
     <Box sx={{ padding: 2 }}>
+      <Box>
       {/* Поисковая строка */}
       <Typography variant='h4' sx={{ marginBottom: 1 }}>
-      Поиск любой автозапчасти в Украине
+        Пошук автозапчастин в Україні
       </Typography>
-      <TextField
-        label="Поиск"
-        variant="outlined"
-        fullWidth
+      <Autocomplete
+        className="search"
+        sx={{ padding: 0, minHeight: "40px" }}
+        options={select.names.options}
+        getOptionLabel={(option) => option.name}
         value={searchQuery}
-        onChange={handleSearch}
-        sx={{ marginBottom: 2 }}
+        onChange={(_, newValue) => setSearchQuery(newValue)}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Пошук"
+            variant="outlined"
+            sx={{ padding: 0, minHeight: "40px" }} 
+            fullWidth
+            InputLabelProps={{
+              shrink: true , // Поднимаем label, если есть значение
+              sx: { transition: "all 0.2s ease-in-out" , }
+              //top: (params.focused) ? '-6px' : '0px' , }
+               // Настройка позиции
+            }}
+            InputProps={{
+              sx: { height: "40px", padding: "0 10px" }, 
+              ...params.InputProps,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button variant="contained" onClick={handleSearch} sx={{ minWidth: 48, height: "100%" }}>
+                    Пошук
+                  </Button>
+                </InputAdornment>
+              ),
+            }}
+            error={!!error}
+            helperText={error}
+          />
+        )}
       />
+    </Box>
 
       {/* Заголовок таблицы */}
       <Typography variant="h6" sx={{ marginBottom: 1 }}>
