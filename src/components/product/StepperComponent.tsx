@@ -4,8 +4,8 @@ import { Box, Button, Step, StepLabel, Stepper, StepIconProps } from '@mui/mater
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import StepOne , {StepOneRef} from './StepOne';
-import StepTwo from './StepTwo';
-import StepThree from './StepThree';
+import StepTwo , {StepTwoRef} from './StepTwo';
+import StepThree , {StepThreeRef} from './StepThree';
 import {request } from '@request/request'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -18,8 +18,7 @@ type Part = {
   partType: string;
   partCondition: string;
   partNumber: string;
-  partFile: (File  | null)[];
-  partPhotos: (string | null)[];
+  partPhotos: (File  | null)[];
   partDescription: string;
   partPrice: string;
 };
@@ -150,9 +149,22 @@ function StepIcon(props: StepIconProps) {
   );
 }
 const StepperComponent = () => {
-  const [parts, setParts] = useState<Part[]>([]);
+  const [parts, setParts] = useState<Part[]>([
+    {
+      partName: '',
+      partGroup: '',
+      partSide: '',
+      partType: '0',
+      partCondition: '0',
+      partNumber: '',
+      partPhotos: [null],
+      partDescription: '',
+      partPrice: '',
+    },
+  ]);
   const stepOneRef = useRef<StepOneRef>(null);
-
+  const StepTwoRef = useRef<StepTwoRef>(null);
+  const StepThreeRef = useRef<StepThreeRef>(null);
   const [carData, setCarData] = useState<CarData>({
     modelId: '',
     carType: '',
@@ -205,7 +217,7 @@ const StepperComponent = () => {
     }
   };
   const handleSubmit = () => {
-    const files: File[] = parts.flatMap((part) => part.partFile || []).filter((file): file is File => file !== null);
+    const files: File[] = parts.flatMap((part) => part.partPhotos || []).filter((file): file is File => file !== null);
   
     const formData = {
       parts,
@@ -213,22 +225,33 @@ const StepperComponent = () => {
       ...contactInfo
     };
   
-    // Отправляем данные и файлы
-    createSpare(formData, files);
-  
-    console.log("Отправленные данные:", JSON.stringify(formData, null, 2));
-  };
+    if (StepThreeRef.current)
+      {
+        const result = StepThreeRef.current.validate();
+        if(result) {
+          createSpare(formData, files);
+        }
+      }
+    };
   const [activeStep, setActiveStep] = useState(0);
   const [validateStepOne, setValidateStepOne] = useState<() => boolean>(() => () => true);  
   const handleNext = () => {
     
     if (activeStep === 0 && stepOneRef.current) {
       const result = stepOneRef.current.validate();
-      console.log("Результат валидации из StepOne:", result);
       if(result) {
         setActiveStep((prev) => prev + 1);
       }
     }
+    if (activeStep == 1 && StepTwoRef.current)
+    {
+      const result = StepTwoRef.current.validate();
+      if(result) {
+        setActiveStep((prev) => prev + 1);
+      }
+    }
+    setActiveStep((prev) => prev + 1);
+
     //if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
   };
 
@@ -266,12 +289,12 @@ const StepperComponent = () => {
     <Box
       sx={{ display: activeStep === 1 ? 'block' : 'none' }}
     >
-      <StepTwo carData={carData} setCarData={setCarData} />
+      <StepTwo ref={StepTwoRef} carData={carData} setCarData={setCarData} />
     </Box>
     <Box
       sx={{ display: activeStep === 2 ? 'block' : 'none' }}
     >
-      <StepThree contactInfo={contactInfo} setContactInfo={setContactInfo}/>
+      <StepThree ref={StepThreeRef} contactInfo={contactInfo} setContactInfo={setContactInfo}/>
     </Box>
   </Box>
         {/*<StepContent 

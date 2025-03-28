@@ -7,10 +7,17 @@ import {
   Radio,
   RadioGroup,
   Link ,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  FormHelperText,
   TextField,
   Typography,
 } from '@mui/material';
 import { getToken , getRole , getEmail , getPhone} from '@request/request'
+import { forwardRef, useImperativeHandle } from "react";
+import select from '@json/select.json'
 
 import { WhatsApp, Telegram } from "@mui/icons-material";
 import ViberStep from '@/svg/viberstep';
@@ -34,20 +41,28 @@ type StepThreeProps = {
   contactInfo: ContactInfo;
   setContactInfo: React.Dispatch<React.SetStateAction<ContactInfo>>;
 };
-const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) => {
-  
+export type StepThreeRef = {
+  validate: () => boolean;
+};
+const StepThree = forwardRef<StepThreeRef , StepThreeProps> (({ contactInfo, setContactInfo  } , ref) => {
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
+     useImperativeHandle(ref, () => ({
+         validate: () => {
+           let newErrors: Record<string, boolean> = {};
+           if(getRole()!= 'buyer') {
+           if (!contactInfo.email) newErrors.email = true;
+           if (!contactInfo.phone) newErrors.phone = true;
+           }
+           if (!Object.values(contactInfo.messageTypes).some(Boolean)) newErrors.messageTypes = true;
+         setErrors(newErrors);
+         const isValid = Object.keys(newErrors).length === 0;
+         console.log('error' , newErrors);         
+         return isValid;
+         },
+       }));
   const [authType, setAuthType] = useState('1');
-  /*const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [regEmail, setRegEmail] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [regPasswordConfirm, setRegPasswordConfirm] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
-  const [phone, setPhone] = useState('');
-  const [additionalPhone, setAdditionalPhone] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [cityName, setCityName] = useState('');
-  const [comments, setComments] = useState('');*/
+  
   
   const [showAdditionalPhone, setShowAdditionalPhone] = useState(false);
   const [token, setToken] = useState<string | null>(null);
@@ -77,6 +92,11 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
         [type]: !prev.messageTypes[type],  // Инвертируем значение текущего поля
       }
     }));
+    if (errors['messageTypes']) {
+      const updatedErrors = { ...errors };
+      delete updatedErrors['messageTypes'];
+      setErrors(updatedErrors);
+    }
   };
 
   const handleInputChange = (field: keyof ContactInfo, value: string) => {
@@ -84,6 +104,11 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
       ...prev,
       [field]: value,  // Обновляем нужное поле в ContactInfo
     }));
+    if (errors[field]) {
+      const updatedErrors = { ...errors };
+      delete updatedErrors[field];
+      setErrors(updatedErrors);
+    }
   };
   
  
@@ -130,6 +155,8 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           onChange={(e) => handleInputChange('email', e.target.value)}
           margin="normal"
           autoComplete="email"
+          error={!!errors.email} // Ошибка показывается, если есть в errors
+          helperText={errors.email ? "Поле обов'язкове" : ""}
         />
         <TextField
           fullWidth
@@ -138,63 +165,61 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           onChange={(e) => handleInputChange('phone', e.target.value)}
           margin="normal"
           autoComplete="tel"
+          error={!!errors.phone} // Ошибка показывается, если есть в errors
+          helperText={errors.phone ? "Поле обов'язкове" : ""}
         />
         </Box>
       )}
-         <Box
-        sx={{
-          mt: 2,
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          flexWrap: 'wrap'
-        }}
-      >
-        <Box className={'message-line'} sx={{ display: "flex", flexWrap: "nowrap", mr: 2 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={contactInfo.messageTypes.viber}
-                onChange={() => handleCheckboxChange("viber")}
-                icon={<ViberStep />}
-                checkedIcon={<ViberStep color={'#8fad1c'} />}
-              />
-            }
-            label="Viber"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={contactInfo.messageTypes.telegram}
-                onChange={() => handleCheckboxChange("telegram")}
-                icon={<Telegram />}
-                checkedIcon={<Telegram />}
-              />
-            }
-            label="Telegram"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={contactInfo.messageTypes.whatsapp}
-                onChange={() => handleCheckboxChange("whatsapp")}
-                icon={<WhatsApp />}
-                checkedIcon={<WhatsApp />}
-              />
-            }
-            label="WhatsApp"
-          />
-        </Box>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={contactInfo.messageTypes.onlySms}
-              onChange={() => handleCheckboxChange("onlySms")}
-            />
-          }
-          label="Только сообщение"
+         <FormControl error={!!errors.messageTypes}>
+  <Box className="message-line" sx={{ display: "flex", flexWrap: "nowrap", mr: 2 }}>
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={contactInfo.messageTypes.viber}
+          onChange={() => handleCheckboxChange("viber")}
+          icon={<ViberStep />}
+          checkedIcon={<ViberStep color={"#8fad1c"} />}
         />
-      </Box>
+      }
+      label="Viber"
+    />
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={contactInfo.messageTypes.telegram}
+          onChange={() => handleCheckboxChange("telegram")}
+          icon={<Telegram />}
+          checkedIcon={<Telegram />}
+        />
+      }
+      label="Telegram"
+    />
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={contactInfo.messageTypes.whatsapp}
+          onChange={() => handleCheckboxChange("whatsapp")}
+          icon={<WhatsApp />}
+          checkedIcon={<WhatsApp />}
+        />
+      }
+      label="WhatsApp"
+    />
+  </Box>
+
+  <FormControlLabel
+    control={
+      <Checkbox
+        checked={contactInfo.messageTypes.onlySms}
+        onChange={() => handleCheckboxChange("onlySms")}
+      />
+    }
+    label="Тільки повідомлення"
+  />
+
+  {errors.messageTypes && <FormHelperText>Оберіть хоч один варіант</FormHelperText>}
+</FormControl>
+
         {showAdditionalPhone && (
           <TextField
             fullWidth
@@ -224,16 +249,25 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
           autoComplete="name"
         />
 
+<FormControl fullWidth margin="normal">
+   <InputLabel>Регіон</InputLabel>
+  <Select
+    labelId="city-label"
+    label="Регіон"
+    value={contactInfo.cityName}
+    onChange={(e) => handleInputChange("cityName", e.target.value)}
+  >
+    {select.regions.options.map((region) => (
+      <MenuItem key={region.id} value={region.id}>
+        {region.name}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
         <TextField
+          className='textArea'
           fullWidth
-          label="Город"
-          value={contactInfo.cityName}
-          onChange={(e) => handleInputChange('cityName', e.target.value)} 
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          label="Комментарии"
+          label="Комментарі"
           multiline
           rows={4}
           value={contactInfo.comments}
@@ -244,6 +278,6 @@ const StepThree: React.FC<StepThreeProps> = ({ contactInfo, setContactInfo  }) =
 
     </Box>
   );
-};
+});
 
 export default StepThree;

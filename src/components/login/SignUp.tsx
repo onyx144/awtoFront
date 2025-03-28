@@ -151,10 +151,12 @@ export default function SignUp() {
         } else {
           console.log('Registration failed. Please try again.');
         }
-      } catch (error) {
-        console.error('Error during registration:', error);
-        console.log('An error occurred. Please try again.');
-      }
+      } catch (error: any) {
+        if (error.response?.data?.message) {
+          alert(error.response.data.message); // Выводим сообщение ошибки в alert
+        } else {
+          alert('Виникла невідома помилка і ви не зареєстровані');
+        }      }
     }
   };
 

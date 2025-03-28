@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { RadioGroup , Checkbox , FormControlLabel , Radio ,  FormGroup , TextField , FormControl, Grid , InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Box } from "@mui/material";
+import React, { useState , useEffect } from 'react';
+import { RadioGroup , FormHelperText , Checkbox , FormControlLabel , Radio ,  FormGroup , TextField , FormControl, Grid , InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Box } from "@mui/material";
 import select from '@json/select.json'
+import { forwardRef, useImperativeHandle } from "react";
 /*interface FormData {
     fuelID: string;
     engineSize: string;
@@ -12,21 +13,21 @@ import select from '@json/select.json'
     vin: string;
   }*/
   type CarData = {
-    modelId: string;
-    carType: string;
-    mark: string;
-    makeRegionId: string;
+    modelId: string;//
+    carType: string;//
+    mark: string;//
+    makeRegionId: string;//
     subModel: string;
     isSubModelVisible: boolean;
-    years: string;
-    fuelID: string;
+    years: string;//
+    fuelID: string;//
     engineSize: string;
     bodyTypeID: string;
     transID: string;
     axleID: string;
     colorName: string;
     colorMetallic: boolean;
-    vin: string;
+    vin: string;//
   };
   
   type StepTwoProps = {
@@ -34,10 +35,35 @@ import select from '@json/select.json'
     setCarData: React.Dispatch<React.SetStateAction<CarData>>;
   };
 
-const StepTwo: React.FC<StepTwoProps> = ({ carData, setCarData }) => {
-//const [modelId, setModelId] = useState<string>('');
-  //const [carType, setCarType] = useState<string>("");
-   const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
+  export type StepTwoRef = {
+    validate: () => boolean;
+  };
+const StepTwo = forwardRef<StepTwoRef, StepTwoProps>(({ carData, setCarData } , ref) => {
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
+   useImperativeHandle(ref, () => ({
+       validate: () => {
+         let newErrors: Record<string, boolean> = {};
+       
+      
+        // if (!carData.modelId) newErrors.modelId = true;
+         if (!carData.carType) newErrors.carType = true;
+         if (!carData.mark) newErrors.mark = true;
+         if (!carData.makeRegionId) newErrors.makeRegionId = true;
+         if (!carData.years) newErrors.years = true;
+         if (!carData.fuelID) newErrors.fuelID = true;
+         if (!carData.vin) newErrors.vin = true;
+         if (!carData.engineSize) newErrors.engineSize = true;
+         if (!carData.bodyTypeID) newErrors.bodyTypeID = true;
+
+   
+       setErrors(newErrors);
+       const isValid = Object.keys(newErrors).length === 0;
+       //setIsValid(() => isValid);
+       
+       return isValid;
+       },
+     }));
    const models =
    (select.models[carData.makeRegionId as keyof typeof select.models] &&
    typeof select.models[carData.makeRegionId as keyof typeof select.models] === "object" &&
@@ -75,13 +101,22 @@ const StepTwo: React.FC<StepTwoProps> = ({ carData, setCarData }) => {
       ...prev,
       [field]: event.target.value
     }));
-    console.log('Model:' , models);
+    if (errors[field]) {
+      const updatedErrors = { ...errors };
+      delete updatedErrors[field];
+      setErrors(updatedErrors);
+    }
   };
 const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ value: unknown }>) => {
   setCarData(prev => ({
     ...prev,
     [field]: event.target.value as string
   }));
+  if (errors[field]) {
+    const updatedErrors = { ...errors };
+    delete updatedErrors[field];
+    setErrors(updatedErrors);
+  }
 };
   const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = e.target;
@@ -102,7 +137,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
       <Typography variant="body1" fontWeight="bold">
         Тип
       </Typography>
-      <FormControl fullWidth>
+      <FormControl error={!!errors.carType}  fullWidth>
         <InputLabel id="car-type-select-label">Выберите тип</InputLabel>
         <Select
           labelId="car-type-select-label"
@@ -117,12 +152,15 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
           </MenuItem>
         ))}
         </Select>
+        {errors.carType && (
+    <FormHelperText>Поле обов'язкове</FormHelperText>
+  )}
       </FormControl>
     </Box>
     <Box sx={{ marginTop: '10px' }}>
       <Box sx={{ display: 'flex', gap: 2 }}>
         {/* Селект для марки */}
-        <FormControl fullWidth>
+        <FormControl fullWidth error={!!errors.mark}>
           <InputLabel id="make-label">Марка</InputLabel>
           <Select
             labelId="make-label"
@@ -140,10 +178,13 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
 
             {/* Дополните остальными элементами списка марки автомобилей */}
           </Select>
+          {errors.mark && (
+    <FormHelperText>Поле обов'язкове</FormHelperText>
+  )}
         </FormControl>
 
         {/* Селект для региона */}
-        <FormControl fullWidth>
+        <FormControl fullWidth error={!!errors.makeRegionId}>
           <InputLabel id="region-label">Регион</InputLabel>
           <Select
             labelId="region-label"
@@ -175,6 +216,9 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
   </Box>
 </MenuItem>
           </Select>
+          {errors.makeRegionId && (
+    <FormHelperText>Поле обов'язкове</FormHelperText>
+  )}
         </FormControl>
       </Box>
     </Box>
@@ -182,7 +226,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
     <Grid item xs={12} md={6} sx={{ marginTop: '10px' }}>
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
     {/* Селект для модели */}
-    <FormControl fullWidth>
+    <FormControl fullWidth >
       <InputLabel id="model-label">Модель</InputLabel>
       <Select
         labelId="model-label"
@@ -246,7 +290,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
 </Grid>
     {/* Год выпуска */}
     <Grid item xs={12} >
-        <FormControl fullWidth sx={{mt: 1}}>
+        <FormControl fullWidth error={!!errors.years} sx={{mt: 1}} >
           <InputLabel id="year-label">Год выпуска</InputLabel>
           <Select
             labelId="year-label"
@@ -332,6 +376,9 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             <MenuItem value="1951">1951</MenuItem>
             <MenuItem value="1950">1950</MenuItem>
           </Select>
+          {errors.years && (
+    <FormHelperText>Поле обов'язкове</FormHelperText>
+  )}
         </FormControl>
       </Grid>
     {/* Engine Section */}
@@ -350,7 +397,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
        justifyItems: 'center',
        gap: '15px',
     }}>
-    <FormControl fullWidth sx={{ flex: '1 1 calc(50% - 16px)' ,  paddingTop: 0}}>
+    <FormControl error={!!errors.fuelID} fullWidth sx={{ flex: '1 1 calc(50% - 16px)' ,  paddingTop: 0}}>
       <InputLabel>Топливо</InputLabel>
       <Select
         label="Топливо"
@@ -364,6 +411,9 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         <MenuItem value="3">Гібрид</MenuItem>
         <MenuItem value="4">Електро</MenuItem>
       </Select>
+      {errors.fuelID && (
+    <FormHelperText>Поле обов'язкове</FormHelperText>
+  )}
     </FormControl>
 
     {/* Поле для объема и текст "литра" */}
@@ -376,6 +426,9 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         fullWidth
         inputProps={{ maxLength: 20 }}
         placeholder="_._"
+        error={!!errors.engineSize} // Ошибка показывается, если есть в errors
+        helperText={errors.engineSize ? "Поле обов'язкове" : ""}
+
       />
       <span style={{ whiteSpace: 'nowrap' }}>литра</span>
     </Box>
@@ -390,7 +443,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
     Кузов
 
   {/* Селект для типа кузова */}
-    <FormControl fullWidth sx={{marginTop: '5px'}}>
+    <FormControl error={!!errors.bodyTypeID} fullWidth sx={{marginTop: '5px'}}>
       <InputLabel>Тип кузова</InputLabel>
       <Select
         label="Тип кузова"
@@ -408,6 +461,9 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         <MenuItem value="9">Кабриолет</MenuItem>
         <MenuItem value="10">Фургон</MenuItem>
       </Select>
+      {errors.bodyTypeID && (
+    <FormHelperText>Поле обов'язкове</FormHelperText>
+  )}
     </FormControl>
 </Grid>
 
@@ -444,7 +500,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
       </Grid>
 
       {/* Color Section */}
-      {formData.bodyTypeID && (
+      {!carData.bodyTypeID && (
         <Grid container spacing={2} id="color_tr" className="req__row" style={{ display: formData.bodyTypeID ? 'block' : 'none' }}>
           <Grid item xs={12} md={3}>Цвет кузова</Grid>
           <Grid item xs={12} md={9}>
@@ -508,15 +564,19 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             sx={{marginTop: '5px'}}
             name="vin"
             value={carData.vin}
+            type='number'
             onChange={handleInputChange("vin")}
             fullWidth
             inputProps={{ maxLength: 50 }}
+            error={!!errors.vin} // Ошибка показывается, если есть в errors
+            helperText={errors.vin ? "Поле обов'язкове" : ""}
+
           />
    
       </Grid>
 
     </Box>
   );
-};
+});
 
 export default StepTwo;

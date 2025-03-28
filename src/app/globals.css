@@ -28,6 +28,12 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+p.MuiFormHelperText-root {
+  bottom: -15px;
+    padding-left: 0;
+    width: 100%;
+    margin-left: 3px!important;
+}
 
 /* global.css или другой файл стилей */
 .cell-style {
@@ -39,6 +45,22 @@ body {
   align-items: center; /* Выравнивание по вертикали */
   justify-content: center;
   font-size: 12px; /* Уменьшаем шрифт для маленьких экранов */
+}
+.textArea input {
+  height: 200px;
+}
+
+.textArea div fieldset {
+  height: 100px;
+}
+
+.textArea div textarea {
+  margin-top: 50px;
+  padding: 10px;
+}
+
+.textArea {
+  height: 100px;
 }
 .header-text {
   text-transform: uppercase;
@@ -53,6 +75,9 @@ body {
   .header-text {
     font-size: 12px!important;
     padding: 6px 6px;
+  }
+  p.MuiFormHelperText-root {
+      font-size: 10px;
   }
   .message-line {
     display: flex;
