@@ -145,7 +145,7 @@ const StepThree = forwardRef<StepThreeRef , StepThreeProps> (({ contactInfo, set
       )}
       
       <Box mt={2}>
-      {(authType === '1' || getRole() == 'salesman') && (
+      {((authType === '1' || getRole() == 'salesman') && getRole() != 'buyer') && (
         <Box>
         <Typography variant="h6">Контактная информация</Typography>
         <TextField

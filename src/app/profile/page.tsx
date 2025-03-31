@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 //import select from '@json/select.json'
 import {request} from '@request/request'
+import { getRole } from '@request/request'
 
 type User = {
   additionalInfo: string | null;
@@ -49,6 +50,7 @@ const Profile = () => {
   const [formData, setFormData] = useState<User | null>(null);
   const [currentPassword, setcurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [role, setRole] = useState<string | null>(null);
   const [confirmPassword, setConfirmPassword] = useState('');
   const updatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,8 +76,16 @@ const Profile = () => {
     try {
       const response = await request('put', `/users/update`, updateData);
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Ошибка при обновлении пользователя:', error);
+  
+      // Проверяем, есть ли у ошибки response и message
+      if (error instanceof Error && (error as any).response?.data?.message) {
+        alert((error as any).response.data.message);
+      } else {
+        alert('Сталася помилка при оновленні користувача. Спробуйте ще раз.' );
+      }
+  
       throw error;
     }
   };
@@ -97,6 +107,9 @@ const Profile = () => {
 
   useEffect(() => {
    getUser(); 
+   if (typeof window !== 'undefined') {
+    setRole(getRole())
+    }
       }, []);
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
@@ -131,7 +144,8 @@ const Profile = () => {
           row
         >
           <FormControlLabel value="user" control={<Radio />} label="Информация о пользователе" />
-          <FormControlLabel value="company" control={<Radio />} label="Информация о компании" />
+          { role == 'salesman' &&
+          <FormControlLabel value="company" control={<Radio />} label="Информация о компании" />}
           <FormControlLabel value="password" control={<Radio />} label="Сменить пароль" />
         </RadioGroup>
       </FormControl>
@@ -212,11 +226,12 @@ const Profile = () => {
                 onChange={handleTextFieldChange}
               />
             </Grid>
+            { role == 'salesman' &&
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel>Способ оплаты</InputLabel>
+                <InputLabel>Спосіб оплаты</InputLabel>
                 <Select
-                  label="Способ оплаты"
+                  label="Спосіб оплаты"
                   name="paymentMethod"
                   value={formData?.paymentMethod  ?? ''}
                   onChange={handleInputChange}
@@ -226,9 +241,10 @@ const Profile = () => {
                   </MenuItem>
                   <MenuItem value="Безналичный">Безналичный</MenuItem>
                 </Select>
-                <FormHelperText>Выберите способ оплаты</FormHelperText>
+                <FormHelperText>Выберите Спосіб оплаты</FormHelperText>
               </FormControl>
             </Grid>
+            }
             <Grid item xs={12}>
               <Button variant="contained" onClick={handleSave} color="primary" type="button">
                 Зберегти

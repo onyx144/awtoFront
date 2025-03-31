@@ -2,7 +2,7 @@ import { Box, Button, Typography,
   MenuItem,
   Select,
   FormControl,
-  InputLabel,TableRow, 
+  InputLabel,TableRow, FormHelperText,
   TextField, TableCell, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import React, { useState , useEffect } from 'react';
 import WhatsAppIcon from '@/svg/WhatsAppIcon';
@@ -74,6 +74,7 @@ interface ItemProps {
   partCondition?: string;
   partNumber?: string;
   photo?: string;
+  archive?: boolean;
   vin?: string;
   partDescription?: string;
 }
@@ -112,6 +113,7 @@ const Item: React.FC<ItemProps> = ({
   photo,
   vin,
   partDescription,
+  archive,
  }) => {
   const [open, setOpen] = useState(false); // Состояние для открытия модального окна
   const [showMessage, setShowMessage] = useState(false); // Состояние для отображения сообщения
@@ -128,8 +130,16 @@ const Item: React.FC<ItemProps> = ({
   });
   
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [archiveState , setArchiveState] = useState(archive);
+    const [errors, setErrors] = useState<Record<string, boolean>>({});
+  
   const handleChange = (field: keyof FormValues, value: string) => {
+    if (errors[field] && value !== "") {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [field]: false,
+      }));
+    }
     if (["condition", "type", "mileageUnit", "availability", "currency"].includes(field)) {
       Cookies.set(field, value);
     }
@@ -174,7 +184,32 @@ const Item: React.FC<ItemProps> = ({
     setOpen(false); // Закрываем модальное окно
   };
   
+  const toggleArchive = async (id: string, currentArchive: boolean) => {
+    try {
+      const response = await request('put' , `/spares/${id}/toggle-archive`);
+      if (response.status === 200) {
+        setArchiveState(!currentArchive);
+      }
+    } catch (error) {
+      console.error("Ошибка при изменении статуса архива:", error);
+    }
+  };
+
   const handleNext = () => {
+    const newErrors = {
+      condition: !formValues.condition,
+      type: !formValues.type,
+      warranty: !formValues.warranty,
+      price: !formValues.price,
+      currency: !formValues.currency,
+    };
+  
+    setErrors(newErrors);
+  
+    // Если есть ошибки, не отправляем форму
+    if (Object.values(newErrors).includes(true)) {
+      return;
+    }
     handleCopy();
 
     setIsSubmitted(true);
@@ -224,15 +259,36 @@ const Item: React.FC<ItemProps> = ({
       <img src={photo} alt="Фото" width={50} height={50} style={{ borderRadius: '5px' }} />
     </a>
   ) : (
-    "Зображення не завантажено"
+    ""
   )}</TableCell>
         <TableCell>{vin}</TableCell>
         <TableCell>{partDescription}</TableCell>
-        { (!story || getRole()=="salesman") &&
+        { (!story && getRole()=="salesman") &&
         <TableCell>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>Звя&apos;затися</Button>
         </TableCell>
         }
+        {archiveState !== undefined && archiveState !== null && id !== undefined && (
+  <TableCell>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Typography
+        sx={{
+          backgroundColor: !archiveState ? "#d1f5d1" : "#f5d1d1", // Светло-зеленый для активного, светло-красный для неактивного
+          color: !archiveState ? "#2e7d32" : "#c62828", // Темно-зеленый и темно-красный текст
+          padding: "8px 16px",
+          borderRadius: "4px",
+          display: "inline-block",
+          fontWeight: "bold",
+        }}
+      >
+        {!archiveState ? "Активна" : "Неактивна"}
+      </Typography>
+      <Button onClick={() => toggleArchive(id, archiveState)} sx={{ textTransform: "none" }}>
+        {!archiveState ? "Додати в архів" : "Активувати"}
+      </Button>
+    </Box>
+  </TableCell>
+)}
       </TableRow>
 
       {/* Модальное окно */}
@@ -246,16 +302,18 @@ const Item: React.FC<ItemProps> = ({
   <DialogContent>
   {!isSubmitted ? (
     <>
-  <FormControl fullWidth margin="normal">
-          <InputLabel>Стан</InputLabel>
-          <Select
-            value={formValues.condition}
-            onChange={(e) => handleChange('condition', e.target.value)}
-          >
-            <MenuItem value="нова">Нова</MenuItem>
-            <MenuItem value="бу">БУ</MenuItem>
-          </Select>
-        </FormControl>
+  <FormControl fullWidth margin="normal" required>
+  <InputLabel>Стан</InputLabel>
+  <Select
+    value={formValues.condition}
+    onChange={(e) => handleChange('condition', e.target.value)}
+    error={!formValues.condition}
+  >
+    <MenuItem value="нова">Нова</MenuItem>
+    <MenuItem value="бу">БУ</MenuItem>
+  </Select>
+  {!formValues.condition && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
+</FormControl>
 
         <FormControl fullWidth margin="normal" variant="outlined">
   <InputLabel id="type-label">Тип</InputLabel>
@@ -311,13 +369,16 @@ const Item: React.FC<ItemProps> = ({
         </FormControl>
 
         <TextField
-          fullWidth
-          label="Ціна"
-          type="number"
-          margin="normal"
-          value={formValues.price}
-          onChange={(e) => handleChange('price', e.target.value)}
-        />
+  fullWidth
+  label="Ціна"
+  type="number"
+  margin="normal"
+  value={formValues.price}
+  onChange={(e) => handleChange('price', e.target.value)}
+  required
+  error={!formValues.price}
+  helperText={!formValues.price ? 'Це поле обов\'язкове для заповнення' : ''}
+/>
 
         <FormControl fullWidth margin="normal">
           <InputLabel>Валюта</InputLabel>

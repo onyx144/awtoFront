@@ -37,7 +37,7 @@ export default function AppBarMenu() {
       
     }, []);
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 , maxWidth: '1440px' , margin: 'auto'}}>
     <CssBaseline />
     <AppBar position="static" color="primary">
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
@@ -53,6 +53,11 @@ export default function AppBarMenu() {
           
 
           {/* Кнопки Вхід и Register */}
+          <Link color="inherit" href="/spares">
+  <Typography className='header-text'>
+    Архів заявок
+  </Typography>
+</Link>
           {!token ? (
             <>
               <Link color="inherit" href="/spares">Найти запчасти</Link>        
@@ -67,7 +72,7 @@ export default function AppBarMenu() {
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Link color="inherit" href="/spares">
   <Typography className='header-text'>
-    Найти запчасти
+    Знайти запчастини
   </Typography>
 </Link>
 {role=="salesman" &&
@@ -82,6 +87,7 @@ export default function AppBarMenu() {
     Історія заявок
   </Typography>
 </Link>}
+
               <Button onClick={handleLogout} className='header-text'sx={{ color: 'red' }}>
                   Вихід
                 </Button>
