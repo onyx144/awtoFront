@@ -17,7 +17,10 @@
   padding: 0 !important;
   min-height: 40px; 
 }
-
+.main {
+  max-width: 1440px;
+  margin: auto;
+}
 .double-flex {
   display: flex;
   justify-content: space-between;

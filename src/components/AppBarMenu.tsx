@@ -53,14 +53,18 @@ export default function AppBarMenu() {
           
 
           {/* Кнопки Вхід и Register */}
-          <Link color="inherit" href="/spares">
+          <Link color="inherit" href="/archive">
   <Typography className='header-text'>
     Архів заявок
   </Typography>
 </Link>
+<Link color="inherit" href="/spares">
+  <Typography className='header-text'>
+    Знайти запчастини
+  </Typography>
+</Link>
           {!token ? (
             <>
-              <Link color="inherit" href="/spares">Найти запчасти</Link>        
               <Button color="inherit" href="/sign-in" sx={{ ml: 2 }}>
                 Вхід
               </Button>
@@ -70,11 +74,7 @@ export default function AppBarMenu() {
             </>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Link color="inherit" href="/spares">
-  <Typography className='header-text'>
-    Знайти запчастини
-  </Typography>
-</Link>
+             
 {role=="salesman" &&
 <Link color="inherit" href="/filters">
   <Typography className='header-text'>

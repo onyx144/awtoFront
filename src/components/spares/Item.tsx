@@ -2,8 +2,12 @@ import { Box, Button, Typography,
   MenuItem,
   Select,
   FormControl,
-  InputLabel,TableRow, FormHelperText,
-  TextField, TableCell, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+  InputLabel,TableRow, TableHead , TableBody , Table , FormHelperText,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+   TableCell, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import React, { useState , useEffect } from 'react';
 import WhatsAppIcon from '@/svg/WhatsAppIcon';
 import ViberIcon from '@/svg/vibericon';
@@ -14,7 +18,6 @@ import { request } from '@/request/request';
 import TelegramLogo from '@/svg/TelegramIcon';
 // Функция для преобразования времени в "Х минут назад"
 const timeAgo = (datetime: string) => {
-    console.log('time' , datetime);
     const now = new Date();
     const time = new Date(datetime);
     const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
@@ -54,7 +57,8 @@ interface ItemProps {
   city: string;
   time: string;
   phone: string;
-  contact: {
+  storyArchive?: Story[]; 
+  contact?: {
     viber: boolean;
     telegram: boolean;
     whatsapp: boolean;
@@ -79,6 +83,18 @@ interface ItemProps {
   partDescription?: string;
 }
 
+interface Story {
+  condition?: string;
+type?: string;
+warranty?: number;
+mileage?: number;
+mileageUnit?: string;
+availability?: string;
+price?: number;
+currency?: string;
+inform?: string;
+salesmanId: string;
+}
 /*const getInitialValues = (): FormValues => ({
   condition: Cookies.get("condition") || "",
   type: Cookies.get("type") || "",
@@ -112,6 +128,7 @@ const Item: React.FC<ItemProps> = ({
   partNumber,
   photo,
   vin,
+  storyArchive,
   partDescription,
   archive,
  }) => {
@@ -131,8 +148,27 @@ const Item: React.FC<ItemProps> = ({
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [archiveState , setArchiveState] = useState(archive);
-    const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [contactData , setContactData] = useState<string[]>();
+  const [showContact , setShowContact] = useState(false);
+
+  const salesman_contact = async(id: string) => {
+    try {
+      const response = await request('get' , `/users/contact/${id}`);
+      if (response.status === 200) {
+        setContactData(response.data);
+        setShowContact(true)
+      }
+    } catch (error: unknown) {
+      // Проверяем, есть ли у ошибки response и message
+      if (error instanceof Error && (error as any).response?.status == '401') {
+        alert('Будь ласка, зареєструйтесь для перегляду контактів.');
+      } else {
+        alert('Сталася помилка при оновленні користувача. Спробуйте ще раз.' );
+      }
   
+    }
+  }
   const handleChange = (field: keyof FormValues, value: string) => {
     if (errors[field] && value !== "") {
       setErrors((prevErrors) => ({
@@ -211,7 +247,7 @@ const Item: React.FC<ItemProps> = ({
       return;
     }
     handleCopy();
-
+    storySend();
     setIsSubmitted(true);
   };
   const handleCopy = async () => {
@@ -243,6 +279,22 @@ const Item: React.FC<ItemProps> = ({
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
       }
+  };
+const storySend = async () => {
+  try {
+    const response = await request('put', `/spares/${id}/add-story`, { 
+      salesmanStoryDto: formValues,
+    });
+
+    console.log('Успешный ответ:', response.data);
+  } catch (error:unknown) {
+    console.error('Ошибка при выполнении запроса:', error);
+    if (error instanceof Error && (error as any).response?.data?.message) {
+      alert((error as any).response.data.message);
+    } else {
+      alert('Помилка');
+    }
+  }
   };
 
   return (
@@ -290,6 +342,67 @@ const Item: React.FC<ItemProps> = ({
   </TableCell>
 )}
       </TableRow>
+      {storyArchive && storyArchive.length > 0 && (
+  <TableRow>
+    <TableCell colSpan={8}>
+      <Table sx={{ width: "100%", backgroundColor: "#f9f9f9" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Стан</TableCell>
+            <TableCell>Тип</TableCell>
+            <TableCell>Гарантія</TableCell>
+            <TableCell>Пробіг</TableCell>
+            <TableCell>Ціна</TableCell>
+            <TableCell>Валюта</TableCell>
+            <TableCell>Інформація</TableCell>
+            <TableCell>Продавець</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {storyArchive.map((story, index) => (
+            <TableRow key={index}>
+              <TableCell>{story.condition || "-"}</TableCell>
+              <TableCell>{story.type || "-"}</TableCell>
+              <TableCell>{story.warranty ? `${story.warranty} міс.` : "-"}</TableCell>
+              <TableCell>{story.mileage ? `${story.mileage} ${story.mileageUnit || ''}` : "-"}</TableCell>
+              <TableCell>{story.price ? `${story.price}` : "-"}</TableCell>
+              <TableCell>{story.currency || "-"}</TableCell>
+              <TableCell>{story.inform || "-"}</TableCell>
+              <TableCell><Button onClick={() => salesman_contact(story.salesmanId)}>
+               Зв'язатися  
+              </Button></TableCell>
+
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableCell>
+  </TableRow>
+)}
+
+<>
+      {/* Условие для открытия модального окна */}
+      {contactData && contactData.length > 0 && showContact && (
+        <Dialog open={showContact} onClose={() => setShowContact(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>Номери телефонів для зв'язку з продавцем</DialogTitle>
+          <DialogContent>
+            {/* Список номеров телефонов */}
+            <List>
+              {contactData.map((contact, index) => (
+                <ListItem key={index}>
+                  <ListItemText primary={contact} />
+                </ListItem>
+              ))}
+            </List>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowContact(false)} color="primary">
+              Закрити
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </>
 
       {/* Модальное окно */}
       <Dialog open={open} onClose={handleClose}>
@@ -312,10 +425,10 @@ const Item: React.FC<ItemProps> = ({
     <MenuItem value="нова">Нова</MenuItem>
     <MenuItem value="бу">БУ</MenuItem>
   </Select>
-  {!formValues.condition && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
+  {!errors.condition && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
 </FormControl>
 
-        <FormControl fullWidth margin="normal" variant="outlined">
+        <FormControl fullWidth margin="normal" variant="outlined" required>
   <InputLabel id="type-label">Тип</InputLabel>
   <Select
     labelId="type-label"
@@ -326,15 +439,19 @@ const Item: React.FC<ItemProps> = ({
     <MenuItem value="оригінальна">Оригінальна</MenuItem>
     <MenuItem value="замінник">Замінник</MenuItem>
   </Select>
+  {!errors.type && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
+
 </FormControl>
 
         <TextField
           fullWidth
-          label="Гарантія (днів)"
+          label="Гарантія (днів)*"
           type="number"
           margin="normal"
           value={formValues.warranty}
           onChange={(e) => handleChange('warranty', e.target.value)}
+          error={!!errors.warranty} // Ошибка показывается, если есть в errors
+          helperText={errors.warranty ? "Це поле обов'язкове для заповнення" : ""}
         />
 
         <TextField
@@ -376,11 +493,11 @@ const Item: React.FC<ItemProps> = ({
   value={formValues.price}
   onChange={(e) => handleChange('price', e.target.value)}
   required
-  error={!formValues.price}
-  helperText={!formValues.price ? 'Це поле обов\'язкове для заповнення' : ''}
+  error={!!errors.price}
+  helperText={errors.price ? 'Це поле обов\'язкове для заповнення' : ''}
 />
 
-        <FormControl fullWidth margin="normal">
+        <FormControl fullWidth margin="normal" required>
           <InputLabel>Валюта</InputLabel>
           <Select
             value={formValues.currency}
@@ -390,6 +507,7 @@ const Item: React.FC<ItemProps> = ({
             <MenuItem value="$">Дол</MenuItem>
             <MenuItem value="€">Євро</MenuItem>
           </Select>
+          {!errors.condition && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
         </FormControl>
         <TextField
           fullWidth
@@ -411,7 +529,7 @@ const Item: React.FC<ItemProps> = ({
           
           {/* Контакты */}
           <Typography variant="body1">Контакты: <Link  href={`tel:${phone}`}>{phone}</Link></Typography>
-          { !contact.onlySms &&
+          { contact && !contact.onlySms &&
           <Box display="flex" gap={2} mt={2}>
                 {contact.viber && (
                   <a href={`viber://chat?number=${phone}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>

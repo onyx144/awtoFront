@@ -32,7 +32,7 @@ const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <AppBarMenu />
-      <main>{children}</main>
+      <main className="main">{children}</main>
     </ThemeProvider>
   );
 };
