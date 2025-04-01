@@ -26,6 +26,7 @@ interface Part {
 interface SpareData {
     id: string;
   name: string;
+  partPhoto?: string[];
   user?: string;
   city: string;
   tyme: string;
@@ -137,6 +138,7 @@ export default function Story() {
             {spare.map((item, index) => (
               <Item
                 key={index}
+                {...(item.partPhoto && item.partPhoto[0] && item.partPhoto[0].length > 0 ? { photo: item.partPhoto[0] } : {})}
                 id={item.id}
                 name={item.partName}
                 user={item.user}

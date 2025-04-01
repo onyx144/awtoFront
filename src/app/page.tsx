@@ -37,6 +37,7 @@ export default function Home() {
   partId: string;
   partNumber: string;
   partDescription?: string;
+  partPhoto?: string[];
   partPrice: string;
   partFile: Record<string, unknown>[]; // Можно уточнить тип фото, если он известен
 
@@ -234,6 +235,7 @@ export default function Home() {
               {filteredData.map((item, index) => (
                 <Item
                 key={index}
+                
                 id={item.id}
                 name={item.partName}
                 user={item.user}
@@ -253,8 +255,8 @@ export default function Home() {
                 partType={item.partType}
                 partCondition={item.partCondition}
                 partNumber={item.partNumber}
-                photo={item.photo}
                 vin={item.vin}
+                {...(item.partPhoto && item.partPhoto[0] && item.partPhoto[0].length > 0 ? { photo: item.partPhoto[0] } : {})}
                 time={item.date}
                 partDescription={item.partDescription}
               />

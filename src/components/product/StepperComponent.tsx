@@ -18,7 +18,7 @@ type Part = {
   partType: string;
   partCondition: string;
   partNumber: string;
-  partPhotos: (File  | null)[];
+  partPhotos: (File  | null | string)[];
   partDescription: string;
   partPrice: string;
 };
@@ -198,16 +198,33 @@ const StepperComponent = () => {
     },
   });
   const createSpare = async (spareData: SpareData , files: File[]): Promise<void> => {
-    console.log('Data:' , files );
+ 
+
     const formData = new FormData();
 
-    files.forEach((file) => {
-      formData.append('files', file); // Добавляем файлы
+    spareData.parts.forEach((part) => {
+      part.partPhotos.forEach((file) => {
+        if (file) { // Проверяем, что файл существует
+          formData.append('files', file); // Добавляем файлы
+        }
+      });
+    });
+    spareData.parts = spareData.parts.map((part) => {
+      // Если у части есть файлы, превращаем их в массив строк с именами
+      if (part.partPhotos && part.partPhotos.length > 0) {
+        // Преобразуем каждый файл в его имя (file.name)
+        part.partPhotos = part.partPhotos
+        .filter((file) => file !== null) // Убираем все элементы, которые равны null
+        .map((file) => (file instanceof File ? file.name : file));         
+       
+      }
+      
+      return part;
     });
   
     try {
       const response = await request('post', '/spares/create' , spareData);
-      if (formData.has('files') && formData.getAll('files').length > 0) {
+     if (formData.has('files') && formData.getAll('files').length > 0) {
       await request('post', '/spares/image', formData);
       }  
       console.log('Запчасть создана:', response.data);

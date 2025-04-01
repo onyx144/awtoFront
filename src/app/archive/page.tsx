@@ -2,6 +2,7 @@
 import React, { useState , useEffect } from 'react';
 import { Box, IconButton , InputAdornment , Autocomplete , Button , TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Item from '@/components/spares/Item';
+
 import {request} from '@request/request';
 import select from '@json/select.json'
 import SearchIcon from "@mui/icons-material/Search";
@@ -20,6 +21,7 @@ export default function Archive() {
       story?: boolean;
       mark?: string;
       modelId?: string;
+      partPhoto?: string[];
       years?: string;
       engineSize?: string;
       fuelID?: string;
@@ -154,6 +156,7 @@ export default function Archive() {
             {spare.map((item, index) => (
               <Item
                 key={index}
+                {...(item.partPhoto && item.partPhoto[0] && item.partPhoto[0].length > 0 ? { photo: item.partPhoto[0] } : {})}
                 id={item.id}
                 name={item.partName}
                 city={item.city}

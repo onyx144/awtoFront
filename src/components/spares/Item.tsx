@@ -13,7 +13,8 @@ import WhatsAppIcon from '@/svg/WhatsAppIcon';
 import ViberIcon from '@/svg/vibericon';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
-import { getRole } from '@/request/request';
+
+import { getRole , BASE_URL} from '@/request/request';
 import { request } from '@/request/request';
 import TelegramLogo from '@/svg/TelegramIcon';
 // Функция для преобразования времени в "Х минут назад"
@@ -77,6 +78,7 @@ interface ItemProps {
   partType?: string;
   partCondition?: string;
   partNumber?: string;
+  partPhoto?: string;
   photo?: string;
   archive?: boolean;
   vin?: string;
@@ -307,9 +309,7 @@ const storySend = async () => {
         <TableCell>{name}</TableCell>
         <TableCell>{partNumber}</TableCell>
         <TableCell> {photo ? (
-    <a href={photo} target="_blank" rel="noopener noreferrer">
-      <img src={photo} alt="Фото" width={50} height={50} style={{ borderRadius: '5px' }} />
-    </a>
+      <img src={BASE_URL + '/uploads/'+ photo} alt="Фото" width={50} height={50} style={{ borderRadius: '5px' }} />
   ) : (
     ""
   )}</TableCell>

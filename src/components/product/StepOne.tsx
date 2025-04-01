@@ -27,7 +27,7 @@ type Part = {
   partType: string;
   partCondition: string;
   partNumber: string;
-  partPhotos: (File  | null)[];
+  partPhotos: (File  | null | string)[];
   partDescription: string;
   partPrice: string;
 };
@@ -97,6 +97,9 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
     }
   
   };
+  const generateRandomFilename = () => {
+    return Math.random().toString().slice(2, 12); // Генерация случайных 10 цифр
+  };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, partIndex: number, photoIndex: number) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -107,6 +110,12 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
         return;
       }
   
+      // Генерация случайного имени для файла
+      const randomFilename = generateRandomFilename();
+      const renamedFile = new File([file], randomFilename + '.' + file.name.split('.').pop(), {
+        type: file.type,
+      });
+  
       // Обновляем `partPhotos` внутри `parts`
       setParts(prevParts => {
         return prevParts.map((part, pIndex) => {
@@ -114,7 +123,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
   
           // Копируем массив `partPhotos`
           const updatedPhotos = [...part.partPhotos];
-          updatedPhotos[photoIndex] = file; // Обновляем нужное фото
+          updatedPhotos[photoIndex] = renamedFile; // Обновляем нужное фото с новым именем
   
           return { ...part, partPhotos: updatedPhotos }; // Возвращаем обновленный объект
         });
@@ -126,7 +135,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
           if (pIndex !== partIndex) return previewRow; // Оставляем остальные превью без изменений
   
           const updatedPreviews = [...previewRow]; // Копируем текущий массив превью
-          updatedPreviews[photoIndex] = URL.createObjectURL(file); // Создаем ссылку для превью
+          updatedPreviews[photoIndex] = URL.createObjectURL(renamedFile); // Создаем ссылку для превью
   
           return updatedPreviews; // Возвращаем обновленный массив превью
         });
@@ -135,9 +144,11 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
   };
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const handleRemovePhoto = (partIndex: number, photoIndex: number) => {
+    console.log('part1' , parts);
     setParts(prevParts => {
       const updatedParts = [...prevParts];
       updatedParts[partIndex].partPhotos = updatedParts[partIndex].partPhotos.filter((_, i) => i !== photoIndex);
+
       return updatedParts;
     });
 
@@ -284,37 +295,38 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
           />
 
 <Box>
-      {parts.map((part, partIndex) => (
-        <Box key={partIndex} sx={{ mt: 2 }}>
+        <Box sx={{ mt: 2 }}>
           <Typography>Фото запчасти</Typography>
-          {part.partPhotos.map((photo, photoIndex) => (
-            <Box key={photoIndex} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-              <input
-                type="file"
-                accept=".png, .jpg, .jpeg, .webp"
-                onChange={(e) => handleFileChange(e, partIndex, photoIndex)}
-                style={{ display: 'none' }}
-                id={`file-upload-${partIndex}-${photoIndex}`}
-              />
-              <label htmlFor={`file-upload-${partIndex}-${photoIndex}`}>
-                <Button variant="contained" component="span">
-                  Загрузить фото
-                </Button>
-              </label>
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+               <input
+      type="file"
+      accept=".png, .jpg, .jpeg, .webp"
+      onChange={(e) => handleFileChange(e, index, 0)}
+      style={{ display: 'none' }}
+      id={`file-upload-${index}-new`}
+    />
+    <label htmlFor={`file-upload-${index}-new`}>
+      <Button variant="contained" component="span">
+        Загрузить фото
+      </Button>
+    </label>
+    {part.partPhotos.map((photo, photoIndex) => (
+  previewUrls[index] && previewUrls[index][photoIndex] && (
+    <Box key={`${index}-${photoIndex}`} sx={{ display: 'flex', alignItems: 'center'}}>
+      <img
+        src={previewUrls[index][photoIndex]}
+        alt="Превью"
+        style={{ width: 50, height: 50, marginLeft: 10, objectFit: 'cover' }}
+      />
+      <IconButton onClick={() => handleRemovePhoto(index, photoIndex)}>
+        <DeleteIcon />
+      </IconButton>
+    </Box>
+  )
+))}
 
-              {previewUrls[partIndex] && previewUrls[partIndex][photoIndex] && (
-                <img
-                  src={previewUrls[partIndex][photoIndex]}
-                  alt="Превью"
-                  style={{ width: 50, height: 50, marginLeft: 10, objectFit: 'cover' }}
-                />
-              )}
-
-              <IconButton onClick={() => handleRemovePhoto(partIndex, photoIndex)}>
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          ))}
+          
+  </Box>
           {/*
           <Button
             variant="outlined"
@@ -338,7 +350,6 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
           </Button>
           */}
         </Box>
-      ))}
     </Box>
           
           <Button
@@ -346,7 +357,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
             onClick={() => addPart()}
             sx={{ mt: 2 , mr: 2 }}
           >
-            Добавить запчасть
+            Додати запчастину
           </Button>
           {index > 0 && (
   <Button

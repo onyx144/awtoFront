@@ -159,4 +159,4 @@ const request = async (
 };
 
 
-export { clearAllUserData , getPhone, getEmail , saveEmail , savePhone, saveRole , getRole , removeRole , saveToken, getToken, removeToken, useAuthInterceptor, request };
+export { BASE_URL , clearAllUserData , getPhone, getEmail , saveEmail , savePhone, saveRole , getRole , removeRole , saveToken, getToken, removeToken, useAuthInterceptor, request };
