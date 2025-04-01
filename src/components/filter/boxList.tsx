@@ -39,30 +39,34 @@ const BoxList: React.FC<BoxListProps> = ({ items, onUpdate }) => {
   //const [checked, setChecked] = useState<boolean>(false); 
   const valuesMap = mapToObject(nameToIdMap);
   const categoryMap: Record<string, string> = {
-  'Тип техники': 'vehicleType',
-  'Назви запчастин': 'spareParts',
-  'Годы выпуска': 'years',
-  'Марки': 'brands',
-  'Групи запчастин': 'spareGroups',
-  'Модель запчастей': 'model',
-  'Типы запчастин': 'type',
-  'Состояние запчастей': 'state',
-  'Регіони України': 'regions',
-};
-
-const redirectToHomeWithFilters = (filters: FilterItem[]) => {
-  const queryParams = filters
-    .map((filter) => {
-      const key = categoryMap[filter.category]; // Найти соответствующий ключ
-      return key
-        ? `${encodeURIComponent(key)}=${encodeURIComponent(filter.values.join(","))}`
-        : null; // Если ключ не найден, пропускаем
-    })
-    .filter(Boolean) // Удаляем null
-    .join("&");
-
-  router.push(`/?${queryParams}`);
-};
+    'Тип техники': 'vehicleType',
+    'Назви запчастин': 'partName',
+    'Годы выпуска': 'years',
+    'Марки': 'mark',
+    'Групи запчастин': 'partGroup',
+    'Модель запчастей': 'modelId',
+    'Типы запчастей': 'type',
+    'Состояние запчастей': 'state',
+    'Регіони України': 'region',
+  };
+  
+  const redirectToHomeWithFilters = (filters: FilterItem[]) => {
+    const queryParams = filters
+      .map((filter) => {
+        // Убираем двоеточие и пробелы в category
+        const normalizedCategory = filter.category.replace(/:\s*$/, '').trim();
+        const key = categoryMap[normalizedCategory]; // Ищем соответствующий ключ по категории
+  
+        return key
+          ? `${encodeURIComponent(key)}=${encodeURIComponent(filter.values.join(","))}`
+          : null; // Если ключ не найден, пропускаем
+      })
+      .filter(Boolean) // Удаляем null
+      .join("&");
+  
+    //console.log('Query Params:', queryParams);
+    router.push(`/?${queryParams}`);
+  };
 
   const messageUpdate = async (id: number , event: React.ChangeEvent<HTMLInputElement>) => {
     const newChecked = event.target.checked;

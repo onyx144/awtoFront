@@ -23,25 +23,26 @@ const FiltersContainer: React.FC<FilterContainerProps> = ({ isAddFiltersVisible 
 
     if (file && file.type === 'text/csv') {
       setCsvFile(file);
+      handleAddCsvFile(file);
     } else {
-      alert('Пожалуйста, выберите файл CSV.');
+      alert('Будь ласка, виберіть файл CSV');
     }
   };
 
-  const handleAddCsvFile = async () => {
+  const handleAddCsvFile = async (file: File) => {
     
-    if (!csvFile) {
-      alert('Выберите файл перед загрузкой.');
+    if (!file) {
+      alert ('Виберіть файл перед завантаженням.');      
       return;
     }
 
     const formData = new FormData();
-    formData.append('csvFile', csvFile);
+    formData.append('file', file);
 
     try {
-      const response = await request('post', `/spare` , formData);
+      const response = await request('post', `/users/csv-file` , formData);
       if (response.status === 201) {
-        console.log('Registration successful!');
+        alert('Файл завантажено')
       }
     } catch (error) {
       alert('Помилка завантаження файлу');
@@ -75,7 +76,6 @@ const FiltersContainer: React.FC<FilterContainerProps> = ({ isAddFiltersVisible 
           color="primary"
           sx={{ mt: 5 }}
           component="span"
-          onClick={handleAddCsvFile} // Загружаем файл при изменении
         >
           Додати csv файл
         </Button>
