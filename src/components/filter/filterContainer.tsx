@@ -1,5 +1,5 @@
 "use client";
-import React , { useState} from 'react';
+import React  from 'react';
 
 import { Button , Box } from "@mui/material";
 import AddFilters from "./addFilters";
@@ -12,17 +12,14 @@ interface FilterContainerProps {
 
 
 const FiltersContainer: React.FC<FilterContainerProps> = ({ isAddFiltersVisible , setIsAddFiltersVisible }) => {
-  //const [isAddFiltersVisible, setIsAddFiltersVisible] = useState(false);
 
   const handleAddFilterClick = () => setIsAddFiltersVisible(true);
   const handleSaveFilter = () => setIsAddFiltersVisible(false);
-  const [csvFile, setCsvFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
 
     if (file && file.type === 'text/csv') {
-      setCsvFile(file);
       handleAddCsvFile(file);
     } else {
       alert('Будь ласка, виберіть файл CSV');
@@ -40,12 +37,12 @@ const FiltersContainer: React.FC<FilterContainerProps> = ({ isAddFiltersVisible 
     formData.append('file', file);
 
     try {
-      const response = await request('post', `/users/csv-file` , formData);
+      const response = await request('post', '/users/csv-file' , formData);
       if (response.status === 201) {
         alert('Файл завантажено')
       }
-    } catch (error) {
-      alert('Помилка завантаження файлу');
+    } catch {
+      alert('Помилка завантаження файлу' );
     }
   };
   return (

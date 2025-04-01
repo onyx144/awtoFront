@@ -4,13 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { request } from '@request/request';
 import Item from '@/components/spares/Item';
+import { AxiosError } from 'axios';
 
-interface MessageType {
-  viber: boolean;
-  telegram: boolean;
-  whatsapp: boolean;
-  onlySms: boolean;
-}
+
 
 interface Part {
   partName: string;
@@ -101,8 +97,8 @@ export default function Story() {
       setSpare(formattedData);
       console.log(formattedData);
     } catch (error: unknown) {
-      if (error instanceof Error && (error as any).response?.data?.message) {
-        alert((error as any).response.data.message);
+      if (error instanceof AxiosError && error.response?.data?.message) {
+              alert(error.response.data.message);
       } else {
         alert('Помилка');
       }
@@ -124,7 +120,7 @@ export default function Story() {
           <TableHead>
             <TableRow>
               <TableCell sx={cellStyle}>Марка<br />Модель<br />Рік</TableCell>
-              <TableCell sx={cellStyle}>Об'єм двигуна<br />Паливо<br />Тип кузова<br />Привід</TableCell>
+              <TableCell sx={cellStyle}>Об`&apos;`єм двигуна<br />Паливо<br />Тип кузова<br />Привід</TableCell>
               <TableCell sx={cellStyle}>Група запчастини<br />Тип запчастини<br />Стан</TableCell>
               <TableCell sx={cellStyle}>Назва запчастини</TableCell>
               <TableCell sx={cellStyle}>Код запчастини</TableCell>

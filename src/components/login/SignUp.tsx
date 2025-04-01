@@ -16,6 +16,7 @@ import Select , {SelectChangeEvent} from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import {request , saveRole, saveEmail , savePhone , saveToken} from '@request/request'
+import { AxiosError } from 'axios';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -151,10 +152,10 @@ export default function SignUp() {
         } else {
           console.log('Registration failed. Please try again.');
         }
-      } catch (error: any) {
-        if (error.response?.data?.message) {
-          alert(error.response.data.message); // Выводим сообщение ошибки в alert
-        } else {
+      } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response?.data?.message) {
+                    alert(error.response.data.message);
+            } else {
           alert('Виникла невідома помилка і ви не зареєстровані');
         }      }
     }

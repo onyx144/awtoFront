@@ -35,12 +35,11 @@ type Part = {
 type StepOneProps = {
   parts: Part[];
   setParts: React.Dispatch<React.SetStateAction<Part[]>>;
-  setIsValid:  (fn: () => boolean) => void;
 };
 export type StepOneRef = {
   validate: () => boolean;
 };
-const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsValid }, ref) => {
+const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts }, ref) => {
   const [previewUrls, setPreviewUrls] = useState<string[][]>(
     parts.map(part =>
       part.partPhotos.map(photo =>
@@ -50,7 +49,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
   );
   useImperativeHandle(ref, () => ({
     validate: () => {
-      let newErrors: Record<string, boolean> = {};
+      const newErrors: Record<string, boolean> = {};
     
     parts.forEach((part, index) => {
       if (!part.partName) newErrors[`partName-${index}`] = true;
@@ -63,7 +62,6 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
 
     setErrors(newErrors);
     const isValid = Object.keys(newErrors).length === 0;
-    setIsValid(() => isValid);
     
     return isValid;
     },
@@ -204,7 +202,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
       fullWidth
       margin="normal"
       error={!!errors[`partName-${index}`]} // Ошибка показывается, если есть в errors
-      helperText={errors[`partName-${index}`] ? "Поле обов'язкове" : ""}    />
+      helperText={errors[`partName-${index}`] ? "Поле обов`&apos;`язкове" : ""}    />
   )}
 />
 
@@ -226,7 +224,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
     {/* Добавьте остальные опции */}
   </Select>
   {errors[`partGroup-${index}`] && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
 </FormControl>
           </Grid>
@@ -243,7 +241,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
       <FormControlLabel value="analog" control={<Radio />} label="Аналог" />
     </RadioGroup>
     {errors[`partType-${index}`] && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
 
   </FormControl>
@@ -269,7 +267,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
             onChange={(e) => handleInputChange(index, 'partNumber', e.target.value)}
             margin="normal"
             error={!!errors[`partNumber-${index}`]} // Ошибка показывается, если есть в errors
-            helperText={errors[`partNumber-${index}`] ? "Поле обов'язкове" : ""}
+            helperText={errors[`partNumber-${index}`] ? "Поле обов`&apos;`язкове" : ""}
           />
 
           <TextField
@@ -290,7 +288,7 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
             onChange={(e) => handleInputChange(index, 'partPrice', e.target.value)}
             margin="normal"
             error={!!errors[`partPrice-${index}`]} // Ошибка показывается, если есть в errors
-            helperText={errors[`partPrice-${index}`] ? "Поле обов'язкове" : ""}
+            helperText={errors[`partPrice-${index}`] ? "Поле обов`&apos;`язкове" : ""}
       
           />
 
@@ -376,5 +374,5 @@ const StepOne = forwardRef<StepOneRef, StepOneProps>(({ parts, setParts, setIsVa
   );
 });
 
-
+StepOne.displayName  = 'StepOne';
 export default StepOne;

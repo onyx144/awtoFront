@@ -46,10 +46,9 @@ export type StepThreeRef = {
 };
 const StepThree = forwardRef<StepThreeRef , StepThreeProps> (({ contactInfo, setContactInfo  } , ref) => {
   const [errors, setErrors] = useState<Record<string, boolean>>({});
-  const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
      useImperativeHandle(ref, () => ({
          validate: () => {
-           let newErrors: Record<string, boolean> = {};
+           const newErrors: Record<string, boolean> = {};
            if(getRole()!= 'buyer') {
            if (!contactInfo.email) newErrors.email = true;
            if (!contactInfo.phone) newErrors.phone = true;
@@ -279,5 +278,6 @@ const StepThree = forwardRef<StepThreeRef , StepThreeProps> (({ contactInfo, set
     </Box>
   );
 });
+StepThree.displayName = 'StepThree'; // ✅ Добавляем имя компонента
 
 export default StepThree;

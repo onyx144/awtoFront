@@ -1,5 +1,5 @@
 "use client";
-import React, { useState , useRef } from 'react';
+import React, { useState , Suspense , useRef } from 'react';
 import { Box, Button, Step, StepLabel, Stepper, StepIconProps } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -197,7 +197,7 @@ const StepperComponent = () => {
       onlySms: false,
     },
   });
-  const createSpare = async (spareData: SpareData , files: File[]): Promise<void> => {
+  const createSpare = async (spareData: SpareData ): Promise<void> => {
  
 
     const formData = new FormData();
@@ -234,7 +234,6 @@ const StepperComponent = () => {
     }
   };
   const handleSubmit = () => {
-    const files: File[] = parts.flatMap((part) => part.partPhotos || []).filter((file): file is File => file !== null);
   
     const formData = {
       parts,
@@ -246,12 +245,11 @@ const StepperComponent = () => {
       {
         const result = StepThreeRef.current.validate();
         if(result) {
-          createSpare(formData, files);
+          createSpare(formData);
         }
       }
     };
   const [activeStep, setActiveStep] = useState(0);
-  const [validateStepOne, setValidateStepOne] = useState<() => boolean>(() => () => true);  
   const handleNext = () => {
     
     if (activeStep === 0 && stepOneRef.current) {
@@ -297,10 +295,11 @@ const StepperComponent = () => {
       </Stepper>
       <Box sx={{ mt: 4 }}>
       <Box>
+        <Suspense>
     <Box
       sx={{ display: activeStep === 0 ? 'block' : 'none' }}
     >
-      <StepOne ref={stepOneRef} parts={parts} setParts={setParts} setIsValid={(fn) => setValidateStepOne(() => fn)}/>
+      <StepOne ref={stepOneRef} parts={parts} setParts={setParts} />
     </Box>
     <Box
       sx={{ display: activeStep === 1 ? 'block' : 'none' }}
@@ -312,6 +311,7 @@ const StepperComponent = () => {
     >
       <StepThree ref={StepThreeRef} contactInfo={contactInfo} setContactInfo={setContactInfo}/>
     </Box>
+    </Suspense>
   </Box>
         {/*<StepContent 
         step={activeStep}

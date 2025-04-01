@@ -11,8 +11,10 @@ import { Box, Button, Typography,
 import React, { useState , useEffect } from 'react';
 import WhatsAppIcon from '@/svg/WhatsAppIcon';
 import ViberIcon from '@/svg/vibericon';
+import { AxiosError } from 'axios';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import select from '@json/select.json'
 
 import { getRole , BASE_URL} from '@/request/request';
 import { request } from '@/request/request';
@@ -163,7 +165,7 @@ const Item: React.FC<ItemProps> = ({
       }
     } catch (error: unknown) {
       // Проверяем, есть ли у ошибки response и message
-      if (error instanceof Error && (error as any).response?.status == '401') {
+      if (error instanceof Error && (error as AxiosError).response?.status === 401) {
         alert('Будь ласка, зареєструйтесь для перегляду контактів.');
       } else {
         alert('Сталася помилка при оновленні користувача. Спробуйте ще раз.' );
@@ -290,22 +292,57 @@ const storySend = async () => {
 
     console.log('Успешный ответ:', response.data);
   } catch (error:unknown) {
-    console.error('Ошибка при выполнении запроса:', error);
-    if (error instanceof Error && (error as any).response?.data?.message) {
-      alert((error as any).response.data.message);
+    if (error instanceof AxiosError && error.response?.status === 401) {
+      alert(error.response.data.message);
     } else {
       alert('Помилка');
     }
   }
   };
-
+  interface MarkItem {
+    id: string;
+    name: string;
+  }
+ /* const getMarkName = (markId: string ): string => {
+    for (const value of Object.values(select.marks)) {
+      if (Array.isArray(value)) {
+        const found = value.find(item => item.id === markId);
+        if (found) return found.name;
+      }
+    }
+    return markId;
+  };*/
+  const getMarkName = (markId: string): string => {
+    // Рекурсивная функция поиска
+    const findName = (obj: any): string | undefined => {
+      // Если это объект с нужными полями
+      if (typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj) {
+        if (obj.id === markId) {
+          return obj.name;
+        }
+      }
+      
+      // Если это массив или объект - ищем рекурсивно
+      if (typeof obj === 'object' && obj !== null) {
+        for (const value of Object.values(obj)) {
+          const result = findName(value);
+          if (result) return result;
+        }
+      }
+      
+      return undefined;
+    };
+  
+    return findName(select) || markId;
+  };
+  
   return (
     <>
       <TableRow sx={{ '& td, & th': { textAlign: 'center', verticalAlign: 'middle' } }}>
 
-        <TableCell>{mark} <br /> {modelId} <br /> {years}</TableCell>
+        <TableCell>{mark && getMarkName(mark)} <br /> {modelId && getMarkName(modelId)} <br /> {years}</TableCell>
         <TableCell>{engineSize} <br/> {fuelID} <br/> {bodyTypeID} <br/>{axleID}</TableCell>
-        <TableCell>{partGroup} <br/> {bodyTypeID} <br/> {partCondition} </TableCell>
+        <TableCell>{partGroup } <br/> {bodyTypeID} <br/> {partCondition} </TableCell>
         <TableCell>{name}</TableCell>
         <TableCell>{partNumber}</TableCell>
         <TableCell> {photo ? (
@@ -369,7 +406,7 @@ const storySend = async () => {
               <TableCell>{story.currency || "-"}</TableCell>
               <TableCell>{story.inform || "-"}</TableCell>
               <TableCell><Button onClick={() => salesman_contact(story.salesmanId)}>
-               Зв'язатися  
+               Зв`&apos;`язатися  
               </Button></TableCell>
 
             </TableRow>
@@ -384,7 +421,7 @@ const storySend = async () => {
       {/* Условие для открытия модального окна */}
       {contactData && contactData.length > 0 && showContact && (
         <Dialog open={showContact} onClose={() => setShowContact(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Номери телефонів для зв'язку з продавцем</DialogTitle>
+          <DialogTitle>Номери телефонів для зв`&apos;`язку з продавцем</DialogTitle>
           <DialogContent>
             {/* Список номеров телефонов */}
             <List>
@@ -425,7 +462,7 @@ const storySend = async () => {
     <MenuItem value="нова">Нова</MenuItem>
     <MenuItem value="бу">БУ</MenuItem>
   </Select>
-  {!errors.condition && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
+  {!errors.condition && <FormHelperText>Це поле обов`&apos;`язкове для заповнення</FormHelperText>}
 </FormControl>
 
         <FormControl fullWidth margin="normal" variant="outlined" required>
@@ -439,7 +476,7 @@ const storySend = async () => {
     <MenuItem value="оригінальна">Оригінальна</MenuItem>
     <MenuItem value="замінник">Замінник</MenuItem>
   </Select>
-  {!errors.type && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
+  {!errors.type && <FormHelperText>Це поле обов`&apos;`язкове для заповнення</FormHelperText>}
 
 </FormControl>
 
@@ -507,7 +544,7 @@ const storySend = async () => {
             <MenuItem value="$">Дол</MenuItem>
             <MenuItem value="€">Євро</MenuItem>
           </Select>
-          {!errors.condition && <FormHelperText>Це поле обов'язкове для заповнення</FormHelperText>}
+          {!errors.condition && <FormHelperText>Це поле обов`&apos;`язкове для заповнення</FormHelperText>}
         </FormControl>
         <TextField
           fullWidth

@@ -1,13 +1,9 @@
 'use client'
-import React, { useState , useEffect } from 'react';
-import { Box, IconButton , InputAdornment , Autocomplete , Button , TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import React, { useState  } from 'react';
+import { Box , InputAdornment  , Button , TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Item from '@/components/spares/Item';
 
 import {request} from '@request/request';
-import select from '@json/select.json'
-import SearchIcon from "@mui/icons-material/Search";
-import CircularProgress from '@mui/material/CircularProgress';
-import { getRole } from '@request/request';
 
 export default function Archive() {
     interface SpareData {
@@ -143,7 +139,7 @@ export default function Archive() {
           <TableHead>
             <TableRow>
               <TableCell sx={cellStyle}>Марка<br />Модель<br />Рік</TableCell>
-              <TableCell sx={cellStyle}>Об'єм двигуна<br />Паливо<br />Тип кузова<br />Привід</TableCell>
+              <TableCell sx={cellStyle}>Об`&apos;`єм двигуна<br />Паливо<br />Тип кузова<br />Привід</TableCell>
               <TableCell sx={cellStyle}>Група запчастини<br />Тип запчастини<br />Стан</TableCell>
               <TableCell sx={cellStyle}>Назва запчастини</TableCell>
               <TableCell sx={cellStyle}>Код запчастини</TableCell>

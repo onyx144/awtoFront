@@ -55,7 +55,6 @@ export default function Home() {
   // Состояние для хранения введенного поиска
   const [searchQuery, setSearchQuery] = useState<Option | null>(null);
 
-  const [spareList] = useState<SpareData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   

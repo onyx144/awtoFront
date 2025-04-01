@@ -21,6 +21,7 @@ import {
 //import select from '@json/select.json'
 import {request} from '@request/request'
 import { getRole } from '@request/request'
+import { AxiosError } from 'axios';
 
 type User = {
   additionalInfo: string | null;
@@ -80,8 +81,8 @@ const Profile = () => {
       console.error('Ошибка при обновлении пользователя:', error);
   
       // Проверяем, есть ли у ошибки response и message
-      if (error instanceof Error && (error as any).response?.data?.message) {
-        alert((error as any).response.data.message);
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        alert(error.response.data.message);
       } else {
         alert('Сталася помилка при оновленні користувача. Спробуйте ще раз.' );
       }

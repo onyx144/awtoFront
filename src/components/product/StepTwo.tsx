@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState  } from 'react';
 import { RadioGroup , FormHelperText , Checkbox , FormControlLabel , Radio ,  FormGroup , TextField , FormControl, Grid , InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Box } from "@mui/material";
 import select from '@json/select.json'
 import { forwardRef, useImperativeHandle } from "react";
@@ -43,7 +43,7 @@ const StepTwo = forwardRef<StepTwoRef, StepTwoProps>(({ carData, setCarData } , 
   const [isSubModelVisible, setSubModelVisible] = useState<boolean>(false);
    useImperativeHandle(ref, () => ({
        validate: () => {
-         let newErrors: Record<string, boolean> = {};
+         const newErrors: Record<string, boolean> = {};
        
       
         // if (!carData.modelId) newErrors.modelId = true;
@@ -153,7 +153,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         ))}
         </Select>
         {errors.carType && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
       </FormControl>
     </Box>
@@ -179,7 +179,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             {/* Дополните остальными элементами списка марки автомобилей */}
           </Select>
           {errors.mark && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
         </FormControl>
 
@@ -217,7 +217,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
 </MenuItem>
           </Select>
           {errors.makeRegionId && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
         </FormControl>
       </Box>
@@ -377,7 +377,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             <MenuItem value="1950">1950</MenuItem>
           </Select>
           {errors.years && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
         </FormControl>
       </Grid>
@@ -412,7 +412,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         <MenuItem value="4">Електро</MenuItem>
       </Select>
       {errors.fuelID && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
     </FormControl>
 
@@ -427,7 +427,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         inputProps={{ maxLength: 20 }}
         placeholder="_._"
         error={!!errors.engineSize} // Ошибка показывается, если есть в errors
-        helperText={errors.engineSize ? "Поле обов'язкове" : ""}
+        helperText={errors.engineSize ? "Поле обов`&apos;`язкове" : ""}
 
       />
       <span style={{ whiteSpace: 'nowrap' }}>литра</span>
@@ -462,7 +462,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
         <MenuItem value="10">Фургон</MenuItem>
       </Select>
       {errors.bodyTypeID && (
-    <FormHelperText>Поле обов'язкове</FormHelperText>
+    <FormHelperText>Поле обов`&apos;`язкове</FormHelperText>
   )}
     </FormControl>
 </Grid>
@@ -569,7 +569,7 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
             fullWidth
             inputProps={{ maxLength: 50 }}
             error={!!errors.vin} // Ошибка показывается, если есть в errors
-            helperText={errors.vin ? "Поле обов'язкове" : ""}
+            helperText={errors.vin ? "Поле обов`&apos;`язкове" : ""}
 
           />
    
@@ -578,5 +578,6 @@ const handleInputChange = (field: keyof CarData) => (event: React.ChangeEvent<{ 
     </Box>
   );
 });
+StepTwo.displayName = 'StepThree'; // ✅ Добавляем имя компонента
 
 export default StepTwo;
