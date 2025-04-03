@@ -44,7 +44,10 @@ const saveRole = (role: string, rememberMe: boolean) => {
 };
 
 const getRole = (): string | null => {
+  if (typeof window !== 'undefined') {
   return localStorage.getItem(ROLE_KEY) || sessionStorage.getItem(ROLE_KEY);
+  }
+  else return null
 };
 
 const removeRole = () => {
