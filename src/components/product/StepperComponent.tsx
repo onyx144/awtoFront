@@ -221,7 +221,7 @@ const StepperComponent = () => {
       
       return part;
     });
-  
+  //coments
     try {
       const response = await request('post', '/spares/create' , spareData);
      if (formData.has('files') && formData.getAll('files').length > 0) {
