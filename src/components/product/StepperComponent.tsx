@@ -220,7 +220,7 @@ const StepperComponent = () => {
       }
       
       return part;
-    });
+    });//product coment
   //coments
     try {
       const response = await request('post', '/spares/create' , spareData);
